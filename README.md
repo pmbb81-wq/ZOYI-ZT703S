@@ -1,3 +1,11 @@
+# NADCHODZI WEBSERWER:
+<img width="394" height="805" alt="zoyi mobile web" src="https://github.com/user-attachments/assets/a2254827-d2e2-4155-b277-f71407d75f94" />
+
+<img width="1850" height="908" alt="zoyi web" src="https://github.com/user-attachments/assets/cc3613fb-4363-4c64-9637-4261921b97a3" />
+
+
+
+
 <h1 align="center">📋 ZOYI official site</h1>
 
 https://zotektools.com/products/triple-in-one-instrument-combining-oscilloscope-multimeter-and-signal-source/
