@@ -59,6 +59,17 @@ Teraz od siebie co ja dodałem do tej wersji :)
 - Dodanie zapamietywania suwaka od przezroczystosci.
 - Stabilizacja pomiaru. Pomiar nie plywa tak jak to bylo na pocztku. Pokazuje stbilne 0.0000 przy braku pomiaru.
 
+- ## UPDATE 2026.05.19
+
+- Dodalem skroty klawiaturowe.
+- Poprawilem stabilnosc wykresu.
+- Poprawilem zakladke datasheet
+
+- <img width="527" height="508" alt="Zrzut ekranu 2026-05-19 183406" src="https://github.com/user-attachments/assets/e26aa8a7-0bc5-4127-a54c-24fa21ee5fef" />
+
+<img width="794" height="703" alt="z8" src="https://github.com/user-attachments/assets/2c095048-3f68-427e-9c1b-0eb74bc0c0e9" />
+
+
 
 
 
