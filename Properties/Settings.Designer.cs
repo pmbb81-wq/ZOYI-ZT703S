@@ -329,5 +329,137 @@ namespace ZOYI.Properties {
                 this["tts_voice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("112")]
+        public int shortcut_ToggleStandardPanel {
+            get {
+                return ((int)(this["shortcut_ToggleStandardPanel"]));
+            }
+            set {
+                this["shortcut_ToggleStandardPanel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("113")]
+        public int shortcut_ToggleAdvancedPanel {
+            get {
+                return ((int)(this["shortcut_ToggleAdvancedPanel"]));
+            }
+            set {
+                this["shortcut_ToggleAdvancedPanel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("114")]
+        public int shortcut_ClearLog {
+            get {
+                return ((int)(this["shortcut_ClearLog"]));
+            }
+            set {
+                this["shortcut_ClearLog"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("115")]
+        public int shortcut_SaveCSV {
+            get {
+                return ((int)(this["shortcut_SaveCSV"]));
+            }
+            set {
+                this["shortcut_SaveCSV"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("116")]
+        public int shortcut_ToggleChartPause {
+            get {
+                return ((int)(this["shortcut_ToggleChartPause"]));
+            }
+            set {
+                this["shortcut_ToggleChartPause"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("117")]
+        public int shortcut_ClearChart {
+            get {
+                return ((int)(this["shortcut_ClearChart"]));
+            }
+            set {
+                this["shortcut_ClearChart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("118")]
+        public int shortcut_MinimizeWindow {
+            get {
+                return ((int)(this["shortcut_MinimizeWindow"]));
+            }
+            set {
+                this["shortcut_MinimizeWindow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("119")]
+        public int shortcut_ToggleTTS {
+            get {
+                return ((int)(this["shortcut_ToggleTTS"]));
+            }
+            set {
+                this["shortcut_ToggleTTS"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public int shortcut_CycleTimeWindow {
+            get {
+                return ((int)(this["shortcut_CycleTimeWindow"]));
+            }
+            set {
+                this["shortcut_CycleTimeWindow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("123")]
+        public int shortcut_OpenShortcutConfig {
+            get {
+                return ((int)(this["shortcut_OpenShortcutConfig"]));
+            }
+            set {
+                this["shortcut_OpenShortcutConfig"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Google")]
+        public string ds_search_engine {
+            get {
+                return ((string)(this["ds_search_engine"]));
+            }
+            set {
+                this["ds_search_engine"] = value;
+            }
+        }
     }
 }

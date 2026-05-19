@@ -26,6 +26,8 @@ namespace ZOYI
         Tools tools;
         string toolsPath = "Tools\\Tools.txt";
 
+        ShortcutManager shortcutManager;
+
         List<string[]> csvData = new List<string[]>();
         object csvLock = new object();
 
@@ -84,6 +86,9 @@ namespace ZOYI
 
             // 9. Inicjalizacja TTS
             InitializeTTS();
+
+            // 10. Inicjalizacja menedżera skrótów klawiaturowych
+            InitializeShortcuts();
         }
 
         private void SetWindowLocation()
@@ -247,6 +252,12 @@ namespace ZOYI
         private void btnMinimize_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void btnShortcuts_Click(object sender, EventArgs e)
+        {
+            var configForm = new ShortcutConfigForm(shortcutManager);
+            configForm.ShowDialog(this);
         }
 
         /*
@@ -452,9 +463,10 @@ namespace ZOYI
 
             float numVal;
             if (!float.TryParse(value.Trim(), System.Globalization.CultureInfo.InvariantCulture, out numVal)) return;
-            if (numVal < 0.09f) return;
+            if (Math.Abs(numVal) < 0.09f) return;
 
-            string cleanValue = numVal.ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
+            bool isNegative = numVal < 0;
+            string cleanValue = Math.Abs(numVal).ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
             var now = DateTime.Now;
 
             if (cleanValue != stableValue)
@@ -472,7 +484,8 @@ namespace ZOYI
 
             cleanValue = cleanValue.Replace('.', ',');
 
-            string textToSpeak = $"{cleanValue} {unit}"
+            string prefix = isNegative ? "minus " : "";
+            string textToSpeak = $"{prefix}{cleanValue} {unit}"
                 .Replace("mV", "mili wolta")
                 .Replace("kV", "kilo wolta")
                 .Replace("V", "wolta")
@@ -809,90 +822,157 @@ namespace ZOYI
             tabCtrl.Controls.Add(tabDiag);
             tabCtrl.Controls.Add(tabDatasheet);
 
+            tabDatasheet.BackColor = Color.FromArgb(13, 13, 13);
+
             Panel dsPanel = new Panel();
             dsPanel.Dock = DockStyle.Fill;
-            dsPanel.BackColor = Color.FromArgb(24, 24, 24);
+            dsPanel.BackColor = Color.FromArgb(13, 13, 13);
 
             Panel dsSearch = new Panel();
             dsSearch.Dock = DockStyle.Top;
-            dsSearch.Height = 45;
+            dsSearch.Height = 55;
             dsSearch.BackColor = Color.FromArgb(34, 34, 34);
+            dsSearch.Padding = new Padding(10, 8, 10, 8);
 
             Label dsLbl = new Label();
             dsLbl.Text = "Wpisz kod elementu (np. MMBT3904, 2N7002, AO3401):";
             dsLbl.ForeColor = Color.Yellow;
-            dsLbl.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dsLbl.Location = new Point(10, 5);
+            dsLbl.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dsLbl.Location = new Point(10, 4);
             dsLbl.AutoSize = true;
             dsSearch.Controls.Add(dsLbl);
 
             TextBox dsInput = new TextBox();
-            dsInput.Location = new Point(10, 15);
-            dsInput.Size = new Size(300, 25);
+            dsInput.Location = new Point(10, 24);
+            dsInput.Size = new Size(250, 25);
             dsInput.Font = new Font("Consolas", 11F, FontStyle.Bold);
             dsInput.BackColor = Color.FromArgb(13, 13, 13);
             dsInput.ForeColor = Color.LightGreen;
             dsInput.BorderStyle = BorderStyle.FixedSingle;
             dsSearch.Controls.Add(dsInput);
 
+            ComboBox cbDsEngine = new ComboBox();
+            cbDsEngine.Location = new Point(270, 24);
+            cbDsEngine.Size = new Size(150, 25);
+            cbDsEngine.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            cbDsEngine.BackColor = Color.FromArgb(13, 13, 13);
+            cbDsEngine.ForeColor = Color.Cyan;
+            cbDsEngine.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbDsEngine.FlatStyle = FlatStyle.Flat;
+            cbDsEngine.Items.Add("Google");
+            cbDsEngine.Items.Add("AllDatasheet");
+            cbDsEngine.Items.Add("Octopart");
+            cbDsEngine.Items.Add("LCSC");
+            cbDsEngine.Items.Add("FindChips");
+            cbDsEngine.Items.Add("DigiKey");
+            cbDsEngine.Items.Add("Mouser");
+            cbDsEngine.Items.Add("SnapEDA");
+            cbDsEngine.Items.Add("AllTransistors");
+            string savedEngine = Properties.Settings.Default.ds_search_engine;
+            if (!string.IsNullOrEmpty(savedEngine) && cbDsEngine.Items.Contains(savedEngine))
+                cbDsEngine.SelectedItem = savedEngine;
+            else
+                cbDsEngine.SelectedIndex = 0;
+            dsSearch.Controls.Add(cbDsEngine);
+
             Button dsBtn = new Button();
             dsBtn.Text = "SZUKAJ";
-            dsBtn.Location = new Point(320, 13);
-            dsBtn.Size = new Size(100, 28);
-            dsBtn.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dsBtn.Location = new Point(430, 23);
+            dsBtn.Size = new Size(95, 27);
+            dsBtn.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             dsBtn.BackColor = Color.FromArgb(0, 64, 64);
             dsBtn.ForeColor = Color.Cyan;
             dsBtn.Cursor = Cursors.Hand;
+            dsBtn.FlatStyle = FlatStyle.Flat;
+            dsBtn.FlatAppearance.BorderSize = 0;
+            dsSearch.Controls.Add(dsBtn);
 
-            Button dsBtn2 = new Button();
-            dsBtn2.Text = "ALLDATASHEET";
-            dsBtn2.Location = new Point(430, 13);
-            dsBtn2.Size = new Size(130, 28);
-            dsBtn2.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            dsBtn2.BackColor = Color.FromArgb(64, 0, 64);
-            dsBtn2.ForeColor = Color.Violet;
-            dsBtn2.Cursor = Cursors.Hand;
+            Label dsHint = new Label();
+            dsHint.Text = "Enter = otworz w przegladarce";
+            dsHint.ForeColor = Color.Gray;
+            dsHint.Font = new Font("Segoe UI", 8F);
+            dsHint.Location = new Point(540, 28);
+            dsHint.AutoSize = true;
+            dsSearch.Controls.Add(dsHint);
 
-            WebBrowser dsBrowser = new WebBrowser();
-            dsBrowser.Dock = DockStyle.Fill;
-            dsBrowser.ScriptErrorsSuppressed = true;
+            Panel dsInfo = new Panel();
+            dsInfo.Dock = DockStyle.Fill;
+            dsInfo.BackColor = Color.FromArgb(13, 13, 13);
 
-            dsBtn.Click += (s, e) =>
+            Label dsInfoIcon = new Label();
+            dsInfoIcon.Text = "SZUKAJ";
+            dsInfoIcon.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            dsInfoIcon.ForeColor = Color.FromArgb(60, 60, 60);
+            dsInfoIcon.TextAlign = ContentAlignment.MiddleCenter;
+            dsInfoIcon.Dock = DockStyle.Top;
+            dsInfoIcon.Height = 50;
+            dsInfo.Controls.Add(dsInfoIcon);
+
+            Label dsInfoText = new Label();
+            dsInfoText.Text = "Wpisz kod elementu i nacisnij SZUKAJ lub Enter.\nWyniki otwarta sie w domyslnej przegladarce.";
+            dsInfoText.Font = new Font("Segoe UI", 11F);
+            dsInfoText.ForeColor = Color.FromArgb(80, 80, 80);
+            dsInfoText.TextAlign = ContentAlignment.MiddleCenter;
+            dsInfoText.Dock = DockStyle.Top;
+            dsInfoText.Height = 45;
+            dsInfoText.AutoSize = false;
+            dsInfo.Controls.Add(dsInfoText);
+
+            void DoSearch()
             {
                 string q = dsInput.Text.Trim();
                 if (string.IsNullOrEmpty(q)) return;
-                dsBrowser.Navigate($"https://www.google.com/search?q={Uri.EscapeDataString(q + " datasheet pdf")}");
-            };
 
-            dsBtn2.Click += (s, e) =>
-            {
-                string q = dsInput.Text.Trim();
-                if (string.IsNullOrEmpty(q)) return;
-                dsBrowser.Navigate($"https://www.alldatasheet.com/search.jsp?sField={Uri.EscapeDataString(q)}");
-            };
+                string engine = cbDsEngine.SelectedItem.ToString();
+                string url = "";
+
+                switch (engine)
+                {
+                    case "Google":
+                        url = $"https://www.google.com/search?q={Uri.EscapeDataString(q + " datasheet pdf")}";
+                        break;
+                    case "AllDatasheet":
+                        url = $"https://www.alldatasheet.com/view.jsp?Searchword={Uri.EscapeDataString(q)}";
+                        break;
+                    case "Octopart":
+                        url = $"https://octopart.com/search?q={Uri.EscapeDataString(q)}";
+                        break;
+                    case "LCSC":
+                        url = $"https://lcsc.com/search?q={Uri.EscapeDataString(q)}";
+                        break;
+                    case "FindChips":
+                        url = $"https://www.findchips.com/search/{Uri.EscapeDataString(q)}";
+                        break;
+                    case "DigiKey":
+                        url = $"https://www.digikey.pl/en/products/result?keywords={Uri.EscapeDataString(q)}";
+                        break;
+                    case "Mouser":
+                        url = $"https://www.mouser.pl/c/?q={Uri.EscapeDataString(q)}";
+                        break;
+                    case "SnapEDA":
+                        url = $"https://www.snapeda.com/search?q={Uri.EscapeDataString(q)}";
+                        break;
+                    case "AllTransistors":
+                        url = $"https://alltransistors.com/search.php?search={Uri.EscapeDataString(q)}";
+                        break;
+                }
+
+                Properties.Settings.Default.ds_search_engine = engine;
+                Properties.Settings.Default.Save();
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+            }
+
+            dsBtn.Click += (s, e) => DoSearch();
 
             dsInput.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
-                {
-                    string q = dsInput.Text.Trim();
-                    if (string.IsNullOrEmpty(q)) return;
-                    dsBrowser.Navigate($"https://www.google.com/search?q={Uri.EscapeDataString(q + " datasheet pdf")}");
-                }
+                    DoSearch();
             };
 
-            dsPanel.Controls.Add(dsBrowser);
+            dsPanel.Controls.Add(dsInfo);
             dsPanel.Controls.Add(dsSearch);
-            dsSearch.Controls.Add(dsBtn);
-            dsSearch.Controls.Add(dsBtn2);
-
-            Label dsHint = new Label();
-            dsHint.Text = "Wpisz kod elementu i kliknij SZUKAJ (Google) lub ALLDATASHEET — Enter = szukaj";
-            dsHint.ForeColor = Color.Gray;
-            dsHint.Font = new Font("Segoe UI", 8F);
-            dsHint.Location = new Point(10, 25);
-            dsHint.AutoSize = true;
-            dsSearch.Controls.Add(dsHint);
 
             tabDatasheet.Controls.Add(dsPanel);
 
@@ -908,6 +988,86 @@ namespace ZOYI
             infoForm.Controls.Add(tabCtrl);
             infoForm.Controls.Add(btnClose);
             infoForm.ShowDialog(this);
+        }
+
+        private void InitializeShortcuts()
+        {
+            shortcutManager = new ShortcutManager();
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.ToggleStandardPanel, () =>
+            {
+                chbStandardPanel.Checked = !chbStandardPanel.Checked;
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.ToggleAdvancedPanel, () =>
+            {
+                chbAdvancedPanel.Checked = !chbAdvancedPanel.Checked;
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.ClearLog, () =>
+            {
+                tbComOutput.Text = "";
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.SaveCSV, () =>
+            {
+                btnSaveLog.PerformClick();
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.ToggleChartPause, () =>
+            {
+                if (tabControl1.SelectedTab == tabPageWYKRES)
+                {
+                    btnChartPause.PerformClick();
+                }
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.ClearChart, () =>
+            {
+                if (tabControl1.SelectedTab == tabPageWYKRES)
+                {
+                    btnChartClear.PerformClick();
+                }
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.MinimizeWindow, () =>
+            {
+                this.WindowState = FormWindowState.Minimized;
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.ToggleTTS, () =>
+            {
+                chbTTSSwitch.Checked = !chbTTSSwitch.Checked;
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.CycleTimeWindow, () =>
+            {
+                if (tabControl1.SelectedTab == tabPageWYKRES)
+                {
+                    Button[] timeButtons = { btnTime10s, btnTime30s, btnTime60s, btnTime5min };
+                    int currentIndex = Array.FindIndex(timeButtons, b => b.ForeColor == Color.White || b.ForeColor == Color.LightGreen);
+                    if (currentIndex < 0) currentIndex = 2;
+                    int nextIndex = (currentIndex + 1) % timeButtons.Length;
+                    btnTimeWindow_Click(timeButtons[nextIndex], EventArgs.Empty);
+                }
+            });
+
+            shortcutManager.RegisterAction(ShortcutManager.ActionId.OpenShortcutConfig, () =>
+            {
+                var configForm = new ShortcutConfigForm(shortcutManager);
+                if (configForm.ShowDialog(this) == DialogResult.OK)
+                {
+                }
+            });
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (shortcutManager != null && shortcutManager.ProcessKey(keyData))
+            {
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private Bitmap DrawBJTNPN()

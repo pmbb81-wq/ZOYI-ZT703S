@@ -32,6 +32,7 @@
             button1 = new Button();
             label1 = new Label();
             btnMinimize = new Button();
+            btnShortcuts = new Button();
             label4 = new Label();
             pictureBox1 = new PictureBox();
             label8 = new Label();
@@ -147,6 +148,21 @@
             btnMinimize.Text = "__";
             btnMinimize.UseVisualStyleBackColor = false;
             btnMinimize.Click += btnMinimize_Click;
+            // 
+            // btnShortcuts
+            // 
+            btnShortcuts.BackColor = Color.FromArgb(0, 64, 64);
+            btnShortcuts.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnShortcuts.ForeColor = Color.Cyan;
+            btnShortcuts.Location = new Point(649, 7);
+            btnShortcuts.Margin = new Padding(2);
+            btnShortcuts.Name = "btnShortcuts";
+            btnShortcuts.Size = new Size(36, 29);
+            btnShortcuts.TabIndex = 14;
+            btnShortcuts.Text = "SK";
+            btnShortcuts.UseVisualStyleBackColor = false;
+            btnShortcuts.Cursor = Cursors.Hand;
+            btnShortcuts.Click += btnShortcuts_Click;
             // 
             // label4
             // 
@@ -1001,6 +1017,7 @@
             Controls.Add(pictureBox1);
             Controls.Add(label4);
             Controls.Add(tabControl1);
+            Controls.Add(btnShortcuts);
             Controls.Add(btnMinimize);
             Controls.Add(label1);
             Controls.Add(button1);
@@ -1042,6 +1059,7 @@
         private Button button1;
         private Label label1;
         private Button btnMinimize;
+        private Button btnShortcuts;
         private Label label4;
         private PictureBox pictureBox1;
         private Label label8;

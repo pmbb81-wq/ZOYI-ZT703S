@@ -13,12 +13,17 @@ namespace ZOYI
         {
             public DateTime Time { get; set; }
             public float Value { get; set; }
+            public bool IsNegative { get; set; }
             public string Unit { get; set; } = "";
             public string Mode { get; set; } = "";
         }
 
         private List<DataPoint> dataPoints = new List<DataPoint>();
         private object dataLock = new object();
+
+        private List<float> smoothingBuffer = new List<float>();
+        private const int SmoothingWindowSize = 2;
+        private const float SpikeThreshold = 5.0f;
 
         private bool isPaused = false;
         private int timeWindowSeconds = 60;
@@ -33,9 +38,10 @@ namespace ZOYI
         private string currentUnit = "V";
         private string currentMode = "DC";
         private float lastValue = 0;
+        private bool lastValueNegative = false;
 
         private System.Windows.Forms.Timer chartTimer;
-        private const int UpdateIntervalMs = 100;
+        private const int UpdateIntervalMs = 30;
 
         public ChartPanel()
         {
@@ -64,27 +70,57 @@ namespace ZOYI
 
             if (string.IsNullOrEmpty(unit)) return;
 
+            bool isNegative = val < 0;
+            float absVal = Math.Abs(val);
+
+            float filteredVal = ApplySmoothing(absVal);
+
             lock (dataLock)
             {
+                bool modeChanged = false;
+                if (!string.IsNullOrEmpty(unit) && currentUnit != "" && unit != currentUnit)
+                {
+                    modeChanged = true;
+                    smoothingBuffer.Clear();
+                }
+                if (!string.IsNullOrEmpty(mode) && currentMode != "" && mode != currentMode)
+                {
+                    modeChanged = true;
+                    smoothingBuffer.Clear();
+                }
+
+                if (modeChanged)
+                {
+                    dataPoints.Clear();
+                    currentMin = float.MaxValue;
+                    currentMax = float.MinValue;
+                    currentSum = 0;
+                    currentCount = 0;
+                    lastValue = 0;
+                    lastValueNegative = false;
+                }
+
                 dataPoints.Add(new DataPoint
                 {
                     Time = DateTime.Now,
-                    Value = val,
+                    Value = filteredVal,
+                    IsNegative = isNegative,
                     Unit = unit,
                     Mode = mode
                 });
 
                 if (!string.IsNullOrEmpty(unit)) currentUnit = unit;
                 if (!string.IsNullOrEmpty(mode)) currentMode = mode;
-                lastValue = val;
+                lastValue = filteredVal;
+                lastValueNegative = isNegative;
 
-                currentMax = Math.Max(currentMax, val);
-                currentSum += val;
+                currentMax = Math.Max(currentMax, filteredVal);
+                currentSum += filteredVal;
                 currentCount++;
 
-                if (Math.Abs(val) > 0.1f)
+                if (filteredVal > 0.1f)
                 {
-                    currentMin = Math.Min(currentMin, val);
+                    currentMin = Math.Min(currentMin, filteredVal);
                 }
             }
         }
@@ -143,10 +179,11 @@ namespace ZOYI
                 g.DrawRectangle(borderPen, left, top, width, height);
             }
 
+            List<DataPoint> visiblePoints = GetVisiblePoints();
             using (Font labelFont = new Font("Segoe UI", 8))
             using (Brush textBrush = new SolidBrush(Color.FromArgb(150, 150, 180)))
             {
-                float range = GetYRange();
+                float range = GetYRange(visiblePoints);
                 for (int i = 0; i <= 5; i++)
                 {
                     float val = yMax - (range * i / 5.0f);
@@ -186,7 +223,7 @@ namespace ZOYI
 
                 if (visiblePoints.Count < 2) return;
 
-                float range = GetYRange();
+                float range = GetYRange(visiblePoints);
                 if (range <= 0) range = 1;
 
                 List<PointF> linePoints = new List<PointF>();
@@ -236,7 +273,7 @@ namespace ZOYI
                     g.FillEllipse(dotBrush, lastPt.X - 4, lastPt.Y - 4, 8, 8);
                 }
 
-                string valueLabel = FormatValue(lastValue);
+                string valueLabel = FormatValue(lastValue, lastValueNegative);
                 using (Font valueFont = new Font("Segoe UI", 13, FontStyle.Bold))
                 {
                     SizeF labelSize = g.MeasureString(valueLabel, valueFont);
@@ -289,7 +326,7 @@ namespace ZOYI
         {
             DateTime now = DateTime.Now;
             DateTime windowStart = now.AddSeconds(-timeWindowSeconds);
-            float range = GetYRange();
+            float range = GetYRange(points);
 
             DataPoint extremePt = null!;
             bool found = false;
@@ -338,10 +375,10 @@ namespace ZOYI
             string minStr, maxStr, avgStr, currentStr;
             lock (dataLock)
             {
-                minStr = currentMin == float.MaxValue ? "---" : FormatValue(currentMin);
-                maxStr = currentMax == float.MinValue ? "---" : FormatValue(currentMax);
-                avgStr = currentCount > 0 ? FormatValue((float)(currentSum / currentCount)) : "---";
-                currentStr = FormatValue(lastValue);
+                minStr = currentMin == float.MaxValue ? "---" : FormatValue(currentMin, lastValueNegative);
+                maxStr = currentMax == float.MinValue ? "---" : FormatValue(currentMax, lastValueNegative);
+                avgStr = currentCount > 0 ? FormatValue((float)(currentSum / currentCount), lastValueNegative) : "---";
+                currentStr = FormatValue(lastValue, lastValueNegative);
             }
 
             using (Font statFont = new Font("Segoe UI", 10))
@@ -401,30 +438,57 @@ namespace ZOYI
             }
         }
 
-        private float GetYRange()
+        private List<DataPoint> GetVisiblePoints()
         {
+            List<DataPoint> result = new List<DataPoint>();
+            DateTime now = DateTime.Now;
+            DateTime windowStart = now.AddSeconds(-timeWindowSeconds);
+
             lock (dataLock)
             {
-                if (currentCount == 0) return 10;
-
-                float min = currentMin;
-                float max = currentMax;
-                float range = max - min;
-
-                if (range < 0.001f) range = Math.Abs(max) * 0.1f;
-                if (range < 0.001f) range = 1;
-
-                float margin = range * 0.15f;
-                yMin = min - margin;
-                yMax = max + margin;
+                foreach (var dp in dataPoints)
+                {
+                    if (dp.Time >= windowStart)
+                        result.Add(dp);
+                }
             }
+            return result;
+        }
+
+        private float GetYRange(List<DataPoint> visiblePoints)
+        {
+            float maxVal = 0;
+
+            if (visiblePoints != null && visiblePoints.Count > 0)
+            {
+                foreach (var dp in visiblePoints)
+                {
+                    maxVal = Math.Max(maxVal, dp.Value);
+                }
+            }
+
+            float[] ranges = { 5f, 25f, 50f, 250f, 500f };
+            float selectedRange = 5f;
+            foreach (float r in ranges)
+            {
+                if (maxVal <= r * 0.9f)
+                {
+                    selectedRange = r;
+                    break;
+                }
+                selectedRange = r;
+            }
+
+            yMin = 0;
+            yMax = selectedRange;
 
             return yMax - yMin;
         }
 
         private string FormatYValue(float val)
         {
-            if (Math.Abs(val) >= 1000) return $"{val / 1000:F1}k";
+            if (float.IsNaN(val) || float.IsInfinity(val)) return "0";
+            if (Math.Abs(val) >= 1000) return $"{val / 1000:F1}";
             if (Math.Abs(val) >= 100) return $"{val:F0}";
             if (Math.Abs(val) >= 10) return $"{val:F1}";
             if (Math.Abs(val) >= 1) return $"{val:F2}";
@@ -432,15 +496,46 @@ namespace ZOYI
             return $"{val:F4}";
         }
 
-        private string FormatValue(float val)
+        private string FormatValue(float val, bool negative = false)
         {
             if (float.IsNaN(val) || float.IsInfinity(val)) return "---";
-            if (Math.Abs(val) >= 1000) return $"{val / 1000:F2}k {currentUnit}";
-            if (Math.Abs(val) >= 100) return $"{val:F1} {currentUnit}";
-            if (Math.Abs(val) >= 10) return $"{val:F2} {currentUnit}";
-            if (Math.Abs(val) >= 1) return $"{val:F3} {currentUnit}";
-            if (Math.Abs(val) >= 0.01f) return $"{val:F4} {currentUnit}";
-            return $"{val:F5} {currentUnit}";
+            string prefix = negative ? "-" : "";
+            if (val >= 1000) return $"{prefix}{val / 1000:F2}k {currentUnit}";
+            if (val >= 100) return $"{prefix}{val:F1} {currentUnit}";
+            if (val >= 10) return $"{prefix}{val:F2} {currentUnit}";
+            if (val >= 1) return $"{prefix}{val:F3} {currentUnit}";
+            if (val >= 0.01f) return $"{prefix}{val:F4} {currentUnit}";
+            return $"{prefix}{val:F5} {currentUnit}";
+        }
+
+        private float ApplySmoothing(float newValue)
+        {
+            lock (dataLock)
+            {
+                smoothingBuffer.Add(newValue);
+                if (smoothingBuffer.Count > SmoothingWindowSize)
+                    smoothingBuffer.RemoveAt(0);
+
+                if (smoothingBuffer.Count < 3)
+                    return newValue;
+
+                var sorted = new List<float>(smoothingBuffer);
+                sorted.Sort();
+                float median = sorted[sorted.Count / 2];
+
+                float avg = 0;
+                int count = 0;
+                foreach (float v in smoothingBuffer)
+                {
+                    if (Math.Abs(v - median) < SpikeThreshold * Math.Max(Math.Abs(median), 0.01f))
+                    {
+                        avg += v;
+                        count++;
+                    }
+                }
+
+                return count > 0 ? avg / count : median;
+            }
         }
 
         public void TogglePause()
@@ -455,6 +550,7 @@ namespace ZOYI
             lock (dataLock)
             {
                 dataPoints.Clear();
+                smoothingBuffer.Clear();
                 currentMin = float.MaxValue;
                 currentMax = float.MinValue;
                 currentSum = 0;
