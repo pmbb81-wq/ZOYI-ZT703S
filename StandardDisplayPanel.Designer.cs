@@ -347,6 +347,8 @@
             label7.TabIndex = 15;
             label7.Text = "KRIS® VERSION";
             label7.TextAlign = ContentAlignment.MiddleCenter;
+            label7.Cursor = Cursors.Hand;
+            label7.Click += label7_Click;
             // 
             // label6
             // 
@@ -362,6 +364,8 @@
             label6.TabIndex = 13;
             label6.Text = "ZOYI®        ZT-703S         OSCILLOSCOPE MULTIMETER";
             label6.TextAlign = ContentAlignment.MiddleCenter;
+            label6.Cursor = Cursors.Hand;
+            label6.Click += label6_Click;
             // 
             // label8
             // 
@@ -377,6 +381,8 @@
             label8.TabIndex = 16;
             label8.Text = "GG 8772666";
             label8.TextAlign = ContentAlignment.MiddleCenter;
+            label8.Cursor = Cursors.Hand;
+            label8.Click += label8_Click;
             // 
             // dateTimePicker1
             // 

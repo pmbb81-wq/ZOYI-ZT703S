@@ -35,6 +35,7 @@
             btnShortcuts = new Button();
             label4 = new Label();
             pictureBox1 = new PictureBox();
+            pbESR = new PictureBox();
             label8 = new Label();
             lblComConnStatus = new Label();
             chbTTSSwitch = new CheckBox();
@@ -91,6 +92,13 @@
             tabPage1 = new TabPage();
             tabPage6 = new TabPage();
             tabPage5 = new TabPage();
+            tabWebServer = new TabPage();
+            btnWebServerStart = new Button();
+            btnWebServerStop = new Button();
+            label2 = new Label();
+            tbWebServerPort = new TextBox();
+            label3 = new Label();
+            llWebAddress = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabTools.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -189,6 +197,17 @@
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 16;
             pictureBox1.TabStop = false;
+            // 
+            // pbESR
+            // 
+            pbESR.Dock = DockStyle.Fill;
+            pbESR.Image = (Image)resources.GetObject("tabPage3.BackgroundImage");
+            pbESR.SizeMode = PictureBoxSizeMode.Zoom;
+            pbESR.Cursor = Cursors.Hand;
+            pbESR.BackColor = Color.FromArgb(24, 24, 24);
+            pbESR.TabIndex = 0;
+            pbESR.TabStop = false;
+            pbESR.Click += pbESR_Click;
             // 
             // label8
             // 
@@ -831,6 +850,7 @@
             tabControl1.Controls.Add(tabPage6);
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage4);
+            tabControl1.Controls.Add(tabWebServer);
             tabControl1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             tabControl1.Location = new Point(10, 40);
             tabControl1.Margin = new Padding(2);
@@ -958,8 +978,7 @@
             // tabPage3
             // 
             tabPage3.BackColor = Color.FromArgb(24, 24, 24);
-            tabPage3.BackgroundImage = (Image)resources.GetObject("tabPage3.BackgroundImage");
-            tabPage3.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage3.Controls.Add(pbESR);
             tabPage3.BorderStyle = BorderStyle.Fixed3D;
             tabPage3.ForeColor = SystemColors.GrayText;
             tabPage3.Location = new Point(4, 32);
@@ -1006,6 +1025,104 @@
             tabPage5.TabIndex = 7;
             tabPage5.Text = "PODŁĄCZ._EXTENDED";
             // 
+            // tabWebServer
+            // 
+            tabWebServer.BackColor = Color.FromArgb(34, 34, 34);
+            tabWebServer.Controls.Add(btnWebServerStop);
+            tabWebServer.Controls.Add(label2);
+            tabWebServer.Controls.Add(tbWebServerPort);
+            tabWebServer.Controls.Add(label3);
+            tabWebServer.Controls.Add(llWebAddress);
+            tabWebServer.Controls.Add(btnWebServerStart);
+            tabWebServer.Location = new Point(4, 32);
+            tabWebServer.Name = "tabWebServer";
+            tabWebServer.Padding = new Padding(3);
+            tabWebServer.Size = new Size(751, 375);
+            tabWebServer.TabIndex = 11;
+            tabWebServer.Text = "WEB SERWER";
+            // 
+            // btnWebServerStart
+            // 
+            btnWebServerStart.BackColor = Color.FromArgb(0, 64, 0);
+            btnWebServerStart.Cursor = Cursors.Hand;
+            btnWebServerStart.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            btnWebServerStart.ForeColor = Color.LightGreen;
+            btnWebServerStart.Location = new Point(16, 16);
+            btnWebServerStart.Margin = new Padding(2);
+            btnWebServerStart.Name = "btnWebServerStart";
+            btnWebServerStart.Size = new Size(160, 44);
+            btnWebServerStart.TabIndex = 0;
+            btnWebServerStart.Text = "URUCHOM";
+            btnWebServerStart.UseVisualStyleBackColor = false;
+            btnWebServerStart.Click += btnWebServerStart_Click;
+            // 
+            // btnWebServerStop
+            // 
+            btnWebServerStop.BackColor = Color.FromArgb(64, 0, 0);
+            btnWebServerStop.Cursor = Cursors.Hand;
+            btnWebServerStop.Enabled = false;
+            btnWebServerStop.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            btnWebServerStop.ForeColor = Color.LightCoral;
+            btnWebServerStop.Location = new Point(180, 16);
+            btnWebServerStop.Margin = new Padding(2);
+            btnWebServerStop.Name = "btnWebServerStop";
+            btnWebServerStop.Size = new Size(160, 44);
+            btnWebServerStop.TabIndex = 1;
+            btnWebServerStop.Text = "ZATRZYMAJ";
+            btnWebServerStop.UseVisualStyleBackColor = false;
+            btnWebServerStop.Click += btnWebServerStop_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
+            label2.ForeColor = Color.Yellow;
+            label2.Location = new Point(16, 80);
+            label2.Margin = new Padding(2, 0, 2, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(40, 20);
+            label2.TabIndex = 2;
+            label2.Text = "Port:";
+            // 
+            // tbWebServerPort
+            // 
+            tbWebServerPort.BackColor = Color.FromArgb(24, 24, 24);
+            tbWebServerPort.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold);
+            tbWebServerPort.ForeColor = Color.Gold;
+            tbWebServerPort.Location = new Point(68, 77);
+            tbWebServerPort.Margin = new Padding(2);
+            tbWebServerPort.Name = "tbWebServerPort";
+            tbWebServerPort.Size = new Size(80, 27);
+            tbWebServerPort.TabIndex = 3;
+            tbWebServerPort.Text = "8080";
+            tbWebServerPort.TextAlign = HorizontalAlignment.Center;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
+            label3.ForeColor = Color.LightGreen;
+            label3.Location = new Point(16, 120);
+            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(52, 20);
+            label3.TabIndex = 4;
+            label3.Text = "Adres:";
+            // 
+            // llWebAddress
+            // 
+            llWebAddress.AutoSize = true;
+            llWebAddress.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold);
+            llWebAddress.LinkColor = Color.Cyan;
+            llWebAddress.Location = new Point(76, 120);
+            llWebAddress.Margin = new Padding(2, 0, 2, 0);
+            llWebAddress.Name = "llWebAddress";
+            llWebAddress.Size = new Size(120, 20);
+            llWebAddress.TabIndex = 5;
+            llWebAddress.TabStop = true;
+            llWebAddress.Text = "http://IP:port/";
+            llWebAddress.LinkClicked += llWebAddress_LinkClicked;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1051,6 +1168,8 @@
             groupBox2.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPageWYKRES.ResumeLayout(false);
+            tabWebServer.ResumeLayout(false);
+            tabWebServer.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1062,6 +1181,7 @@
         private Button btnShortcuts;
         private Label label4;
         private PictureBox pictureBox1;
+        private PictureBox pbESR;
         private Label label8;
         private Label lblComConnStatus;
         private TabPage tabPage4;
@@ -1118,5 +1238,12 @@
         private CheckBox chbTTSSwitch;
         private ComboBox cbTTSVoice;
         private Label lblTTSStatus;
+        private TabPage tabWebServer;
+        private Button btnWebServerStart;
+        private Button btnWebServerStop;
+        private Label label2;
+        private TextBox tbWebServerPort;
+        private Label label3;
+        private LinkLabel llWebAddress;
     }
 }

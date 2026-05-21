@@ -181,6 +181,10 @@ namespace ZOYI
                 case 0x0C:
                     Cap_unit = "m";
                     break;
+                default:
+                    if (unit1 != 0x00)
+                        Console.WriteLine($"[DEBUG] Unknown capacitance unit1 byte: 0x{unit1:X2} (frame: {BitConverter.ToString(frame)})");
+                    break;
             }
 
             switch (unit2)
@@ -199,6 +203,9 @@ namespace ZOYI
                     break;
                 case 0x0A:
                     Unit = "mV";
+                    break;
+                case 0x0C:
+                    Unit = "mF";
                     break;
                 case 0x40:
                     Unit = "Ω";
@@ -288,12 +295,12 @@ namespace ZOYI
 
             if (Math.Abs(val) < STABILIZATION_THRESHOLD)
             {
-                Value = " 0.0000";
+                Value = " 0.000";
                 return;
             }
 
             float rounded = (float)Math.Round(val, 2);
-            Value = " " + rounded.ToString("F4", CultureInfo.InvariantCulture);
+            Value = " " + rounded.ToString("F3", CultureInfo.InvariantCulture);
         }
 
         private char DecodeDigit(byte hex)

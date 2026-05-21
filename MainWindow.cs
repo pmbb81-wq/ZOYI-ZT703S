@@ -16,6 +16,7 @@ namespace ZOYI
         }
 
         FrameDecoder frame_dec;
+        WebServer webServer;
 
         COMx comx;
         StandardDisplayPanel standardDisplayPanel;
@@ -64,14 +65,19 @@ namespace ZOYI
             // 2. Inicjalizacja paneli wyświetlania
             InitializeDisplayPanels();
 
-            // 3. Utworzenie katalogu logów
+            // 3. Utworzenie katalogów
             Directory.CreateDirectory("logs");
+            Directory.CreateDirectory("Images");
+
+            // 3b. Zaladowanie zapisanego obrazu ESR
+            LoadESRImage();
 
             // 4. Ustawienie domyślnej pozycji w ComboBox
 
 
             // 5. Inicjalizacja pomocniczych klas
             frame_dec = new FrameDecoder();
+            webServer = new WebServer(frame_dec);
             comx = new COMx();
 
             // 6. Narzędzia
@@ -89,6 +95,9 @@ namespace ZOYI
 
             // 10. Inicjalizacja menedżera skrótów klawiaturowych
             InitializeShortcuts();
+
+            // 11. Sprawdzenie aktualizacji
+            this.Shown += async (s, e) => await CheckForUpdateAsync();
         }
 
         private void SetWindowLocation()
@@ -145,13 +154,57 @@ namespace ZOYI
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //bCOMconnected = false;
+            webServer.Stop();
             comx.disconnect();
             standardDisplayPanel.Close();
 
             Properties.Settings.Default.main_form_pos_x = this.Location.X;
             Properties.Settings.Default.main_form_pos_y = this.Location.Y;
             Properties.Settings.Default.Save();
+        }
+
+        private void btnWebServerStart_Click(object sender, EventArgs e)
+        {
+            int port = int.Parse(tbWebServerPort.Text);
+            webServer.Start(port);
+
+            if (webServer.IsRunning)
+            {
+                llWebAddress.Text = webServer.getURI();
+                llWebAddress.Links.Clear();
+                llWebAddress.Links.Add(0, webServer.getURI().Length, webServer.getURI());
+
+                tbWebServerPort.Enabled = false;
+                btnWebServerStop.Enabled = true;
+                btnWebServerStart.Enabled = false;
+            }
+        }
+
+        private void btnWebServerStop_Click(object sender, EventArgs e)
+        {
+            if (webServer.IsRunning)
+            {
+                webServer.Stop();
+                tbWebServerPort.Enabled = true;
+                btnWebServerStop.Enabled = false;
+                btnWebServerStart.Enabled = true;
+                llWebAddress.Text = "http://IP:port/";
+                llWebAddress.Links.Clear();
+            }
+        }
+
+        private void llWebAddress_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            string? url = e.Link!.LinkData as string;
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
         }
 
         private void chbShowPanel_CheckedChanged(object sender, EventArgs e)
@@ -258,6 +311,58 @@ namespace ZOYI
         {
             var configForm = new ShortcutConfigForm(shortcutManager);
             configForm.ShowDialog(this);
+        }
+
+        private void pbESR_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Obrazy|*.png;*.jpg;*.jpeg;*.bmp";
+                ofd.Title = "Wybierz obraz tabeli ESR";
+                ofd.InitialDirectory = "Images";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string ext = Path.GetExtension(ofd.FileName).ToLower();
+                        string destPath = "Images\\esr_table" + ext;
+                        Directory.CreateDirectory("Images");
+                        File.Copy(ofd.FileName, destPath, true);
+                        pbESR.Image = Image.FromFile(destPath);
+                        MessageBox.Show("Zmieniono obraz tabeli ESR.", "Sukces", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Blad: " + ex.Message, "Blad", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void LoadESRImage()
+        {
+            string esrPath = null;
+            string[] extensions = { ".png", ".jpg", ".jpeg", ".bmp" };
+
+            foreach (var ext in extensions)
+            {
+                string path = "Images\\esr_table" + ext;
+                if (File.Exists(path))
+                {
+                    esrPath = path;
+                    break;
+                }
+            }
+
+            if (esrPath != null)
+            {
+                pbESR.Image = Image.FromFile(esrPath);
+            }
+            else
+            {
+                pbESR.Image = (Image)Properties.Resources.ResourceManager.GetObject("tabPage3.BackgroundImage");
+            }
         }
 
         /*
@@ -488,16 +593,19 @@ namespace ZOYI
             string textToSpeak = $"{prefix}{cleanValue} {unit}"
                 .Replace("mV", "mili wolta")
                 .Replace("kV", "kilo wolta")
+                .Replace("uV", "mikrowolta")
                 .Replace("V", "wolta")
                 .Replace("mA", "mili ampera")
+                .Replace("uA", "mikroampera")
                 .Replace("A", "ampera")
-                .Replace("kΩ", "kilooma")
-                .Replace("MΩ", "megaoma")
-                .Replace("Ω", " oma")
+                .Replace("pF", "pikofarada")
                 .Replace("nF", "nanofarada")
                 .Replace("uF", "mikrofarada")
                 .Replace("mF", "milifarada")
                 .Replace("F", "farada")
+                .Replace("kΩ", "kilooma")
+                .Replace("MΩ", "megaoma")
+                .Replace("Ω", " oma")
                 .Replace("kHz", "kiloherca")
                 .Replace("Hz", "herca");
 
@@ -1068,6 +1176,22 @@ namespace ZOYI
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private async Task CheckForUpdateAsync()
+        {
+            try
+            {
+                var release = await UpdateChecker.CheckForUpdate();
+                if (release == null) return;
+
+                string skipped = Properties.Settings.Default.skipped_version;
+                if (release.TagName == skipped) return;
+
+                var dlg = new UpdateDialog(release);
+                dlg.ShowDialog(this);
+            }
+            catch { }
         }
 
         private Bitmap DrawBJTNPN()

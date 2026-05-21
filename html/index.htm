@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOYI Multimeter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e17;
+            color: #f0f4fc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #111827;
+            border-bottom: 1px solid #2a3550;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo { height: 32px; }
+        .title { font-size: 1.1rem; font-weight: 600; }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #8892a8;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #5a6478;
+        }
+
+        .dot.on { background: #10b981; box-shadow: 0 0 6px #10b981; }
+        .dot.err { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+        .main {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: #1a2234;
+            border: 1px solid #2a3550;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-head {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid #2a3550;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8892a8;
+            font-weight: 600;
+        }
+
+        .card-body { padding: 20px 16px; text-align: center; }
+
+        .value-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .value {
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            font-weight: 700;
+            color: #22d3ee;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .unit {
+            font-size: clamp(1rem, 4vw, 1.8rem);
+            color: #8892a8;
+        }
+
+        .bargraph {
+            width: 100%;
+            height: 12px;
+            background: #0f1724;
+            border-radius: 6px;
+            margin-top: 16px;
+            overflow: hidden;
+            border: 1px solid #2a3550;
+        }
+
+        .bargraph-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #22d3ee, #3b82f6);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-card .card-body {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .info-val {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #f0f4fc;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: #8892a8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5a6478;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="zoyi.png" alt="" class="logo">
+            <span class="title">ZOYI Multimeter</span>
+        </div>
+        <div class="status">
+            <span class="dot" id="dot"></span>
+            <span id="stxt">Connecting...</span>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-head" id="label">--</div>
+            <div class="card-body">
+                <div class="value-row">
+                    <span class="value" id="value">--</span>
+                    <span class="unit" id="unit"></span>
+                </div>
+                <div class="bargraph">
+                    <div class="bargraph-fill" id="bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card info-card">
+                <div class="card-head">LAST</div>
+                <div class="card-body"><span class="info-val" id="last">--</span></div>
+            </div>
+            <div class="card info-card">
+                <div class="card-head">MIN</div>
+                <div class="card-body"><span class="info-val" id="min">--</span></div>
+            </div>
+            <div class="card info-card">
+                <div class="card-head">MAX</div>
+                <div class="card-body"><span class="info-val" id="max">--</span></div>
+            </div>
+            <div class="card info-card">
+                <div class="card-head">Status</div>
+                <div class="card-body"><span class="info-val" id="mode2">--</span></div>
+            </div>
+            <div class="card info-card">
+                <div class="card-head">Frequency</div>
+                <div class="card-body"><span class="info-val" id="freq">--</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">ZOYI Terminal V2 — Web Monitor</div>
+
+    <script>
+        var dot = document.getElementById('dot');
+        var stxt = document.getElementById('stxt');
+        var es = null;
+        var retry = null;
+        var values = [];
+        var lastStable = null;
+        var STABLE_THRESHOLD = 0.2;
+
+        function status(s) {
+            dot.className = 'dot';
+            if (s === 'on') { dot.classList.add('on'); stxt.textContent = 'Connected'; }
+            else if (s === 'err') { dot.classList.add('err'); stxt.textContent = 'Reconnecting...'; }
+            else { stxt.textContent = 'Connecting...'; }
+        }
+
+        function parseNum(v) {
+            if (!v) return null;
+            var s = v.trim().replace(',', '.');
+            var n = parseFloat(s);
+            return isNaN(n) ? null : n;
+        }
+
+        function getRangeMax(unit, val) {
+            if (!unit) return 1;
+            if (unit.indexOf('mV') !== -1) return 400;
+            if (unit.indexOf('V') !== -1) {
+                var abs = Math.abs(val || 0);
+                if (abs <= 5) return 5;
+                if (abs <= 25) return 25;
+                if (abs <= 50) return 50;
+                if (abs <= 100) return 100;
+                if (abs <= 150) return 150;
+                if (abs <= 200) return 200;
+                if (abs <= 250) return 250;
+                return 500;
+            }
+            if (unit.indexOf('mA') !== -1) return 400;
+            if (unit.indexOf('A') !== -1) return 10;
+            if (unit.indexOf('nF') !== -1) return 100;
+            if (unit.indexOf('uF') !== -1) return 20000;
+            if (unit.indexOf('mF') !== -1) return 200;
+            if (unit.indexOf('F') !== -1) return 1;
+            if (unit.indexOf('k') !== -1) return 40000;
+            if (unit.indexOf('M') !== -1) return 40;
+            if (unit.indexOf('Ω') !== -1) return 40;
+            return 1;
+        }
+
+        function updateBar(val, unit) {
+            var bar = document.getElementById('bar');
+            if (val === null || !unit) {
+                bar.style.width = '0%';
+                bar.style.background = 'linear-gradient(90deg, #22d3ee, #3b82f6)';
+                return;
+            }
+            if (val === 'OL') {
+                bar.style.width = '100%';
+                bar.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+                return;
+            }
+            var max = getRangeMax(unit, val);
+            var pct = Math.min(Math.abs(val) / max * 100, 100);
+            bar.style.width = pct + '%';
+
+            var r, g, b;
+            if (pct < 50) {
+                r = 34; g = 211; b = 238;
+            } else if (pct < 75) {
+                var t = (pct - 50) / 25;
+                r = Math.round(34 + t * (245 - 34));
+                g = Math.round(211 + t * (157 - 211));
+                b = Math.round(238 + t * (11 - 238));
+            } else {
+                var t = (pct - 75) / 25;
+                r = Math.round(245 + t * (239 - 245));
+                g = Math.round(157 + t * (68 - 157));
+                b = Math.round(11 + t * (68 - 11));
+            }
+
+            bar.style.background = 'linear-gradient(90deg, rgb(' + r + ',' + g + ',' + b + '), rgba(' + Math.max(r-40,0) + ',' + Math.max(g-40,0) + ',' + Math.max(b-40,0) + '))';
+        }
+
+        function update(d) {
+            if (d.Label) document.getElementById('label').textContent = d.Label;
+            if (d.Value) document.getElementById('value').textContent = d.Value;
+            if (d.Unit) document.getElementById('unit').textContent = d.Unit;
+            if (d.Mode2) document.getElementById('mode2').textContent = d.Mode2;
+            if (d.Freq) document.getElementById('freq').textContent = d.Freq + (d.Freq_unit ? ' ' + d.Freq_unit : '');
+
+            var num = parseNum(d.Value);
+            updateBar(num, d.Unit);
+
+            if (num !== null && Math.abs(num) >= STABLE_THRESHOLD) {
+                if (num !== lastStable) {
+                    values.push(num);
+                    lastStable = num;
+                }
+                var sum = 0, mn = values[0], mx = values[0];
+                for (var i = 0; i < values.length; i++) {
+                    sum += values[i];
+                    if (values[i] < mn) mn = values[i];
+                    if (values[i] > mx) mx = values[i];
+                }
+                document.getElementById('last').textContent = lastStable.toFixed(4);
+                document.getElementById('min').textContent = mn.toFixed(4);
+                document.getElementById('max').textContent = mx.toFixed(4);
+            }
+        }
+
+        function connect() {
+            if (es) { es.close(); es = null; }
+            status('wait');
+            es = new EventSource('/measure');
+            es.onopen = function () { status('on'); };
+            es.onmessage = function (e) {
+                try { update(JSON.parse(e.data)); } catch (err) { }
+            };
+            es.onerror = function () {
+                status('err');
+                es.close();
+                es = null;
+                retry = setTimeout(connect, 3000);
+            };
+        }
+
+        connect();
+    </script>
+</body>
+</html>

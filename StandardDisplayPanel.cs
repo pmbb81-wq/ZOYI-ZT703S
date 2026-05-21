@@ -35,6 +35,11 @@ namespace ZOYI
 
         CheckBox chbShowHide;
         System.Windows.Forms.Timer clockTimer;
+        System.Windows.Forms.Timer scrollTimer;
+        Panel pnlScroll;
+        Label lblScroll;
+        int scrollX = 0;
+        string scrollText = "";
 
         public StandardDisplayPanel(CheckBox chb)
         {
@@ -83,6 +88,62 @@ namespace ZOYI
             clockTimer.Interval = 1000;
             clockTimer.Tick += (s, e) => { dateTimePicker1.Value = DateTime.Now; };
             clockTimer.Start();
+
+            string savedName = Properties.Settings.Default.panel_std_custom_name;
+            if (!string.IsNullOrEmpty(savedName))
+                label7.Text = savedName;
+
+            string savedGG = Properties.Settings.Default.panel_std_custom_gg;
+            if (!string.IsNullOrEmpty(savedGG))
+                label8.Text = savedGG;
+
+            string savedTitle = Properties.Settings.Default.panel_std_custom_title;
+            if (!string.IsNullOrEmpty(savedTitle))
+                scrollText = savedTitle;
+            else
+                scrollText = label6.Text;
+
+            float savedFontSize = (float)Properties.Settings.Default.panel_std_title_font_size;
+            if (savedFontSize <= 0) savedFontSize = 15.75f;
+
+            pnlScroll = new Panel();
+            pnlScroll.Size = new Size(578, 80);
+            pnlScroll.BackColor = Color.FromArgb(34, 34, 34);
+            pnlScroll.Cursor = Cursors.Hand;
+            pnlScroll.Click += label6_Click;
+            pnlScroll.Dock = DockStyle.Fill;
+
+            lblScroll = new Label();
+            lblScroll.AutoSize = true;
+            lblScroll.Font = new Font("Segoe UI", savedFontSize, FontStyle.Bold, GraphicsUnit.Point, 238);
+            lblScroll.ForeColor = Color.Yellow;
+            lblScroll.BackColor = Color.FromArgb(34, 34, 34);
+            lblScroll.Text = scrollText + "          ";
+            lblScroll.Location = new Point(0, 0);
+            pnlScroll.Controls.Add(lblScroll);
+
+            label6.Visible = false;
+            tableLayoutPanel1.Controls.Add(pnlScroll, 0, 0);
+
+            scrollX = pnlScroll.Width;
+
+            scrollTimer = new System.Windows.Forms.Timer();
+            scrollTimer.Interval = 30;
+            scrollTimer.Tick += ScrollTimer_Tick;
+            scrollTimer.Start();
+
+            this.Shown += (s, ev) => { scrollX = pnlScroll.Width; };
+        }
+
+        private void ScrollTimer_Tick(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(scrollText) || lblScroll == null || pnlScroll == null) return;
+
+            scrollX -= 2;
+            if (scrollX < -lblScroll.Width)
+                scrollX = pnlScroll.Width;
+
+            lblScroll.Location = new Point(scrollX, 0);
         }
 
         // update label, value, suffix
@@ -298,9 +359,179 @@ namespace ZOYI
 
         }
 
+        private void label6_Click(object sender, EventArgs e)
+        {
+            scrollTimer.Stop();
+
+            using (var input = new Form())
+            {
+                input.Text = "Edytuj tekst banera";
+                input.Size = new Size(400, 200);
+                input.FormBorderStyle = FormBorderStyle.FixedDialog;
+                input.MaximizeBox = false;
+                input.MinimizeBox = false;
+                input.StartPosition = FormStartPosition.CenterParent;
+                input.BackColor = Color.FromArgb(24, 24, 24);
+
+                var lblText = new Label();
+                lblText.Text = "Tekst:";
+                lblText.ForeColor = Color.Yellow;
+                lblText.Font = new Font("Segoe UI", 9F);
+                lblText.Location = new Point(15, 10);
+                lblText.AutoSize = true;
+                input.Controls.Add(lblText);
+
+                var txt = new TextBox();
+                txt.Location = new Point(15, 30);
+                txt.Size = new Size(350, 25);
+                txt.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+                txt.BackColor = Color.FromArgb(13, 13, 13);
+                txt.ForeColor = Color.Yellow;
+                txt.BorderStyle = BorderStyle.FixedSingle;
+                txt.Text = scrollText;
+                input.Controls.Add(txt);
+
+                var lblSize = new Label();
+                lblSize.Text = "Rozmiar czcionki:";
+                lblSize.ForeColor = Color.Yellow;
+                lblSize.Font = new Font("Segoe UI", 9F);
+                lblSize.Location = new Point(15, 65);
+                lblSize.AutoSize = true;
+                input.Controls.Add(lblSize);
+
+                var numSize = new NumericUpDown();
+                numSize.Location = new Point(15, 85);
+                numSize.Size = new Size(80, 25);
+                numSize.Font = new Font("Segoe UI", 11F);
+                numSize.BackColor = Color.FromArgb(13, 13, 13);
+                numSize.ForeColor = Color.Yellow;
+                numSize.Minimum = 8;
+                numSize.Maximum = 48;
+                numSize.DecimalPlaces = 1;
+                numSize.Value = (decimal)lblScroll.Font.Size;
+                input.Controls.Add(numSize);
+
+                var btnOk = new Button();
+                btnOk.Text = "ZAPISZ";
+                btnOk.Location = new Point(140, 125);
+                btnOk.Size = new Size(100, 30);
+                btnOk.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+                btnOk.BackColor = Color.FromArgb(0, 64, 0);
+                btnOk.ForeColor = Color.LightGreen;
+                btnOk.FlatStyle = FlatStyle.Flat;
+                btnOk.FlatAppearance.BorderSize = 0;
+                btnOk.Cursor = Cursors.Hand;
+                btnOk.Click += (s, ev) => { input.DialogResult = DialogResult.OK; input.Close(); };
+                input.Controls.Add(btnOk);
+
+                input.AcceptButton = btnOk;
+
+                if (input.ShowDialog(this) == DialogResult.OK)
+                {
+                    scrollText = txt.Text;
+                    float newSize = (float)numSize.Value;
+                    lblScroll.Font = new Font("Segoe UI", newSize, FontStyle.Bold, GraphicsUnit.Point, 238);
+                    lblScroll.Text = scrollText + "          ";
+                    scrollX = pnlScroll.Width;
+                    Properties.Settings.Default.panel_std_custom_title = txt.Text;
+                    Properties.Settings.Default.panel_std_title_font_size = (double)newSize;
+                    Properties.Settings.Default.Save();
+                }
+            }
+
+            scrollTimer.Start();
+        }
+
         private void label7_Click(object sender, EventArgs e)
         {
+            using (var input = new Form())
+            {
+                input.Text = "Edytuj nazwe";
+                input.Size = new Size(300, 140);
+                input.FormBorderStyle = FormBorderStyle.FixedDialog;
+                input.MaximizeBox = false;
+                input.MinimizeBox = false;
+                input.StartPosition = FormStartPosition.CenterParent;
+                input.BackColor = Color.FromArgb(24, 24, 24);
 
+                var txt = new TextBox();
+                txt.Location = new Point(15, 15);
+                txt.Size = new Size(250, 25);
+                txt.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+                txt.BackColor = Color.FromArgb(13, 13, 13);
+                txt.ForeColor = Color.Lime;
+                txt.BorderStyle = BorderStyle.FixedSingle;
+                txt.Text = label7.Text;
+                input.Controls.Add(txt);
+
+                var btnOk = new Button();
+                btnOk.Text = "ZAPISZ";
+                btnOk.Location = new Point(90, 55);
+                btnOk.Size = new Size(100, 30);
+                btnOk.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+                btnOk.BackColor = Color.FromArgb(0, 64, 0);
+                btnOk.ForeColor = Color.LightGreen;
+                btnOk.FlatStyle = FlatStyle.Flat;
+                btnOk.FlatAppearance.BorderSize = 0;
+                btnOk.Cursor = Cursors.Hand;
+                btnOk.Click += (s, ev) => { input.DialogResult = DialogResult.OK; input.Close(); };
+                input.Controls.Add(btnOk);
+
+                input.AcceptButton = btnOk;
+
+                if (input.ShowDialog(this) == DialogResult.OK)
+                {
+                    label7.Text = txt.Text;
+                    Properties.Settings.Default.panel_std_custom_name = txt.Text;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+            using (var input = new Form())
+            {
+                input.Text = "Edytuj numer GG";
+                input.Size = new Size(300, 140);
+                input.FormBorderStyle = FormBorderStyle.FixedDialog;
+                input.MaximizeBox = false;
+                input.MinimizeBox = false;
+                input.StartPosition = FormStartPosition.CenterParent;
+                input.BackColor = Color.FromArgb(24, 24, 24);
+
+                var txt = new TextBox();
+                txt.Location = new Point(15, 15);
+                txt.Size = new Size(250, 25);
+                txt.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+                txt.BackColor = Color.FromArgb(13, 13, 13);
+                txt.ForeColor = Color.Navy;
+                txt.BorderStyle = BorderStyle.FixedSingle;
+                txt.Text = label8.Text;
+                input.Controls.Add(txt);
+
+                var btnOk = new Button();
+                btnOk.Text = "ZAPISZ";
+                btnOk.Location = new Point(90, 55);
+                btnOk.Size = new Size(100, 30);
+                btnOk.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+                btnOk.BackColor = Color.FromArgb(0, 64, 0);
+                btnOk.ForeColor = Color.LightGreen;
+                btnOk.FlatStyle = FlatStyle.Flat;
+                btnOk.FlatAppearance.BorderSize = 0;
+                btnOk.Cursor = Cursors.Hand;
+                btnOk.Click += (s, ev) => { input.DialogResult = DialogResult.OK; input.Close(); };
+                input.Controls.Add(btnOk);
+
+                input.AcceptButton = btnOk;
+
+                if (input.ShowDialog(this) == DialogResult.OK)
+                {
+                    label8.Text = txt.Text;
+                    Properties.Settings.Default.panel_std_custom_gg = txt.Text;
+                    Properties.Settings.Default.Save();
+                }
+            }
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)

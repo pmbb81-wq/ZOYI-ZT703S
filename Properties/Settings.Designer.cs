@@ -461,5 +461,65 @@ namespace ZOYI.Properties {
                 this["ds_search_engine"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("KRIS® VERSION")]
+        public string panel_std_custom_name {
+            get {
+                return ((string)(this["panel_std_custom_name"]));
+            }
+            set {
+                this["panel_std_custom_name"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("GG 8772666")]
+        public string panel_std_custom_gg {
+            get {
+                return ((string)(this["panel_std_custom_gg"]));
+            }
+            set {
+                this["panel_std_custom_gg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ZOYI®        ZT-703S         OSCILLOSCOPE MULTIMETER")]
+        public string panel_std_custom_title {
+            get {
+                return ((string)(this["panel_std_custom_title"]));
+            }
+            set {
+                this["panel_std_custom_title"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15.75")]
+        public double panel_std_title_font_size {
+            get {
+                return ((double)(this["panel_std_title_font_size"]));
+            }
+            set {
+                this["panel_std_title_font_size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string skipped_version {
+            get {
+                return ((string)(this["skipped_version"]));
+            }
+            set {
+                this["skipped_version"] = value;
+            }
+        }
     }
 }

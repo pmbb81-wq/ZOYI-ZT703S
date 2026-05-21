@@ -113,5 +113,20 @@
     <Setting Name="ds_search_engine" Type="System.String" Scope="User">
       <Value Profile="(Default)">Google</Value>
     </Setting>
+    <Setting Name="panel_std_custom_name" Type="System.String" Scope="User">
+      <Value Profile="(Default)">KRIS® VERSION</Value>
+    </Setting>
+    <Setting Name="panel_std_custom_gg" Type="System.String" Scope="User">
+      <Value Profile="(Default)">GG 8772666</Value>
+    </Setting>
+    <Setting Name="panel_std_custom_title" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ZOYI®        ZT-703S         OSCILLOSCOPE MULTIMETER</Value>
+    </Setting>
+    <Setting Name="panel_std_title_font_size" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">15.75</Value>
+    </Setting>
+    <Setting Name="skipped_version" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
+    </Setting>
   </Settings>
 </SettingsFile>

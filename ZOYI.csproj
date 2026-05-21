@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <Content Include="Images\icon.ico" />
+    <Content Include="html\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
