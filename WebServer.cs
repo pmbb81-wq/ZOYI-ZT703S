@@ -93,6 +93,27 @@ namespace ZOYI
                 {
                     await ServeFile(stream, "html\\favicon.ico", "image/x-icon");
                 }
+                else if (firstLine.Contains("GET") && firstLine.Contains("t6.html"))
+                {
+                    await ServeFile(stream, "html\\t6.html", "text/html; charset=UTF-8");
+                }
+                else if (firstLine.Contains("GET") && firstLine.Contains("/images/"))
+                {
+                    string[] parts = firstLine.Split(' ');
+                    string reqPath = parts.Length > 1 ? parts[1].TrimStart('/') : "";
+                    string localPath = System.IO.Path.Combine("html", reqPath);
+                    string ext = System.IO.Path.GetExtension(localPath).ToLower();
+                    string mime = ext switch
+                    {
+                        ".png" => "image/png",
+                        ".jpg" or ".jpeg" => "image/jpeg",
+                        ".gif" => "image/gif",
+                        ".svg" => "image/svg+xml",
+                        ".ico" => "image/x-icon",
+                        _ => "application/octet-stream"
+                    };
+                    await ServeFile(stream, localPath, mime);
+                }
                 else
                 {
                     await ServeFile(stream, "html\\index.htm", "text/html; charset=UTF-8");

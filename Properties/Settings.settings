@@ -59,6 +59,9 @@
     <Setting Name="panel_adv_value_font" Type="System.Drawing.Font" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="panel_adv_bar_color" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Orange</Value>
+    </Setting>
     <Setting Name="panel_std_label_font" Type="System.Drawing.Font" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

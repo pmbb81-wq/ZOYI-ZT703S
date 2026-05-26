@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symulator Pomiaru Tranzystorów</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-user-select: none; /* Blokuje zaznaczanie tekstu na telefonie */
+            user-select: none;
+        }
+
+        #pinout-graphic svg { width: 100%; height: 100%; display: block; }
+
+        body {
+            background-color: #1e272e;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+        }
+
+        /* Obudowa multimetru dopasowana do ekranów mobilnych */
+        .multimeter {
+            background-color: #d2dae2;
+            width: 100%;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 4px solid #f53b57;
+        }
+
+        /* Ekran LCD */
+        .lcd-display {
+            background-color: #0c1013;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            border: 3px solid #808e9b;
+        }
+
+        .lcd-value {
+            font-family: monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
+        /* Opis i status */
+        .status-box {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #2f3640;
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 65px;
+        }
+
+        .status-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #eccc68;
+        }
+
+        .status-desc {
+            font-size: 0.85rem;
+            color: #a4b0be;
+            margin-top: 4px;
+        }
+
+        /* Sekcje kontrolne */
+        .control-group {
+            background-color: #2f3640;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .group-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #74b9ff;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        /* Kontrolki formularza */
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #1e272e;
+            color: white;
+            border: 1px solid #485460;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        /* Przełączniki radiowe stylizowane na przyciski (Segmented Controls) */
+        .radio-tile-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .radio-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .radio-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-label {
+            display: block;
+            text-align: center;
+            background-color: #1e272e;
+            padding: 10px 5px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 1px solid #485460;
+            transition: all 0.2s;
+        }
+
+        .radio-container input:checked ~ .radio-label {
+            background-color: #2ed573;
+            color: #1e272e;
+            font-weight: bold;
+            border-color: #2ed573;
+            box-shadow: 0 0 8px rgba(46, 213, 115, 0.4);
+        }
+
+        /* Przycisk dotykowy pomiaru */
+        .btn-measure {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            background-color: #1e272e;
+            border: 3px solid #ffa502;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: background 0.1s;
+            touch-action: none; /* Blokuje zoomowanie przy przytrzymaniu na telefonie */
+        }
+
+        .btn-measure.active {
+            background-color: #ff4757;
+            border-color: #ff6b81;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+<div id="pinout-graphic" style="position:absolute;background:#0c1013;border-radius:12px;padding:10px;border:1px solid #485460;display:flex;align-items:center;justify-content:center;resize:both;overflow:hidden;min-width:200px;min-height:120px;cursor:move;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.5);"></div>
+
+
+<div id="meter-container" style="position:absolute;resize:both;overflow:hidden;min-width:320px;min-height:420px;z-index:5;">
+    <div id="meter-handle" style="cursor:move;background:#c0392b;color:white;font-size:0.75rem;font-weight:bold;padding:4px 10px;border-radius:14px 14px 0 0;text-align:center;user-select:none;">ZT-703S SYMULATOR — przeciągnij</div>
+    <div class="multimeter" style="margin-top:0;">
+    <div class="lcd-display">
+        <div id="lcd" class="lcd-value">0.000 V</div>
+    </div>
+
+    <div class="status-box">
+        <div id="status" class="status-title">Sondy odłączone</div>
+        <div id="desc" class="status-desc">Wybierz parametry i naciśnij przycisk pomiaru.</div>
+    </div>
+
+    <div class="control-group">
+        <div class="group-title">Wybierz typ tranzystora</div>
+        <select id="transistor-type">
+            <option value="npn_si">NPN Krzemowy (np. BC547) [Vf ≈ 0.67V]</option>
+            <option value="pnp_si">PNP Krzemowy (np. BC557) [Vf ≈ 0.67V]</option>
+            <option value="npn_ge">NPN Germanowy (Retro) [Vf ≈ 0.28V]</option>
+            <option value="npn_darlington">Darlington (Wysokie Vf) [Vf ≈ 1.20V]</option>
+            <option value="npn_mosfet">N-MOSFET Kanał N (np. IRF540)</option>
+            <option value="pnp_mosfet">P-MOSFET Kanał P (np. IRF9540)</option>
+            <option value="diode_si">Dioda krzemowa (np. 1N4148) [Vf ≈ 0.70V]</option>
+            <option value="diode_schottky">Dioda Schottky'ego (np. BAT54) [Vf ≈ 0.30V]</option>
+            <option value="diode_zener">Dioda Zenera (forward) [Vf ≈ 0.75V]</option>
+            <option value="diode_led">LED czerwona [Vf ≈ 1.80V]</option>
+        </select>
+    </div>
+
+    <div class="control-group">
+        <div class="group-title" style="color: #ff4757;">Sonda Czerwona (+) podłączona do:</div>
+        <div class="radio-tile-group">
+            <div class="radio-container">
+                <input type="radio" id="red-b" name="red_probe" value="B" checked>
+                <label for="red-b" class="radio-label">Baza (B)</label>
+            </div>
+            <div class="radio-container">
+                <input type="radio" id="red-c" name="red_probe" value="C">
+                <label for="red-c" class="radio-label">Kolektor (C)</label>
+            </div>
+            <div class="radio-container" id="red-e-container">
+                <input type="radio" id="red-e" name="red_probe" value="E">
+                <label for="red-e" class="radio-label">Emiter (E)</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="group-title" style="color: #a4b0be;">Sonda Czarna (-) podłączona do:</div>
+        <div class="radio-tile-group">
+            <div class="radio-container">
+                <input type="radio" id="black-b" name="black_probe" value="B">
+                <label for="black-b" class="radio-label">Baza (B)</label>
+            </div>
+            <div class="radio-container">
+                <input type="radio" id="black-c" name="black_probe" value="C" checked>
+                <label for="black-c" class="radio-label">Kolektor (C)</label>
+            </div>
+            <div class="radio-container" id="black-e-container">
+                <input type="radio" id="black-e" name="black_probe" value="E">
+                <label for="black-e" class="radio-label">Emiter (E)</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="group-title">Stan techniczny komponentu</div>
+        <div class="radio-tile-group">
+            <div class="radio-container">
+                <input type="radio" id="cond-good" name="condition" value="GOOD" checked>
+                <label for="cond-good" class="radio-label">Sprawny</label>
+            </div>
+            <div class="radio-container">
+                <input type="radio" id="cond-short" name="condition" value="SHORT">
+                <label for="cond-short" class="radio-label" id="cond-short-label">Zwarty (C-E)</label>
+            </div>
+            <div class="radio-container">
+                <input type="radio" id="cond-open" name="condition" value="OPEN">
+                <label for="cond-open" class="radio-label">Przerwa</label>
+            </div>
+        </div>
+    </div>
+
+    <button id="btn-measure" class="btn-measure">Dotknij sondami (Trzymaj)</button>
+
+    <button id="btn-simulate" style="width:100%;padding:10px;font-size:0.95rem;font-weight:bold;text-transform:uppercase;color:white;background-color:#1e272e;border:2px solid #74b9ff;border-radius:8px;cursor:pointer;margin-top:8px;transition:background 0.1s;">Symuluj wzorcowo</button>
+
+    <div id="diode-indicator" style="display:none;align-items:center;gap:8px;margin-top:10px;padding:6px 10px;background:#0c1013;border-radius:6px;border:1px solid #2ed573;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#2ed573;box-shadow:0 0 6px #2ed573;"></span>
+        <span style="font-size:0.8rem;color:#2ed573;font-weight:bold;">TRYB DIODE — dane z miernika</span>
+    </div>
+    <div id="sse-status" style="text-align:center;font-size:0.75rem;color:#a4b0be;margin-top:6px;">Łączenie z miernikiem...</div>
+</div>
+</div>
+
+<script>
+    // Baza danych dla złączy tranzystorów
+    function cat(type) {
+        if (type.startsWith('diode')) return 'diode';
+        if (type.endsWith('mosfet')) return 'mosfet';
+        return 'bjt';
+    }
+
+    const transistorDatabase = {
+        npn_si: { be: 0.685, bc: 0.675, desc: "Standardowy krzemowy tranzystor NPN. Przewodzi, gdy Baza ma (+)." },
+        pnp_si: { be: 0.685, bc: 0.675, desc: "Standardowy krzemowy tranzystor PNP. Przewodzi, gdy Baza ma (-)." },
+        npn_ge: { be: 0.290, bc: 0.275, desc: "Tranzystor germanowy retro. Niskie napięcia przewodzenia złączy." },
+        npn_darlington: { be: 1.250, bc: 0.710, desc: "Tranzystor Darlingtona. Posiada dwa złącza szeregowe na bazie." },
+        npn_mosfet: { be: 0.000, bc: 0.000, body_diode: 0.720, desc: "N-kanałowy MOSFET. Dioda pasożytnicza D-S przewodzi przy D(+) S(-)." },
+        pnp_mosfet: { be: 0.000, bc: 0.000, body_diode: 0.720, desc: "P-kanałowy MOSFET. Dioda pasożytnicza S-D przewodzi przy S(+) D(-)." },
+        diode_si: { be: 0.700, bc: 0, desc: "Standardowa dioda krzemowa (1N4148, 1N4007). Przewodzi przy A(+) K(-)." },
+        diode_schottky: { be: 0.300, bc: 0, desc: "Dioda Schottky'ego (BAT54). Niski Vf ≈ 0.3V. Szybkie przełączanie." },
+        diode_zener: { be: 0.750, bc: 0, desc: "Dioda Zenera w kierunku przewodzenia. Vf podobny do standardowej diody." },
+        diode_led: { be: 1.800, bc: 0, desc: "LED czerwona. Wyższy Vf ≈ 1.8V. Świeci przy przewodzeniu." }
+    };
+
+    // Referencje do elementów DOM
+    const lcd = document.getElementById('lcd');
+    const statusText = document.getElementById('status');
+    const descText = document.getElementById('desc');
+    const transistorSelect = document.getElementById('transistor-type');
+    const btnMeasure = document.getElementById('btn-measure');
+    let isConnected = false;
+    let loopInterval = null;
+
+    // Generatory SVG pinoutów SOT-23 (widok z góry) z podświetleniem sond
+    function diodeSVG(redPin, blackPin, label, imgUrl) {
+        var w = 380, h = 220;
+        if (!imgUrl) imgUrl = 'images/diode_symbol.png';
+        var svg = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">' +
+            // tło
+            '<rect width="' + w + '" height="' + h + '" rx="8" fill="#1a1e24"/>' +
+            // obrazek symbolu diody
+            '<image href="' + imgUrl + '" x="40" y="5" width="300" height="150" preserveAspectRatio="xMidYMid meet"/>' +
+            // nazwa komponentu nad obrazkiem
+            '<text x="190" y="18" text-anchor="middle" fill="#f1c40f" font-size="7" font-family="sans-serif" font-weight="bold">' + (label || '') + '</text>' +
+            // nóżki
+            function() {
+                var s = '';
+                var pinX = [80, 190, 300];
+                var pinW = 50, pinH = 18, pinY = 170;
+                var vals = ['A', '', 'K'];
+                var labels = ['A', '', 'K'];
+                for (var i = 0; i < 3; i++) {
+                    if (i === 1) {
+                        s += '<rect x="' + (pinX[i] - 20) + '" y="' + (pinY + 10) + '" width="40" height="' + pinH + '" rx="2" fill="#2d3436" opacity="0.3"/>';
+                        continue;
+                    }
+                    var px = pinX[i] - pinW / 2;
+                    var label = labels[i];
+                    var val = vals[i];
+                    var isRed = val === redPin;
+                    var isBlack = val === blackPin;
+                    var leadColor = '#3d444d';
+                    var labelColor = '#636e72';
+                    var bgColor = 'transparent';
+                    var glow = '';
+                    if (isRed) {
+                        leadColor = '#ff4757'; labelColor = '#ff4757'; bgColor = 'rgba(255,71,87,0.15)';
+                        glow = '<circle cx="' + pinX[i] + '" cy="' + (pinY + 10) + '" r="36" fill="rgba(255,71,87,0.08)"/>';
+                    } else if (isBlack) {
+                        leadColor = '#a4b0be'; labelColor = '#a4b0be'; bgColor = 'rgba(164,176,190,0.12)';
+                        glow = '<circle cx="' + pinX[i] + '" cy="' + (pinY + 10) + '" r="36" fill="rgba(164,176,190,0.06)"/>';
+                    }
+                    s += glow;
+                    if (bgColor !== 'transparent') {
+                        s += '<rect x="' + (px - 6) + '" y="' + (pinY - 3) + '" width="' + (pinW + 12) + '" height="' + (pinH + 30) + '" rx="8" fill="' + bgColor + '"/>';
+                    }
+                    s += '<rect x="' + px + '" y="' + pinY + '" width="' + pinW + '" height="' + pinH + '" rx="3" fill="' + leadColor + '" opacity="0.9"/>';
+                    s += '<text x="' + pinX[i] + '" y="' + (pinY + pinH + 24) + '" text-anchor="middle" fill="' + labelColor + '" font-size="22" font-weight="bold" font-family="monospace">' + label + '</text>';
+                    if (isRed) {
+                        s += '<circle cx="' + (pinX[i] + pinW / 2 - 16) + '" cy="' + (pinY - 6) + '" r="7" fill="#ff4757"/>';
+                        s += '<text x="' + (pinX[i] + pinW / 2 - 16) + '" y="' + (pinY + 2) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">+</text>';
+                    } else if (isBlack) {
+                        s += '<circle cx="' + (pinX[i] + pinW / 2 - 16) + '" cy="' + (pinY - 6) + '" r="7" fill="#636e72"/>';
+                        s += '<text x="' + (pinX[i] + pinW / 2 - 16) + '" y="' + (pinY + 2) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">−</text>';
+                    }
+                }
+                return s;
+            }() +
+            '</svg>';
+        return svg;
+    }
+
+    function pinoutSVG(pins, subtitle, label, redPin, blackPin, imgUrl) {
+        var w = 380, h = 200, bx = 100, by = 40, bw = 180, bh = 100;
+        var svg = '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">' +
+            // cień
+            '<rect x="' + (bx + 2) + '" y="' + (by + 2) + '" width="' + bw + '" height="' + bh + '" rx="4" fill="rgba(0,0,0,0.35)"/>' +
+            // korpus
+            (!imgUrl
+                ? '<rect x="' + bx + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="4" fill="#1a1e24" stroke="#555f6d" stroke-width="1.5"/>' +
+                  '<rect x="' + (bx + 4) + '" y="' + (by + 4) + '" width="' + (bw - 8) + '" height="' + 6 + '" rx="2" fill="#2d3436" opacity="0.5"/>' +
+                  '<path d="M' + (bx + 6) + ' ' + (by + 2) + ' L' + (bx + 6) + ' ' + (by + 14) + '" stroke="#e17055" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>' +
+                  '<circle cx="' + (bx + 12) + '" cy="' + (by + 12) + '" r="2.5" fill="#e17055" opacity="0.9"/>'
+                : '<image href="' + imgUrl + '" x="' + bx + '" y="' + by + '" width="' + bw + '" height="' + bh + '" preserveAspectRatio="xMidYMid slice" style="border-radius:4px"/>'
+            ) +
+            // nadruk
+            '<text x="' + (bx + bw / 2) + '" y="' + (by + 30) + '" text-anchor="middle" fill="#a4b0be" font-size="6.5" font-family="sans-serif" letter-spacing="1">' + (imgUrl ? '' : 'SOT-23') + '</text>' +
+            '<text x="' + (bx + bw / 2) + '" y="' + (by + 43) + '" text-anchor="middle" fill="' + (subtitle.includes('MOS') ? '#74b9ff' : '#55efc4') + '" font-size="8" font-weight="bold" font-family="sans-serif">' + subtitle + '</text>' +
+            // nazwa komponentu
+            '<text x="' + (bx + bw / 2) + '" y="' + (by + 56) + '" text-anchor="middle" fill="#f1c40f" font-size="7" font-family="sans-serif" font-weight="bold">' + label + '</text>' +
+            // numerki pinów na korpusie
+            '<text x="' + (bx + 10) + '" y="' + (by + 20) + '" text-anchor="middle" fill="#636e72" font-size="6" font-family="sans-serif">1</text>' +
+            '<text x="' + (bx + bw / 2) + '" y="' + (by + 20) + '" text-anchor="middle" fill="#636e72" font-size="6" font-family="sans-serif">2</text>' +
+            '<text x="' + (bx + bw - 10) + '" y="' + (by + 20) + '" text-anchor="middle" fill="#636e72" font-size="6" font-family="sans-serif">3</text>';
+        // nóżki
+        var pinX = [bx + 18, bx + bw / 2, bx + bw - 18];
+        var pinW = 44, pinH = 18, pinY = by + bh - 3;
+        for (var i = 0; i < 3; i++) {
+            var px = pinX[i] - pinW / 2;
+            var isRed = pins[i] === redPin;
+            var isBlack = pins[i] === blackPin;
+            var leadColor = '#3d444d';
+            var labelColor = '#636e72';
+            var bgColor = 'transparent';
+            var glow = '';
+            if (isRed) {
+                leadColor = '#ff4757';
+                labelColor = '#ff4757';
+                bgColor = 'rgba(255,71,87,0.15)';
+                glow = '<circle cx="' + pinX[i] + '" cy="' + (pinY + 5) + '" r="36" fill="rgba(255,71,87,0.08)"/>';
+            } else if (isBlack) {
+                leadColor = '#a4b0be';
+                labelColor = '#a4b0be';
+                bgColor = 'rgba(164,176,190,0.12)';
+                glow = '<circle cx="' + pinX[i] + '" cy="' + (pinY + 5) + '" r="36" fill="rgba(164,176,190,0.06)"/>';
+            }
+            svg += glow;
+            if (bgColor !== 'transparent') {
+                svg += '<rect x="' + (px - 6) + '" y="' + (pinY - 3) + '" width="' + (pinW + 12) + '" height="' + (pinH + 30) + '" rx="8" fill="' + bgColor + '"/>';
+            }
+            svg += '<rect x="' + px + '" y="' + pinY + '" width="' + pinW + '" height="' + pinH + '" rx="3" fill="' + leadColor + '" opacity="0.9"/>';
+            svg += '<text x="' + pinX[i] + '" y="' + (pinY + pinH + 24) + '" text-anchor="middle" fill="' + labelColor + '" font-size="22" font-weight="bold" font-family="monospace">' + pins[i] + '</text>';
+            if (isRed) {
+                svg += '<circle cx="' + (pinX[i] + pinW / 2 - 16) + '" cy="' + (pinY - 6) + '" r="7" fill="#ff4757"/>';
+                svg += '<text x="' + (pinX[i] + pinW / 2 - 16) + '" y="' + (pinY + 2) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">+</text>';
+            } else if (isBlack) {
+                svg += '<circle cx="' + (pinX[i] + pinW / 2 - 16) + '" cy="' + (pinY - 6) + '" r="7" fill="#636e72"/>';
+                svg += '<text x="' + (pinX[i] + pinW / 2 - 16) + '" y="' + (pinY + 2) + '" text-anchor="middle" fill="white" font-size="9" font-weight="bold">−</text>';
+            }
+        }
+        svg += '</svg>';
+        return svg;
+    }
+
+    function updatePinoutGraphic() {
+        var type = transistorSelect.value;
+        var el = document.getElementById('pinout-graphic');
+        var c = cat(type);
+        var redPin = getSelectedRadio('red_probe');
+        var blackPin = getSelectedRadio('black_probe');
+        var label = transistorSelect.options[transistorSelect.selectedIndex].text.split('[')[0].trim();
+        if (c === 'diode') {
+            var map = { B: 'A', C: 'K' };
+            var imgUrls = {
+                diode_schottky: 'images/schottky.png',
+                diode_zener: 'images/zener.png',
+                diode_led: 'images/led.jpg'
+            };
+            var diodeImgUrl = imgUrls[type];
+            el.innerHTML = diodeSVG(map[redPin] || redPin, map[blackPin] || blackPin, label, diodeImgUrl);
+        } else {
+            var isMos = c === 'mosfet';
+            var pins = isMos ? ['G', 'S', 'D'] : ['B', 'E', 'C'];
+            var subtitle = isMos ? 'MOSFET' : 'NPN / PNP';
+            // mapuj wartości radio (B/C/E) na nazwy pinów MOSFET (G/D/S)
+            var mosMap = { B: 'G', C: 'D', E: 'S' };
+            var mappedRed = isMos ? (mosMap[redPin] || redPin) : redPin;
+            var mappedBlack = isMos ? (mosMap[blackPin] || blackPin) : blackPin;
+            var imgUrl = null;
+            if (type === 'npn_si') {
+                imgUrl = 'images/bc547.jpg';
+            } else if (type === 'pnp_si') {
+                imgUrl = 'images/bc557.jpg';
+            } else if (type === 'npn_mosfet') {
+                imgUrl = 'images/nmos.jpeg';
+            } else if (type === 'pnp_mosfet') {
+                imgUrl = 'images/pmos.png';
+            }
+            el.innerHTML = pinoutSVG(pins, subtitle, label, mappedRed, mappedBlack, imgUrl);
+        }
+    }
+
+    // Aktualizacja opisu, grafiki i etykiet sond przy zmianie typu
+    function updateProbeLabels() {
+        var c = cat(transistorSelect.value);
+        var redLabels, blackLabels;
+        var showThird = true;
+        if (c === 'diode') {
+            redLabels = ['Anoda (A)', 'Katoda (K)'];
+            blackLabels = ['Anoda (A)', 'Katoda (K)'];
+            showThird = false;
+            document.getElementById('cond-short-label').textContent = 'Zwarty (A-K)';
+            // reset trzeciego pinu jeśli był zaznaczony
+            if (document.getElementById('red-e').checked) { document.getElementById('red-b').checked = true; }
+            if (document.getElementById('black-e').checked) { document.getElementById('black-b').checked = true; }
+        } else if (c === 'mosfet') {
+            redLabels = ['Bramka (G)', 'Dren (D)', "Źródło (S)"];
+            blackLabels = ['Bramka (G)', 'Dren (D)', "Źródło (S)"];
+            document.getElementById('cond-short-label').textContent = 'Zwarty (D-S)';
+        } else {
+            redLabels = ['Baza (B)', 'Kolektor (C)', 'Emiter (E)'];
+            blackLabels = ['Baza (B)', 'Kolektor (C)', 'Emiter (E)'];
+            document.getElementById('cond-short-label').textContent = 'Zwarty (C-E)';
+        }
+        // pokaż/ukryj trzeci pin
+        document.getElementById('red-e-container').style.display = showThird ? '' : 'none';
+        document.getElementById('black-e-container').style.display = showThird ? '' : 'none';
+        // ustaw etykiety
+        document.querySelectorAll('input[name="red_probe"]').forEach(function(r, i) {
+            if (i < redLabels.length) {
+                document.querySelector('label[for="' + r.id + '"]').textContent = redLabels[i];
+            }
+        });
+        document.querySelectorAll('input[name="black_probe"]').forEach(function(r, i) {
+            if (i < blackLabels.length) {
+                document.querySelector('label[for="' + r.id + '"]').textContent = blackLabels[i];
+            }
+        });
+    }
+    transistorSelect.addEventListener('change', () => {
+        const type = transistorSelect.value;
+        descText.innerText = transistorDatabase[type].desc;
+        updatePinoutGraphic();
+        updateProbeLabels();
+        if (isConnected) calculateMeasurement();
+    });
+
+    // Śledzenie zmian w przełącznikach
+    document.querySelectorAll('input[type=radio]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updatePinoutGraphic();
+            if (isConnected) calculateMeasurement();
+        });
+    });
+
+    function getSelectedRadio(name) {
+        return document.querySelector(`input[name="${name}"]:checked`).value;
+    }
+
+    // Rdzeń obliczeniowy pomiaru tranzystora
+    function calculateMeasurement() {
+        const type = transistorSelect.value;
+        const red = getSelectedRadio('red_probe');
+        const black = getSelectedRadio('black_probe');
+        const condition = getSelectedRadio('condition');
+        const isDiode = type.startsWith('diode');
+        const isNPN = type.startsWith('npn');
+        const isMOSFET = type.endsWith('mosfet');
+
+        // Błąd podłączenia pod ten sam pin
+        if (red === black) {
+            lcd.innerText = "0.000 V";
+            statusText.innerText = "Sondy zwarte na tym samym pinie";
+            statusText.style.color = "#ffa502";
+            return;
+        }
+
+        // DIODA
+        if (isDiode) {
+            if (condition === "SHORT") {
+                const noise = (Math.random() * (0.004 - 0.001) + 0.001).toFixed(3);
+                lcd.innerText = noise + " V";
+                statusText.innerText = "ZWARCIE ZŁĄCZA A-K";
+                statusText.style.color = "#ff4757";
+                return;
+            }
+            if (condition === "OPEN") {
+                lcd.innerText = "OL";
+                statusText.innerText = "PRZERWA W STRUKTURZE";
+                statusText.style.color = "#ff4757";
+                return;
+            }
+            // forward bias
+            if (red === "B" && black === "C") {
+                const noise = (Math.random() * (0.002 - (-0.002)) + (-0.002));
+                const v = (transistorDatabase[type].be + noise).toFixed(3);
+                lcd.innerText = v + " V";
+                statusText.innerText = "Dioda przewodzi (A→K) OK";
+                statusText.style.color = "#2ed573";
+                return;
+            }
+            lcd.innerText = "OL";
+            statusText.innerText = "Dioda zaporowo (OL)";
+            statusText.style.color = "#ffffff";
+            return;
+        }
+
+        // 1. Uszkodzenie: Zwarcie (Short) - najczęściej Kolektor-Emiter
+        if (condition === "SHORT") {
+            if ((red === "C" && black === "E") || (red === "E" && black === "C")) {
+                const noise = (Math.random() * (0.004 - 0.001) + 0.001).toFixed(3);
+                lcd.innerText = `${noise} V`;
+                statusText.innerText = "Uszkodzenie: ZWARCIE ZŁĄCZA C-E";
+                statusText.style.color = "#ff4757";
+                return;
+            }
+        }
+
+        // 2. Uszkodzenie: Przerwa (Open)
+        if (condition === "OPEN") {
+            lcd.innerText = "OL";
+            statusText.innerText = "Uszkodzenie: PRZERWA W STRUKTURZE";
+            statusText.style.color = "#ff4757";
+            return;
+        }
+
+        // 3. Komponent sprawny
+        if (condition === "GOOD") {
+            
+            if (isMOSFET) {
+                const isNChannel = type.startsWith("npn");
+                let isBodyDiodeForward = isNChannel ? (red === "C" && black === "E") : (red === "E" && black === "C");
+                
+                if (isBodyDiodeForward) {
+                    const noise = (Math.random() * (0.002 - (-0.002)) + (-0.002));
+                    const finalVoltage = (transistorDatabase[type].body_diode + noise).toFixed(3);
+                    lcd.innerText = `${finalVoltage} V`;
+                    statusText.innerText = "Dioda pasożytnicza: Przewodzenie (OK)";
+                    statusText.style.color = "#2ed573";
+                    return;
+                }
+                
+                lcd.innerText = "OL";
+                statusText.innerText = "Bramka izolowana / Kierunek zaporowy (OL)";
+                statusText.style.color = "#ffffff";
+                return;
+            }
+            
+            let isForwardBE = isNPN ? (red === "B" && black === "E") : (red === "E" && black === "B");
+            let isForwardBC = isNPN ? (red === "B" && black === "C") : (red === "C" && black === "B");
+
+            const noise = (Math.random() * (0.002 - (-0.002)) + (-0.002));
+
+            if (isForwardBE) {
+                const finalVoltage = (transistorDatabase[type].be + noise).toFixed(3);
+                lcd.innerText = `${finalVoltage} V`;
+                statusText.innerText = "Złącze Baza-Emiter: Przewodzenie (OK)";
+                statusText.style.color = "#2ed573";
+                return;
+            }
+
+            if (isForwardBC) {
+                const finalVoltage = (transistorDatabase[type].bc + noise).toFixed(3);
+                lcd.innerText = `${finalVoltage} V`;
+                statusText.innerText = "Złącze Baza-Kolektor: Przewodzenie (OK)";
+                statusText.style.color = "#2ed573";
+                return;
+            }
+
+            // Stan zaporowy lub brak przejścia na sprawnym tranzystorze (np. C-E)
+            lcd.innerText = "OL";
+            statusText.innerText = "Kierunek zaporowy / Brak przejścia (OL)";
+            statusText.style.color = "#ffffff";
+        }
+    }
+
+    // --- PRZYWRÓCONA ORYGINALNA OBSŁUGA ZDARZEŃ DOTYKOWYCH I MYSZY (Trzymaj, aby mierzyć) ---
+
+    function startMeasurement(e) {
+        e.preventDefault(); 
+        if (isConnected) return;
+        
+        isConnected = true;
+        btnMeasure.classList.add('active');
+        btnMeasure.innerText = "Mierzę...";
+        
+        calculateMeasurement();
+        loopInterval = setInterval(calculateMeasurement, 100);
+    }
+
+    function stopMeasurement() {
+        if (!isConnected) return;
+        
+        isConnected = false;
+        btnMeasure.classList.remove('active');
+        btnMeasure.innerText = "Dotknij sondami (Trzymaj)";
+        
+        clearInterval(loopInterval);
+        lcd.innerText = "0.000 V";
+        statusText.innerText = "Sondy odłączone";
+        statusText.style.color = "#ffffff";
+    }
+
+    // Obsługa dla komputerów (Myszka)
+    btnMeasure.addEventListener('mousedown', startMeasurement);
+    window.addEventListener('mouseup', stopMeasurement);
+
+    // Obsługa dla smartfonów/tabletów (Dotyk) - Działa w Pydroid 3
+    btnMeasure.addEventListener('touchstart', startMeasurement);
+    window.addEventListener('touchend', stopMeasurement);
+
+    // Przycisk symulacji wzorcowej
+    const btnSimulate = document.getElementById('btn-simulate');
+    let simActive = false;
+
+    btnSimulate.addEventListener('click', function () {
+        if (diodeMode) {
+            simulateOnce();
+        } else {
+            startMeasurement(new Event('mousedown'));
+            setTimeout(stopMeasurement, 400);
+        }
+    });
+
+    let simHoldUntil = 0;
+
+    function simulateOnce() {
+        simActive = true;
+        simHoldUntil = Date.now() + 2000;
+        const type = transistorSelect.value;
+        const red = getSelectedRadio('red_probe');
+        const black = getSelectedRadio('black_probe');
+        const condition = getSelectedRadio('condition');
+
+        if (red === black) {
+            lcd.innerText = '0.000 V';
+            statusText.innerText = 'SYMULACJA: Sondy zwarte na tym samym pinie';
+            statusText.style.color = '#ffa502';
+            descText.innerText = 'Podłącz sondy do różnych pinów';
+            simActive = false;
+            return;
+        }
+
+        const isGood = condition === 'GOOD';
+        const isDiode = type.startsWith('diode');
+        const isNPN = type.startsWith('npn');
+        const isMOSFET = type.endsWith('mosfet');
+
+        // --- DIODA ---
+        if (isDiode) {
+            if (condition === 'SHORT') {
+                const noise = (Math.random() * (0.004 - 0.001) + 0.001).toFixed(3);
+                lcd.innerText = noise + ' V';
+                statusText.innerText = 'SYMULACJA: ZWARCIE ZŁĄCZA A-K';
+                statusText.style.color = '#ff4757';
+                descText.innerText = 'Element USZKODZONY — zwarcie anoda-katoda';
+                simActive = false;
+                return;
+            }
+            if (condition === 'OPEN') {
+                lcd.innerText = 'OL';
+                statusText.innerText = 'SYMULACJA: PRZERWA W STRUKTURZE';
+                statusText.style.color = '#ff4757';
+                descText.innerText = 'Element USZKODZONY — brak przewodzenia w obie strony';
+                simActive = false;
+                return;
+            }
+            // forward bias: A+, K-
+            if (red === 'B' && black === 'C') {
+                const noise = (Math.random() * (0.002 - (-0.002)) + (-0.002));
+                const v = (transistorDatabase[type].be + noise).toFixed(3);
+                lcd.innerText = v + ' V';
+                statusText.innerText = 'SYMULACJA: Dioda przewodzi (A→K)';
+                statusText.style.color = '#2ed573';
+                descText.innerText = isGood ? 'Element SPRAWNY — typowy Vf diody w kierunku przewodzenia' : 'Wynik jak dla sprawnego';
+                simActive = false;
+                return;
+            }
+            // reverse bias
+            lcd.innerText = 'OL';
+            statusText.innerText = 'SYMULACJA: Dioda zaporowo (OL)';
+            statusText.style.color = '#ffffff';
+            descText.innerText = 'Element SPRAWNY — brak przewodzenia w kierunku zaporowym';
+            simActive = false;
+            return;
+        }
+
+        if (condition === 'SHORT' && ((red === 'C' && black === 'E') || (red === 'E' && black === 'C'))) {
+            const noise = (Math.random() * (0.004 - 0.001) + 0.001).toFixed(3);
+            lcd.innerText = noise + ' V';
+            statusText.innerText = 'SYMULACJA: ZWARCIE ZŁĄCZA C-E';
+            statusText.style.color = '#ff4757';
+            descText.innerText = 'Element USZKODZONY — zwarcie kolektor-emiter';
+            simActive = false;
+            return;
+        }
+
+        if (condition === 'OPEN') {
+            lcd.innerText = 'OL';
+            statusText.innerText = 'SYMULACJA: PRZERWA W STRUKTURZE';
+            statusText.style.color = '#ff4757';
+            descText.innerText = 'Element USZKODZONY — brak przewodzenia na wszystkich złączach';
+            simActive = false;
+            return;
+        }
+
+        if (isMOSFET) {
+            const isNChannel = type.startsWith('npn');
+            const isBodyDiodeForward = isNChannel ? (red === 'C' && black === 'E') : (red === 'E' && black === 'C');
+            if (isBodyDiodeForward) {
+                const noise = (Math.random() * (0.002 - (-0.002)) + (-0.002));
+                const finalVoltage = (transistorDatabase[type].body_diode + noise).toFixed(3);
+                lcd.innerText = finalVoltage + ' V';
+                statusText.innerText = 'SYMULACJA: Dioda pasożytnicza — Przewodzenie (OK)';
+                statusText.style.color = '#2ed573';
+                descText.innerText = 'Element SPRAWNY — dioda wewnętrzna MOSFET przewodzi';
+                simActive = false;
+                return;
+            }
+            lcd.innerText = 'OL';
+            statusText.innerText = 'SYMULACJA: Bramka izolowana (OL)';
+            statusText.style.color = '#ffffff';
+            descText.innerText = 'Element SPRAWNY — bramka izolowana, kierunek zaporowy';
+            simActive = false;
+            return;
+        }
+
+        const isForwardBE = isNPN ? (red === 'B' && black === 'E') : (red === 'E' && black === 'B');
+        const isForwardBC = isNPN ? (red === 'B' && black === 'C') : (red === 'C' && black === 'B');
+        const noise = (Math.random() * (0.002 - (-0.002)) + (-0.002));
+
+        if (isForwardBE) {
+            const v = (transistorDatabase[type].be + noise).toFixed(3);
+            lcd.innerText = v + ' V';
+            statusText.innerText = 'SYMULACJA: Złącze B-E — Przewodzenie (OK)';
+            statusText.style.color = '#2ed573';
+            descText.innerText = isGood ? 'Element SPRAWNY — typowy Vf złącza baza-emiter' : 'Wynik jak dla sprawnego — ustaw stan na Zwarty/Przerwa by zasymulować uszkodzenie';
+            simActive = false;
+            return;
+        }
+
+        if (isForwardBC) {
+            const v = (transistorDatabase[type].bc + noise).toFixed(3);
+            lcd.innerText = v + ' V';
+            statusText.innerText = 'SYMULACJA: Złącze B-C — Przewodzenie (OK)';
+            statusText.style.color = '#2ed573';
+            descText.innerText = isGood ? 'Element SPRAWNY — typowy Vf złącza baza-kolektor' : 'Wynik jak dla sprawnego — ustaw stan na Zwarty/Przerwa by zasymulować uszkodzenie';
+            simActive = false;
+            return;
+        }
+
+        lcd.innerText = 'OL';
+        statusText.innerText = 'SYMULACJA: Kierunek zaporowy (OL)';
+        statusText.style.color = '#ffffff';
+        descText.innerText = 'Element SPRAWNY — brak przewodzenia w tym kierunku';
+        simActive = false;
+    }
+
+    // Ustawienie pierwszego opisu, grafiki i etykiet
+    descText.innerText = transistorDatabase[transistorSelect.value].desc;
+    updatePinoutGraphic();
+    updateProbeLabels();
+
+    // --- Połączenie SSE z rzeczywistym miernikiem (tryb DIODE) ---
+    let diodeMode = false;
+    let es = null;
+    let lastRealValue = null;
+
+    function showDiodeStatus() {
+        if (diodeMode) {
+            document.getElementById('diode-indicator').style.display = 'flex';
+        } else {
+            document.getElementById('diode-indicator').style.display = 'none';
+        }
+    }
+
+    function connectSSE() {
+        if (es) { es.close(); }
+        es = new EventSource('/measure');
+        es.onopen = function () {
+            document.getElementById('sse-status').textContent = 'Połączono z miernikiem';
+            document.getElementById('sse-status').style.color = '#2ed573';
+        };
+        es.onmessage = function (e) {
+            try {
+                var d = JSON.parse(e.data);
+                var isDiode = d.Mode1 === 'DIODE';
+                if (isDiode !== diodeMode) {
+                    diodeMode = isDiode;
+                    showDiodeStatus();
+                }
+                if (diodeMode) {
+                    if (Date.now() < simHoldUntil) return;
+                    var val = parseFloat(d.Value);
+                    if (!isNaN(val)) {
+                        lastRealValue = val;
+                        if (val < 0.001) {
+                            lcd.innerText = 'OL';
+                            statusText.innerText = 'Tryb DIODE — brak przewodzenia (OL)';
+                            statusText.style.color = '#ffffff';
+                            descText.innerText = 'Sondy rozwarte — brak mierzonego elementu';
+                        } else {
+                            lcd.innerText = val.toFixed(3) + ' V';
+                            statusText.innerText = 'Tryb DIODE — pomiar rzeczywisty';
+                            statusText.style.color = '#2ed573';
+                            if (val < 0.01) {
+                                descText.innerText = 'Sondy rozwarte lub zwarcie';
+                            } else if (val < 0.4) {
+                                descText.innerText = 'Bardzo niskie napięcie — możliwe zwarcie';
+                            } else if (val < 0.9) {
+                                descText.innerText = 'Złącze przewodzi — typowy Vf dla krzemu';
+                            } else if (val < 1.5) {
+                                descText.innerText = 'Wysokie Vf — możliwy Darlington lub LED';
+                            } else {
+                                descText.innerText = 'Bardzo wysokie Vf — dioda LED?';
+                            }
+                        }
+                    } else if (d.Label === 'OL') {
+                        lcd.innerText = 'OL';
+                        statusText.innerText = 'Tryb DIODE — brak przewodzenia (OL)';
+                        statusText.style.color = '#ffffff';
+                        descText.innerText = 'Sondy rozwarte lub kierunek zaporowy';
+                    }
+                }
+            } catch (err) { }
+        };
+        es.onerror = function () {
+            document.getElementById('sse-status').textContent = 'Rozłączono';
+            document.getElementById('sse-status').style.color = '#ff4757';
+            diodeMode = false;
+            showDiodeStatus();
+            es.close();
+            es = null;
+            setTimeout(connectSSE, 3000);
+        };
+    }
+
+    connectSSE();
+
+    // --- Przeciąganie i skalowanie okienek ---
+    function makeDraggable(el, handle) {
+        if (!el) return;
+        var key = el.id + '_pos';
+        var saved = localStorage.getItem(key);
+        if (saved) {
+            try {
+                var p = JSON.parse(saved);
+                if (p.x !== undefined) el.style.left = p.x + 'px';
+                if (p.y !== undefined) el.style.top = p.y + 'px';
+            } catch(e) {}
+        } else {
+            el.style.left = '10px';
+            el.style.top = '10px';
+        }
+        var offX = 0, offY = 0, dragging = false, startX = 0, startY = 0;
+        var h = handle || el;
+        h.addEventListener('mousedown', function(e) {
+            dragging = true;
+            offX = e.clientX - el.offsetLeft;
+            offY = e.clientY - el.offsetTop;
+            startX = e.clientX;
+            startY = e.clientY;
+            h.style.cursor = 'grabbing';
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!dragging) return;
+            if (Math.abs(e.clientX - startX) < 5 && Math.abs(e.clientY - startY) < 5) return;
+            el.style.left = (e.clientX - offX) + 'px';
+            el.style.top = (e.clientY - offY) + 'px';
+        });
+        document.addEventListener('mouseup', function() {
+            if (!dragging) return;
+            dragging = false;
+            h.style.cursor = '';
+            localStorage.setItem(key, JSON.stringify({
+                x: el.offsetLeft, y: el.offsetTop
+            }));
+        });
+        var timer;
+        function saveSize() {
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                localStorage.setItem(key, JSON.stringify({
+                    x: el.offsetLeft, y: el.offsetTop
+                }));
+            }, 500);
+        }
+        if (window.ResizeObserver) {
+            new ResizeObserver(saveSize).observe(el);
+        }
+    }
+
+    makeDraggable(document.getElementById('pinout-graphic'));
+    makeDraggable(document.getElementById('meter-container'), document.getElementById('meter-handle'));
+
+    // Podwójne kliknięcie — powiększenie grafiki pinoutu (wykrywane ręcznie, by uniknąć konfliktów)
+    (function() {
+        var pg = document.getElementById('pinout-graphic');
+        var lastClick = 0;
+        pg.addEventListener('click', function(e) {
+            var now = Date.now();
+            if (now - lastClick < 350) {
+                var zoomed = this.dataset.zoomed === 'true';
+                if (zoomed) {
+                    this.style.width = this.dataset.origW || '380px';
+                    this.style.height = this.dataset.origH || '220px';
+                    this.dataset.zoomed = 'false';
+                    this.style.borderColor = '#485460';
+                } else {
+                    this.dataset.origW = this.style.width || this.offsetWidth + 'px';
+                    this.dataset.origH = this.style.height || this.offsetHeight + 'px';
+                    this.style.width = (window.innerWidth * 0.7) + 'px';
+                    this.style.height = (window.innerHeight * 0.7) + 'px';
+                    this.dataset.zoomed = 'true';
+                    this.style.borderColor = '#f1c40f';
+                }
+                lastClick = 0;
+            } else {
+                lastClick = now;
+            }
+        });
+    })();
+</script>
+
+</body>
+</html>

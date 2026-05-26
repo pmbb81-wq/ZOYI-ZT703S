@@ -42,6 +42,8 @@
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripMenuItemLabel = new ToolStripMenuItem();
             toolStripMenuItemLabelFont = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
+            toolStripMenuItemBarColor = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             zamknijPanelToolStripMenuItem = new ToolStripMenuItem();
             fontDialog = new FontDialog();
@@ -132,7 +134,7 @@
             contextMenuAdvDisp.BackColor = Color.Black;
             contextMenuAdvDisp.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             contextMenuAdvDisp.ImageScalingSize = new Size(24, 24);
-            contextMenuAdvDisp.Items.AddRange(new ToolStripItem[] { toolStripMenuItemArcBar, toolStripSeparator2, toolStripMenuItemValue, toolStripMenuItemValueFont, toolStripSeparator3, toolStripMenuItemLabel, toolStripMenuItemLabelFont, toolStripSeparator1, zamknijPanelToolStripMenuItem });
+            contextMenuAdvDisp.Items.AddRange(new ToolStripItem[] { toolStripMenuItemArcBar, toolStripSeparator2, toolStripMenuItemValue, toolStripMenuItemValueFont, toolStripSeparator3, toolStripMenuItemLabel, toolStripMenuItemLabelFont, toolStripSeparator4, toolStripMenuItemBarColor, toolStripSeparator1, zamknijPanelToolStripMenuItem });
             contextMenuAdvDisp.Name = "contextMenuAdvDisp";
             contextMenuAdvDisp.RenderMode = ToolStripRenderMode.System;
             contextMenuAdvDisp.ShowCheckMargin = true;
@@ -206,6 +208,21 @@
             toolStripMenuItemLabelFont.Size = new Size(186, 22);
             toolStripMenuItemLabelFont.Text = "Czcionka";
             toolStripMenuItemLabelFont.Click += toolStripMenuItemLabelFont_Click;
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(183, 6);
+            // 
+            // toolStripMenuItemBarColor
+            // 
+            toolStripMenuItemBarColor.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItemBarColor.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItemBarColor.ForeColor = Color.LemonChiffon;
+            toolStripMenuItemBarColor.Name = "toolStripMenuItemBarColor";
+            toolStripMenuItemBarColor.Size = new Size(186, 22);
+            toolStripMenuItemBarColor.Text = "Kolor paska";
+            toolStripMenuItemBarColor.Click += toolStripMenuItemBarColor_Click;
             // 
             // toolStripSeparator1
             // 
@@ -292,6 +309,8 @@
         private ToolStripMenuItem toolStripMenuItemValueFont;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem toolStripMenuItemLabelFont;
+        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem toolStripMenuItemBarColor;
         private FontDialog fontDialog;
         private Label lblFreq;
         private Label lblMode;

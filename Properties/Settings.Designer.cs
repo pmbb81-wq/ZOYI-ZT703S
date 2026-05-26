@@ -169,6 +169,18 @@ namespace ZOYI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Orange")]
+        public string panel_adv_bar_color {
+            get {
+                return ((string)(this["panel_adv_bar_color"]));
+            }
+            set {
+                this["panel_adv_bar_color"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Black")]
         public string panel_adv_bg_color {
             get {

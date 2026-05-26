@@ -67,6 +67,7 @@ namespace ZOYI
             color_label = ColorTranslator.FromHtml(Properties.Settings.Default.panel_adv_label_color);
             color_value = ColorTranslator.FromHtml(Properties.Settings.Default.panel_adv_value_color);
             color_bg = ColorTranslator.FromHtml(Properties.Settings.Default.panel_adv_bg_color);
+            try { arcProgressBar1.BarColor1 = ColorTranslator.FromHtml(Properties.Settings.Default.panel_adv_bar_color); } catch { }
 
             lblLabel.Font = font_label;
             lblValue.Font = font_value;
@@ -282,6 +283,20 @@ namespace ZOYI
 
                 Properties.Settings.Default.panel_adv_value_font = lblValue.Font;
                 Properties.Settings.Default.panel_adv_value_color = ColorTranslator.ToHtml(lblValue.ForeColor);
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void toolStripMenuItemBarColor_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            cd.Color = arcProgressBar1.BarColor1;
+            cd.FullOpen = true;
+            if (cd.ShowDialog() == DialogResult.OK)
+            {
+                arcProgressBar1.BarColor1 = cd.Color;
+                arcProgressBar1.BarColor2 = cd.Color;
+                Properties.Settings.Default.panel_adv_bar_color = ColorTranslator.ToHtml(cd.Color);
                 Properties.Settings.Default.Save();
             }
         }
