@@ -106,7 +106,16 @@ namespace ZOYI
             {
                 int x = Properties.Settings.Default.main_form_pos_x;
                 int y = Properties.Settings.Default.main_form_pos_y;
-                this.Location = new Point(x, y);
+                var pt = new Point(x, y);
+                bool onScreen = false;
+                foreach (var s in Screen.AllScreens)
+                {
+                    if (s.Bounds.Contains(pt)) { onScreen = true; break; }
+                }
+                if (onScreen)
+                    this.Location = pt;
+                else
+                    StartPosition = FormStartPosition.CenterScreen;
             }
             catch
             {
