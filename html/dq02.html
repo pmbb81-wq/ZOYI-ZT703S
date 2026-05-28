@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOYI DQ02</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0e17;
+            color: #f0f4fc;
+            min-height: 100vh;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #0f131e;
+            border-bottom: 1px solid #1e2d42;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo { height: 32px; }
+        .title { font-size: 1.1rem; font-weight: 600; color: #e2e8f0; }
+
+        .nav {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+        }
+
+        .nav a {
+            color: #64748b;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .nav a:hover { color: #e2e8f0; background: #1e2d42; }
+        .nav a.active { color: #60a5fa; background: #1e2d42; }
+
+        .main {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .placeholder {
+            padding: 60px 20px;
+            color: #475569;
+        }
+
+        .placeholder h2 {
+            font-size: 1.5rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .placeholder p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <img src="zoyi.png" alt="" class="logo">
+            <span class="title">ZOYI DQ02</span>
+        </div>
+        <div class="nav">
+            <a href="index.htm">Multimeter</a>
+            <a href="t6.html">Symulator</a>
+            <a href="dq02.html" class="active">DQ02</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="placeholder">
+            <h2>ZOYI DQ02</h2>
+            <p>Strona w przygotowaniu.</p>
+        </div>
+    </div>
+</body>
+</html>

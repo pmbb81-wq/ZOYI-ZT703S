@@ -39,7 +39,7 @@ namespace ZOYI
                     port.Parity = Parity.None;
                     port.DataBits = 8;
                     port.StopBits = StopBits.One;
-                    port.ReadTimeout = SerialPort.InfiniteTimeout; // 500;
+                    port.ReadTimeout = 1000;
 
                     port.Open();
 
@@ -88,14 +88,46 @@ namespace ZOYI
          */
         public async Task<int> readByteAsync()
         {
-            int readByte = -1;
+            if (!bConnected)
+                return -1;
 
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    return port!.ReadByte();
+                }
+                catch (TimeoutException)
+                {
+                    return -2;
+                }
+                catch
+                {
+                    bConnected = false;
+                    return -1;
+                }
+            });
+        }
+
+        /*
+         * 
+         */
+        public void write(string data)
+        {
+            if (bConnected)
+                port!.Write(data);
+        }
+
+        public async Task writeAsync(string data)
+        {
             if (bConnected)
             {
-                readByte = await Task.Run(() => port!.ReadByte());
+                await Task.Run(() =>
+                {
+                    try { port!.Write(data); }
+                    catch { bConnected = false; }
+                });
             }
-            
-            return readByte;
         }
 
         /*

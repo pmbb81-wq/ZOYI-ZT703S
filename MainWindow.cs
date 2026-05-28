@@ -19,6 +19,7 @@ namespace ZOYI
         WebServer webServer;
 
         COMx comx;
+        COMx dq02Comx;
         StandardDisplayPanel standardDisplayPanel;
         AdancedDisplayPanel advancedDisplayPanel;
 
@@ -58,27 +59,11 @@ namespace ZOYI
         public MainWindow()
         {
             InitializeComponent();
-
-            // 1. Ustawienie pozycji okna
-            SetWindowLocation();
-
-            // 2. Inicjalizacja paneli wyświetlania
-            InitializeDisplayPanels();
-
-            // 3. Utworzenie katalogów
-            Directory.CreateDirectory("logs");
-            Directory.CreateDirectory("Images");
-
-            // 3b. Zaladowanie zapisanego obrazu ESR
-            LoadESRImage();
-
-            // 4. Ustawienie domyślnej pozycji w ComboBox
-
-
-            // 5. Inicjalizacja pomocniczych klas
             frame_dec = new FrameDecoder();
-            webServer = new WebServer(frame_dec);
             comx = new COMx();
+            dq02Comx = new COMx();
+            webServer = new WebServer(frame_dec);
+            refreshDQ02portlist();
 
             // 6. Narzędzia
             tools = new Tools(toolsPath, panelTools);
@@ -1752,6 +1737,16 @@ namespace ZOYI
 
             parent.Controls.Add(card);
             return y + totalH + 10;
+        }
+
+        private void tabDQ02_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblDQ02Prefix_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

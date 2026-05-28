@@ -93,13 +93,37 @@
             tabPage6 = new TabPage();
             tabPage5 = new TabPage();
             tabWebServer = new TabPage();
-            btnWebServerStart = new Button();
             btnWebServerStop = new Button();
             label2 = new Label();
             tbWebServerPort = new TextBox();
             label3 = new Label();
             llWebAddress = new LinkLabel();
+            btnWebServerStart = new Button();
+            tabDQ02 = new TabPage();
+            tbDQ02Log = new TextBox();
+            btnDQ02Connect = new Button();
+            btnDQ02ClearLog = new Button();
+            btnDQ02SaveLog = new Button();
+            btnDQ02Refresh = new Button();
+            lbDQ02Ports = new ListBox();
+            tbDQ02Baud = new TextBox();
+            lblDQ02Functions = new Label();
+            lblDQ02Speed = new Label();
+            lblDQ02Model = new Label();
+            lblDQ02Freq = new Label();
+            lblDQ02Level = new Label();
+            lblDQ02Nominal = new Label();
+            lblDQ02LossParam = new Label();
+            lblDQ02Range = new Label();
+            lblDQ02Output = new Label();
+            lblDQ02Comparison = new Label();
+            lblDQ02Bias = new Label();
+            lblDQ02Tolerance = new Label();
+            lblDQ02Prefix = new Label();
+            lblDQ02Value = new Label();
+            lblDQ02Secondary = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
             tabPage2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -111,6 +135,9 @@
             groupBox2.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPageWYKRES.SuspendLayout();
+            tabPage3.SuspendLayout();
+            tabWebServer.SuspendLayout();
+            tabDQ02.SuspendLayout();
             SuspendLayout();
             // 
             // button1
@@ -138,10 +165,10 @@
             label1.Size = new Size(418, 25);
             label1.TabIndex = 12;
             label1.Text = "ZOYI® ZT-703S OSCILLOSCOPE MULTIMETER";
+            label1.Click += label1_Click;
             label1.MouseDown += MainWindow_MouseDown;
             label1.MouseMove += MainWindow_MouseMove;
             label1.MouseUp += MainWindow_MouseUp;
-            label1.Click += label1_Click;
             // 
             // btnMinimize
             // 
@@ -160,6 +187,7 @@
             // btnShortcuts
             // 
             btnShortcuts.BackColor = Color.FromArgb(0, 64, 64);
+            btnShortcuts.Cursor = Cursors.Hand;
             btnShortcuts.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnShortcuts.ForeColor = Color.Cyan;
             btnShortcuts.Location = new Point(649, 7);
@@ -169,7 +197,6 @@
             btnShortcuts.TabIndex = 14;
             btnShortcuts.Text = "SK";
             btnShortcuts.UseVisualStyleBackColor = false;
-            btnShortcuts.Cursor = Cursors.Hand;
             btnShortcuts.Click += btnShortcuts_Click;
             // 
             // label4
@@ -200,11 +227,14 @@
             // 
             // pbESR
             // 
-            pbESR.Dock = DockStyle.Fill;
-            pbESR.Image = (Image)resources.GetObject("tabPage3.BackgroundImage");
-            pbESR.SizeMode = PictureBoxSizeMode.Zoom;
-            pbESR.Cursor = Cursors.Hand;
             pbESR.BackColor = Color.FromArgb(24, 24, 24);
+            pbESR.Cursor = Cursors.Hand;
+            pbESR.Dock = DockStyle.Fill;
+            pbESR.Image = (Image)resources.GetObject("pbESR.Image");
+            pbESR.Location = new Point(0, 0);
+            pbESR.Name = "pbESR";
+            pbESR.Size = new Size(747, 371);
+            pbESR.SizeMode = PictureBoxSizeMode.Zoom;
             pbESR.TabIndex = 0;
             pbESR.TabStop = false;
             pbESR.Click += pbESR_Click;
@@ -851,6 +881,7 @@
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Controls.Add(tabWebServer);
+            tabControl1.Controls.Add(tabDQ02);
             tabControl1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             tabControl1.Location = new Point(10, 40);
             tabControl1.Margin = new Padding(2);
@@ -978,8 +1009,8 @@
             // tabPage3
             // 
             tabPage3.BackColor = Color.FromArgb(24, 24, 24);
-            tabPage3.Controls.Add(pbESR);
             tabPage3.BorderStyle = BorderStyle.Fixed3D;
+            tabPage3.Controls.Add(pbESR);
             tabPage3.ForeColor = SystemColors.GrayText;
             tabPage3.Location = new Point(4, 32);
             tabPage3.Name = "tabPage3";
@@ -1041,21 +1072,6 @@
             tabWebServer.TabIndex = 11;
             tabWebServer.Text = "WEB SERWER";
             // 
-            // btnWebServerStart
-            // 
-            btnWebServerStart.BackColor = Color.FromArgb(0, 64, 0);
-            btnWebServerStart.Cursor = Cursors.Hand;
-            btnWebServerStart.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
-            btnWebServerStart.ForeColor = Color.LightGreen;
-            btnWebServerStart.Location = new Point(16, 16);
-            btnWebServerStart.Margin = new Padding(2);
-            btnWebServerStart.Name = "btnWebServerStart";
-            btnWebServerStart.Size = new Size(160, 44);
-            btnWebServerStart.TabIndex = 0;
-            btnWebServerStart.Text = "URUCHOM";
-            btnWebServerStart.UseVisualStyleBackColor = false;
-            btnWebServerStart.Click += btnWebServerStart_Click;
-            // 
             // btnWebServerStop
             // 
             btnWebServerStop.BackColor = Color.FromArgb(64, 0, 0);
@@ -1077,10 +1093,10 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
             label2.ForeColor = Color.Yellow;
-            label2.Location = new Point(16, 80);
+            label2.Location = new Point(19, 83);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(40, 20);
+            label2.Size = new Size(41, 20);
             label2.TabIndex = 2;
             label2.Text = "Port:";
             // 
@@ -1102,7 +1118,7 @@
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
             label3.ForeColor = Color.LightGreen;
-            label3.Location = new Point(16, 120);
+            label3.Location = new Point(19, 123);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
             label3.Size = new Size(52, 20);
@@ -1114,14 +1130,319 @@
             llWebAddress.AutoSize = true;
             llWebAddress.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold);
             llWebAddress.LinkColor = Color.Cyan;
-            llWebAddress.Location = new Point(76, 120);
+            llWebAddress.Location = new Point(79, 123);
             llWebAddress.Margin = new Padding(2, 0, 2, 0);
             llWebAddress.Name = "llWebAddress";
-            llWebAddress.Size = new Size(120, 20);
+            llWebAddress.Size = new Size(112, 20);
             llWebAddress.TabIndex = 5;
             llWebAddress.TabStop = true;
             llWebAddress.Text = "http://IP:port/";
             llWebAddress.LinkClicked += llWebAddress_LinkClicked;
+            // 
+            // btnWebServerStart
+            // 
+            btnWebServerStart.BackColor = Color.FromArgb(0, 64, 0);
+            btnWebServerStart.Cursor = Cursors.Hand;
+            btnWebServerStart.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            btnWebServerStart.ForeColor = Color.LightGreen;
+            btnWebServerStart.Location = new Point(16, 16);
+            btnWebServerStart.Margin = new Padding(2);
+            btnWebServerStart.Name = "btnWebServerStart";
+            btnWebServerStart.Size = new Size(160, 44);
+            btnWebServerStart.TabIndex = 0;
+            btnWebServerStart.Text = "URUCHOM";
+            btnWebServerStart.UseVisualStyleBackColor = false;
+            btnWebServerStart.Click += btnWebServerStart_Click;
+            // 
+            // tabDQ02
+            // 
+            tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.Controls.Add(tbDQ02Log);
+            tabDQ02.Controls.Add(btnDQ02Connect);
+            tabDQ02.Controls.Add(btnDQ02ClearLog);
+            tabDQ02.Controls.Add(btnDQ02SaveLog);
+            tabDQ02.Controls.Add(btnDQ02Refresh);
+            tabDQ02.Controls.Add(lbDQ02Ports);
+            tabDQ02.Controls.Add(tbDQ02Baud);
+            tabDQ02.Controls.Add(lblDQ02Functions);
+            tabDQ02.Controls.Add(lblDQ02Speed);
+            tabDQ02.Controls.Add(lblDQ02Model);
+            tabDQ02.Controls.Add(lblDQ02Freq);
+            tabDQ02.Controls.Add(lblDQ02Level);
+            tabDQ02.Controls.Add(lblDQ02Nominal);
+            tabDQ02.Controls.Add(lblDQ02LossParam);
+            tabDQ02.Controls.Add(lblDQ02Range);
+            tabDQ02.Controls.Add(lblDQ02Output);
+            tabDQ02.Controls.Add(lblDQ02Comparison);
+            tabDQ02.Controls.Add(lblDQ02Bias);
+            tabDQ02.Controls.Add(lblDQ02Tolerance);
+            tabDQ02.Controls.Add(lblDQ02Prefix);
+            tabDQ02.Controls.Add(lblDQ02Value);
+            tabDQ02.Controls.Add(lblDQ02Secondary);
+            tabDQ02.Location = new Point(4, 32);
+            tabDQ02.Name = "tabDQ02";
+            tabDQ02.Padding = new Padding(3);
+            tabDQ02.Size = new Size(751, 375);
+            tabDQ02.TabIndex = 12;
+            tabDQ02.Text = "ZOYI DQ02";
+            // 
+            // tbDQ02Log
+            // 
+            tbDQ02Log.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tbDQ02Log.BackColor = Color.FromArgb(13, 13, 13);
+            tbDQ02Log.Font = new Font("Consolas", 8F);
+            tbDQ02Log.ForeColor = Color.FromArgb(0, 200, 0);
+            tbDQ02Log.Location = new Point(289, 200);
+            tbDQ02Log.Multiline = true;
+            tbDQ02Log.Name = "tbDQ02Log";
+            tbDQ02Log.ReadOnly = true;
+            tbDQ02Log.ScrollBars = ScrollBars.Vertical;
+            tbDQ02Log.Size = new Size(431, 128);
+            tbDQ02Log.TabIndex = 6;
+            tbDQ02Log.WordWrap = false;
+            // 
+            // btnDQ02Connect
+            // 
+            btnDQ02Connect.BackColor = Color.FromArgb(0, 64, 0);
+            btnDQ02Connect.Cursor = Cursors.Hand;
+            btnDQ02Connect.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnDQ02Connect.ForeColor = Color.LightGreen;
+            btnDQ02Connect.Location = new Point(516, 27);
+            btnDQ02Connect.Name = "btnDQ02Connect";
+            btnDQ02Connect.Size = new Size(155, 28);
+            btnDQ02Connect.TabIndex = 7;
+            btnDQ02Connect.Text = "POŁĄCZ";
+            btnDQ02Connect.UseVisualStyleBackColor = false;
+            btnDQ02Connect.Click += btnDQ02Connect_Click;
+            // 
+            // btnDQ02ClearLog
+            // 
+            btnDQ02ClearLog.BackColor = Color.FromArgb(64, 0, 0);
+            btnDQ02ClearLog.Cursor = Cursors.Hand;
+            btnDQ02ClearLog.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            btnDQ02ClearLog.ForeColor = Color.LightCoral;
+            btnDQ02ClearLog.Location = new Point(564, 344);
+            btnDQ02ClearLog.Name = "btnDQ02ClearLog";
+            btnDQ02ClearLog.Size = new Size(70, 28);
+            btnDQ02ClearLog.TabIndex = 8;
+            btnDQ02ClearLog.Text = "CLEAR";
+            btnDQ02ClearLog.UseVisualStyleBackColor = false;
+            btnDQ02ClearLog.Click += btnDQ02ClearLog_Click;
+            // 
+            // btnDQ02SaveLog
+            // 
+            btnDQ02SaveLog.BackColor = Color.FromArgb(0, 0, 64);
+            btnDQ02SaveLog.Cursor = Cursors.Hand;
+            btnDQ02SaveLog.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+            btnDQ02SaveLog.ForeColor = Color.CornflowerBlue;
+            btnDQ02SaveLog.Location = new Point(650, 344);
+            btnDQ02SaveLog.Name = "btnDQ02SaveLog";
+            btnDQ02SaveLog.Size = new Size(70, 28);
+            btnDQ02SaveLog.TabIndex = 9;
+            btnDQ02SaveLog.Text = "SAVE";
+            btnDQ02SaveLog.UseVisualStyleBackColor = false;
+            btnDQ02SaveLog.Click += btnDQ02SaveLog_Click;
+            // 
+            // btnDQ02Refresh
+            // 
+            btnDQ02Refresh.BackColor = Color.FromArgb(32, 32, 32);
+            btnDQ02Refresh.Cursor = Cursors.Hand;
+            btnDQ02Refresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnDQ02Refresh.ForeColor = Color.LightGray;
+            btnDQ02Refresh.Location = new Point(516, 92);
+            btnDQ02Refresh.Name = "btnDQ02Refresh";
+            btnDQ02Refresh.Size = new Size(155, 28);
+            btnDQ02Refresh.TabIndex = 10;
+            btnDQ02Refresh.Text = "REFRESH";
+            btnDQ02Refresh.UseVisualStyleBackColor = false;
+            btnDQ02Refresh.Click += btnDQ02RefreshPorts_Click;
+            // 
+            // lbDQ02Ports
+            // 
+            lbDQ02Ports.BackColor = Color.FromArgb(24, 24, 24);
+            lbDQ02Ports.Font = new Font("Consolas", 10F);
+            lbDQ02Ports.ForeColor = Color.Gold;
+            lbDQ02Ports.ItemHeight = 15;
+            lbDQ02Ports.Location = new Point(516, 125);
+            lbDQ02Ports.Name = "lbDQ02Ports";
+            lbDQ02Ports.Size = new Size(155, 49);
+            lbDQ02Ports.TabIndex = 11;
+            // 
+            // tbDQ02Baud
+            // 
+            tbDQ02Baud.BackColor = Color.FromArgb(24, 24, 24);
+            tbDQ02Baud.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            tbDQ02Baud.ForeColor = Color.Gold;
+            tbDQ02Baud.Location = new Point(516, 61);
+            tbDQ02Baud.Name = "tbDQ02Baud";
+            tbDQ02Baud.Size = new Size(155, 27);
+            tbDQ02Baud.TabIndex = 12;
+            tbDQ02Baud.Text = "115200";
+            tbDQ02Baud.TextAlign = HorizontalAlignment.Center;
+            // 
+            // lblDQ02Functions
+            // 
+            lblDQ02Functions.AutoSize = true;
+            lblDQ02Functions.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblDQ02Functions.ForeColor = Color.FromArgb(180, 220, 255);
+            lblDQ02Functions.Location = new Point(8, 6);
+            lblDQ02Functions.Name = "lblDQ02Functions";
+            lblDQ02Functions.Size = new Size(78, 15);
+            lblDQ02Functions.TabIndex = 13;
+            lblDQ02Functions.Text = "Functions: —";
+            // 
+            // lblDQ02Speed
+            // 
+            lblDQ02Speed.AutoSize = true;
+            lblDQ02Speed.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblDQ02Speed.ForeColor = Color.FromArgb(180, 220, 255);
+            lblDQ02Speed.Location = new Point(200, 6);
+            lblDQ02Speed.Name = "lblDQ02Speed";
+            lblDQ02Speed.Size = new Size(60, 15);
+            lblDQ02Speed.TabIndex = 14;
+            lblDQ02Speed.Text = "Speed: —";
+            // 
+            // lblDQ02Model
+            // 
+            lblDQ02Model.AutoSize = true;
+            lblDQ02Model.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblDQ02Model.ForeColor = Color.FromArgb(180, 220, 255);
+            lblDQ02Model.Location = new Point(380, 6);
+            lblDQ02Model.Name = "lblDQ02Model";
+            lblDQ02Model.Size = new Size(60, 15);
+            lblDQ02Model.TabIndex = 15;
+            lblDQ02Model.Text = "Model: —";
+            // 
+            // lblDQ02Freq
+            // 
+            lblDQ02Freq.AutoSize = true;
+            lblDQ02Freq.Font = new Font("Segoe UI", 9F);
+            lblDQ02Freq.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Freq.Location = new Point(8, 35);
+            lblDQ02Freq.Name = "lblDQ02Freq";
+            lblDQ02Freq.Size = new Size(80, 15);
+            lblDQ02Freq.TabIndex = 16;
+            lblDQ02Freq.Text = "Frequency: —";
+            // 
+            // lblDQ02Level
+            // 
+            lblDQ02Level.AutoSize = true;
+            lblDQ02Level.Font = new Font("Segoe UI", 9F);
+            lblDQ02Level.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Level.Location = new Point(200, 34);
+            lblDQ02Level.Name = "lblDQ02Level";
+            lblDQ02Level.Size = new Size(52, 15);
+            lblDQ02Level.TabIndex = 17;
+            lblDQ02Level.Text = "Level: —";
+            // 
+            // lblDQ02Nominal
+            // 
+            lblDQ02Nominal.AutoSize = true;
+            lblDQ02Nominal.Font = new Font("Segoe UI", 9F);
+            lblDQ02Nominal.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Nominal.Location = new Point(380, 35);
+            lblDQ02Nominal.Name = "lblDQ02Nominal";
+            lblDQ02Nominal.Size = new Size(71, 15);
+            lblDQ02Nominal.TabIndex = 18;
+            lblDQ02Nominal.Text = "Nominal: —";
+            // 
+            // lblDQ02LossParam
+            // 
+            lblDQ02LossParam.AutoSize = true;
+            lblDQ02LossParam.Font = new Font("Segoe UI", 9F);
+            lblDQ02LossParam.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02LossParam.Location = new Point(8, 66);
+            lblDQ02LossParam.Name = "lblDQ02LossParam";
+            lblDQ02LossParam.Size = new Size(113, 15);
+            lblDQ02LossParam.TabIndex = 19;
+            lblDQ02LossParam.Text = "Parameters: Loss: —";
+            // 
+            // lblDQ02Range
+            // 
+            lblDQ02Range.AutoSize = true;
+            lblDQ02Range.Font = new Font("Segoe UI", 9F);
+            lblDQ02Range.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Range.Location = new Point(200, 68);
+            lblDQ02Range.Name = "lblDQ02Range";
+            lblDQ02Range.Size = new Size(58, 15);
+            lblDQ02Range.TabIndex = 20;
+            lblDQ02Range.Text = "Range: —";
+            // 
+            // lblDQ02Output
+            // 
+            lblDQ02Output.AutoSize = true;
+            lblDQ02Output.Font = new Font("Segoe UI", 9F);
+            lblDQ02Output.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Output.Location = new Point(380, 65);
+            lblDQ02Output.Name = "lblDQ02Output";
+            lblDQ02Output.Size = new Size(63, 15);
+            lblDQ02Output.TabIndex = 21;
+            lblDQ02Output.Text = "Output: —";
+            // 
+            // lblDQ02Comparison
+            // 
+            lblDQ02Comparison.AutoSize = true;
+            lblDQ02Comparison.Font = new Font("Segoe UI", 9F);
+            lblDQ02Comparison.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Comparison.Location = new Point(8, 94);
+            lblDQ02Comparison.Name = "lblDQ02Comparison";
+            lblDQ02Comparison.Size = new Size(90, 15);
+            lblDQ02Comparison.TabIndex = 22;
+            lblDQ02Comparison.Text = "Comparison: —";
+            // 
+            // lblDQ02Bias
+            // 
+            lblDQ02Bias.AutoSize = true;
+            lblDQ02Bias.Font = new Font("Segoe UI", 9F);
+            lblDQ02Bias.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Bias.Location = new Point(200, 96);
+            lblDQ02Bias.Name = "lblDQ02Bias";
+            lblDQ02Bias.Size = new Size(46, 15);
+            lblDQ02Bias.TabIndex = 23;
+            lblDQ02Bias.Text = "Bias: —";
+            // 
+            // lblDQ02Tolerance
+            // 
+            lblDQ02Tolerance.AutoSize = true;
+            lblDQ02Tolerance.Font = new Font("Segoe UI", 9F);
+            lblDQ02Tolerance.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Tolerance.Location = new Point(380, 95);
+            lblDQ02Tolerance.Name = "lblDQ02Tolerance";
+            lblDQ02Tolerance.Size = new Size(76, 15);
+            lblDQ02Tolerance.TabIndex = 24;
+            lblDQ02Tolerance.Text = "Tolerance: —";
+            // 
+            // lblDQ02Prefix
+            // 
+            lblDQ02Prefix.AutoSize = true;
+            lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
+            lblDQ02Prefix.ForeColor = Color.Gold;
+            lblDQ02Prefix.Location = new Point(8, 117);
+            lblDQ02Prefix.Name = "lblDQ02Prefix";
+            lblDQ02Prefix.Size = new Size(60, 51);
+            lblDQ02Prefix.TabIndex = 25;
+            lblDQ02Prefix.Text = "—";
+            // 
+            // lblDQ02Value
+            // 
+            lblDQ02Value.AutoSize = true;
+            lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
+            lblDQ02Value.ForeColor = Color.Gold;
+            lblDQ02Value.Location = new Point(160, 119);
+            lblDQ02Value.Name = "lblDQ02Value";
+            lblDQ02Value.Size = new Size(60, 51);
+            lblDQ02Value.TabIndex = 26;
+            lblDQ02Value.Text = "—";
+            // 
+            // lblDQ02Secondary
+            // 
+            lblDQ02Secondary.AutoSize = true;
+            lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblDQ02Secondary.ForeColor = Color.Cyan;
+            lblDQ02Secondary.Location = new Point(8, 200);
+            lblDQ02Secondary.Name = "lblDQ02Secondary";
+            lblDQ02Secondary.Size = new Size(0, 32);
+            lblDQ02Secondary.TabIndex = 27;
             // 
             // MainWindow
             // 
@@ -1151,6 +1472,7 @@
             MouseMove += MainWindow_MouseMove;
             MouseUp += MainWindow_MouseUp;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbESR).EndInit();
             tabTools.ResumeLayout(false);
             tabTools.PerformLayout();
             tabPage2.ResumeLayout(false);
@@ -1168,8 +1490,11 @@
             groupBox2.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPageWYKRES.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
             tabWebServer.ResumeLayout(false);
             tabWebServer.PerformLayout();
+            tabDQ02.ResumeLayout(false);
+            tabDQ02.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1239,6 +1564,29 @@
         private ComboBox cbTTSVoice;
         private Label lblTTSStatus;
         private TabPage tabWebServer;
+        private TabPage tabDQ02;
+        private Button btnDQ02Connect;
+        private Button btnDQ02ClearLog;
+        private Button btnDQ02SaveLog;
+        private ListBox lbDQ02Ports;
+        private TextBox tbDQ02Baud;
+        private TextBox tbDQ02Log;
+        private Label lblDQ02Functions;
+        private Label lblDQ02Speed;
+        private Label lblDQ02Model;
+        private Button btnDQ02Refresh;
+        private Label lblDQ02Freq;
+        private Label lblDQ02Level;
+        private Label lblDQ02Nominal;
+        private Label lblDQ02LossParam;
+        private Label lblDQ02Range;
+        private Label lblDQ02Output;
+        private Label lblDQ02Comparison;
+        private Label lblDQ02Bias;
+        private Label lblDQ02Tolerance;
+        private Label lblDQ02Prefix;
+        private Label lblDQ02Value;
+        private Label lblDQ02Secondary;
         private Button btnWebServerStart;
         private Button btnWebServerStop;
         private Label label2;
