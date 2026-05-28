@@ -230,7 +230,6 @@
             pbESR.BackColor = Color.FromArgb(24, 24, 24);
             pbESR.Cursor = Cursors.Hand;
             pbESR.Dock = DockStyle.Fill;
-            pbESR.Image = (Image)resources.GetObject("pbESR.Image");
             pbESR.Location = new Point(0, 0);
             pbESR.Name = "pbESR";
             pbESR.Size = new Size(747, 371);
@@ -1192,7 +1191,7 @@
             tbDQ02Log.BackColor = Color.FromArgb(13, 13, 13);
             tbDQ02Log.Font = new Font("Consolas", 8F);
             tbDQ02Log.ForeColor = Color.FromArgb(0, 200, 0);
-            tbDQ02Log.Location = new Point(289, 200);
+            tbDQ02Log.Location = new Point(289, 213);
             tbDQ02Log.Multiline = true;
             tbDQ02Log.Name = "tbDQ02Log";
             tbDQ02Log.ReadOnly = true;
@@ -1285,7 +1284,7 @@
             lblDQ02Functions.AutoSize = true;
             lblDQ02Functions.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Functions.ForeColor = Color.FromArgb(180, 220, 255);
-            lblDQ02Functions.Location = new Point(8, 6);
+            lblDQ02Functions.Location = new Point(10, 3);
             lblDQ02Functions.Name = "lblDQ02Functions";
             lblDQ02Functions.Size = new Size(78, 15);
             lblDQ02Functions.TabIndex = 13;
@@ -1417,7 +1416,7 @@
             lblDQ02Prefix.AutoSize = true;
             lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Prefix.ForeColor = Color.Gold;
-            lblDQ02Prefix.Location = new Point(8, 117);
+            lblDQ02Prefix.Location = new Point(26, 119);
             lblDQ02Prefix.Name = "lblDQ02Prefix";
             lblDQ02Prefix.Size = new Size(60, 51);
             lblDQ02Prefix.TabIndex = 25;
@@ -1428,7 +1427,7 @@
             lblDQ02Value.AutoSize = true;
             lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Value.ForeColor = Color.Gold;
-            lblDQ02Value.Location = new Point(160, 119);
+            lblDQ02Value.Location = new Point(109, 119);
             lblDQ02Value.Name = "lblDQ02Value";
             lblDQ02Value.Size = new Size(60, 51);
             lblDQ02Value.TabIndex = 26;
@@ -1436,13 +1435,14 @@
             // 
             // lblDQ02Secondary
             // 
-            lblDQ02Secondary.AutoSize = true;
+            lblDQ02Secondary.AutoSize = false;
             lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblDQ02Secondary.ForeColor = Color.Cyan;
             lblDQ02Secondary.Location = new Point(8, 200);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
-            lblDQ02Secondary.Size = new Size(0, 32);
+            lblDQ02Secondary.Size = new Size(300, 40);
             lblDQ02Secondary.TabIndex = 27;
+            lblDQ02Secondary.Text = "0.000";
             // 
             // MainWindow
             // 

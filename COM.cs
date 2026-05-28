@@ -475,9 +475,9 @@ namespace ZOYI
                             {
                                 if (parsed.IsValid)
                                 {
-                                    lblDQ02Functions.Text = $"Functions: {parsed.RangeMode}";
+                                    lblDQ02Functions.Text = $"Functions: {parsed.Function}";
                                     lblDQ02Speed.Text = $"Speed: {parsed.Speed}";
-                                    lblDQ02Model.Text = $"Model: {parsed.CircuitMode}";
+                                    lblDQ02Model.Text = $"Model: {parsed.ModelMode}";
 
                                     string freqStr = parsed.Frequency >= 1000
                                         ? (parsed.Frequency / 1000).ToString("F1") + " kHz"
@@ -493,7 +493,7 @@ namespace ZOYI
                                     lblDQ02Nominal.Text = $"Nominal: {nominalStr}";
 
                                     lblDQ02LossParam.Text = $"Parameters: Loss: {parsed.SecondaryParam}";
-                                    lblDQ02Range.Text = $"Range: {parsed.RangeMode}";
+                                    lblDQ02Range.Text = $"Range: {DQ02Data.FormatRange(parsed.RangeValue)}";
                                     lblDQ02Output.Text = $"Output: {parsed.Output}";
                                     lblDQ02Comparison.Text = $"Comparison: —";
                                     string biasVoltage = (parsed.MinLimit / 1000.0).ToString("F1") + " V";

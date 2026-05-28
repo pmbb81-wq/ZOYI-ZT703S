@@ -75,7 +75,10 @@ namespace ZOYI
             // 8. Załadowanie ustawień suwaków
             LoadAdvancedPanelSettings(GetTbarArcTicks());
 
-            // 9. Inicjalizacja TTS
+            // 9. Inicjalizacja paneli wyświetlania
+            InitializeDisplayPanels();
+
+            // 10. Inicjalizacja TTS
             InitializeTTS();
 
             // 10. Inicjalizacja menedżera skrótów klawiaturowych
@@ -83,6 +86,9 @@ namespace ZOYI
 
             // 11. Sprawdzenie aktualizacji
             this.Shown += async (s, e) => await CheckForUpdateAsync();
+
+            // 12. Umożliw przeciąganie wszystkich etykiet DQ02
+            EnableDQ02LabelDragging();
         }
 
         private void SetWindowLocation()
@@ -203,26 +209,20 @@ namespace ZOYI
 
         private void chbShowPanel_CheckedChanged(object sender, EventArgs e)
         {
+            if (standardDisplayPanel == null) return;
             if (chbStandardPanel.Checked)
-            {
                 standardDisplayPanel.Show();
-            }
             else
-            {
                 standardDisplayPanel.Hide();
-            }
         }
 
         private void chbAdvancedPanel_CheckedChanged(object sender, EventArgs e)
         {
+            if (advancedDisplayPanel == null) return;
             if (chbAdvancedPanel.Checked)
-            {
                 advancedDisplayPanel.Show();
-            }
             else
-            {
                 advancedDisplayPanel.Hide();
-            }
         }
 
         private void btnClearLog_Click(object sender, EventArgs e)
@@ -294,6 +294,55 @@ namespace ZOYI
                 var distY = currentPos.Y - mousePosDown.Y;
                 Location = new Point(currentFormLocation.X + distX, currentFormLocation.Y + distY);
             }
+        }
+
+        /*
+         * DQ02 label dragging
+         */
+        private void EnableDQ02LabelDragging()
+        {
+            foreach (Control c in tabDQ02.Controls)
+            {
+                if (c is Label lbl && lbl.Name != null && lbl.Name.StartsWith("lblDQ02"))
+                    MakeDraggable(lbl);
+            }
+        }
+
+        private void MakeDraggable(Control ctrl)
+        {
+            bool dragging = false;
+            Point startPoint = Point.Empty;
+            Point originalLocation = Point.Empty;
+
+            ctrl.MouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    dragging = true;
+                    startPoint = Control.MousePosition;
+                    originalLocation = ctrl.Location;
+                    ctrl.BringToFront();
+                }
+            };
+
+            ctrl.MouseMove += (s, e) =>
+            {
+                if (dragging)
+                {
+                    var currentPos = Control.MousePosition;
+                    var dx = currentPos.X - startPoint.X;
+                    var dy = currentPos.Y - startPoint.Y;
+                    ctrl.Location = new Point(originalLocation.X + dx, originalLocation.Y + dy);
+                }
+            };
+
+            ctrl.MouseUp += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                    dragging = false;
+                else if (e.Button == MouseButtons.Right)
+                    MessageBox.Show($"Nazwa kontrolki: {ctrl.Name}\nPozycja: {ctrl.Location}", "Info");
+            };
         }
 
         private void btnMinimize_Click(object sender, EventArgs e)

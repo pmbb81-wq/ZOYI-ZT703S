@@ -15,9 +15,11 @@ namespace ZOYI
         public string Function { get; set; } = "";      // C, L, R, Z, V, etc.
         public string SecondaryParam { get; set; } = "";  // D, Q, X, P, R (ESR)
         public string RangeMode { get; set; } = "";
-        public string CircuitMode { get; set; } = "";    // PAR, SER
+        public string ModelMode { get; set; } = "";       // AUTO, SER, PAR (user's circuit model selection)
+        public string CircuitMode { get; set; } = "";    // SER, PAR (actual applied circuit)
         public string Speed { get; set; } = "";
         public string Trigger { get; set; } = "";
+        public string RangeValue { get; set; } = "";     // AUTO or numeric impedance in ohms (from field 8)
         public double Frequency { get; set; }
         public double Level { get; set; }
         public double Nominal { get; set; }               // reference value (field 14)
@@ -125,9 +127,10 @@ namespace ZOYI
             result.Function       = parts[3];
             result.SecondaryParam = parts[4];
 
-            if (parts.Length > 6) result.CircuitMode = parts[6];
+            if (parts.Length > 5) result.ModelMode    = parts[5];
+            if (parts.Length > 6) result.CircuitMode  = parts[6];
             if (parts.Length > 7) result.Speed       = parts[7];
-            if (parts.Length > 8) result.Trigger     = parts[8];
+            if (parts.Length > 8) { result.Trigger = parts[8]; result.RangeValue = parts[8]; }
 
             if (parts.Length > 9)
                 result.Frequency = SafeParseDouble(parts[9]);
@@ -190,6 +193,21 @@ namespace ZOYI
             if (string.IsNullOrEmpty(s)) return 0;
             double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val);
             return val;
+        }
+
+        public static string FormatRange(string rangeValue)
+        {
+            if (string.IsNullOrEmpty(rangeValue) || rangeValue.Trim().ToUpperInvariant() == "AUTO")
+                return "AUTO";
+
+            if (double.TryParse(rangeValue, NumberStyles.Any, CultureInfo.InvariantCulture, out double ohms) && ohms > 0)
+            {
+                if (ohms >= 1_000_000) return (ohms / 1_000_000).ToString("F0") + " MΩ";
+                if (ohms >= 1000) return (ohms / 1000).ToString("F0") + " kΩ";
+                return ohms.ToString("F0") + " Ω";
+            }
+
+            return rangeValue;
         }
 
         public override string ToString()
