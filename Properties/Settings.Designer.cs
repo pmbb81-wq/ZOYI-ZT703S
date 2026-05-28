@@ -533,5 +533,97 @@ namespace ZOYI.Properties {
                 this["skipped_version"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font dq02_value_font {
+            get {
+                return ((global::System.Drawing.Font)(this["dq02_value_font"]));
+            }
+            set {
+                this["dq02_value_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Gold")]
+        public string dq02_value_color {
+            get {
+                return ((string)(this["dq02_value_color"]));
+            }
+            set {
+                this["dq02_value_color"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font dq02_prefix_font {
+            get {
+                return ((global::System.Drawing.Font)(this["dq02_prefix_font"]));
+            }
+            set {
+                this["dq02_prefix_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Gold")]
+        public string dq02_prefix_color {
+            get {
+                return ((string)(this["dq02_prefix_color"]));
+            }
+            set {
+                this["dq02_prefix_color"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font dq02_secondary_font {
+            get {
+                return ((global::System.Drawing.Font)(this["dq02_secondary_font"]));
+            }
+            set {
+                this["dq02_secondary_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Cyan")]
+        public string dq02_secondary_color {
+            get {
+                return ((string)(this["dq02_secondary_color"]));
+            }
+            set {
+                this["dq02_secondary_color"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font panel_std_dq02_label_font {
+            get {
+                return ((global::System.Drawing.Font)(this["panel_std_dq02_label_font"]));
+            }
+            set {
+                this["panel_std_dq02_label_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public string panel_std_dq02_label_color {
+            get {
+                return ((string)(this["panel_std_dq02_label_color"]));
+            }
+            set {
+                this["panel_std_dq02_label_color"] = value;
+            }
+        }
     }
 }

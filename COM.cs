@@ -505,6 +505,8 @@ namespace ZOYI
                                     lblDQ02Prefix.Text = parsed.DisplayPrefix + ":";
                                     lblDQ02Value.Text = parsed.DisplayValue;
                                     lblDQ02Secondary.Text = parsed.DisplaySecondary;
+
+                                    standardDisplayPanel.SetDQ02Value(parsed.DisplayPrefix, parsed.DisplayValue, parsed.DisplaySecondary);
                                 }
                             }));
                         }

@@ -1435,12 +1435,11 @@
             // 
             // lblDQ02Secondary
             // 
-            lblDQ02Secondary.AutoSize = false;
             lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblDQ02Secondary.ForeColor = Color.Cyan;
             lblDQ02Secondary.Location = new Point(8, 200);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
-            lblDQ02Secondary.Size = new Size(300, 40);
+            lblDQ02Secondary.Size = new Size(133, 57);
             lblDQ02Secondary.TabIndex = 27;
             lblDQ02Secondary.Text = "0.000";
             // 

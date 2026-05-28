@@ -306,6 +306,79 @@ namespace ZOYI
                 if (c is Label lbl && lbl.Name != null && lbl.Name.StartsWith("lblDQ02"))
                     MakeDraggable(lbl);
             }
+
+            SetupDQ02ValueContextMenu();
+        }
+
+        private void SetupDQ02ValueContextMenu()
+        {
+            lblDQ02Value.ContextMenuStrip = MakeFontColorMenu(lblDQ02Value,
+                () => Properties.Settings.Default.dq02_value_font,
+                v => Properties.Settings.Default.dq02_value_font = v,
+                () => Properties.Settings.Default.dq02_value_color,
+                v => Properties.Settings.Default.dq02_value_color = v,
+                new Font("Segoe UI", 28F, FontStyle.Bold), Color.Gold);
+
+            lblDQ02Prefix.ContextMenuStrip = MakeFontColorMenu(lblDQ02Prefix,
+                () => Properties.Settings.Default.dq02_prefix_font,
+                v => Properties.Settings.Default.dq02_prefix_font = v,
+                () => Properties.Settings.Default.dq02_prefix_color,
+                v => Properties.Settings.Default.dq02_prefix_color = v,
+                new Font("Segoe UI", 28F, FontStyle.Bold), Color.Gold);
+
+            lblDQ02Secondary.ContextMenuStrip = MakeFontColorMenu(lblDQ02Secondary,
+                () => Properties.Settings.Default.dq02_secondary_font,
+                v => Properties.Settings.Default.dq02_secondary_font = v,
+                () => Properties.Settings.Default.dq02_secondary_color,
+                v => Properties.Settings.Default.dq02_secondary_color = v,
+                new Font("Segoe UI", 18F, FontStyle.Bold), Color.Cyan);
+        }
+
+        private ContextMenuStrip MakeFontColorMenu(Label lbl,
+            Func<Font> getFont, Action<Font> setFont,
+            Func<string> getColor, Action<string> setColor,
+            Font defaultFont, Color defaultColor)
+        {
+            // Load saved
+            if (getFont() != null) lbl.Font = getFont();
+            try { lbl.ForeColor = ColorTranslator.FromHtml(getColor()); } catch { }
+
+            var ctx = new ContextMenuStrip();
+            ctx.Items.Add("Change Font...", null, (s, e) =>
+            {
+                using (var fd = new FontDialog())
+                {
+                    fd.Font = lbl.Font;
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        lbl.Font = fd.Font;
+                        setFont(fd.Font);
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Change Color...", null, (s, e) =>
+            {
+                using (var cd = new ColorDialog())
+                {
+                    cd.Color = lbl.ForeColor;
+                    if (cd.ShowDialog() == DialogResult.OK)
+                    {
+                        lbl.ForeColor = cd.Color;
+                        setColor(ColorTranslator.ToHtml(cd.Color));
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Reset", null, (s, e) =>
+            {
+                lbl.Font = defaultFont;
+                lbl.ForeColor = defaultColor;
+                setFont(null);
+                setColor(ColorTranslator.ToHtml(defaultColor));
+                Properties.Settings.Default.Save();
+            });
+            return ctx;
         }
 
         private void MakeDraggable(Control ctrl)
@@ -340,8 +413,6 @@ namespace ZOYI
             {
                 if (e.Button == MouseButtons.Left)
                     dragging = false;
-                else if (e.Button == MouseButtons.Right)
-                    MessageBox.Show($"Nazwa kontrolki: {ctrl.Name}\nPozycja: {ctrl.Location}", "Info");
             };
         }
 

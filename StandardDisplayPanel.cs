@@ -133,6 +133,60 @@ namespace ZOYI
             scrollTimer.Start();
 
             this.Shown += (s, ev) => { scrollX = pnlScroll.Width; };
+
+            SetupLabel1ContextMenu();
+        }
+
+        private void SetupLabel1ContextMenu()
+        {
+            if (label1 == null) return;
+
+            if (Properties.Settings.Default.panel_std_dq02_label_font != null)
+                label1.Font = Properties.Settings.Default.panel_std_dq02_label_font;
+            try { label1.ForeColor = ColorTranslator.FromHtml(Properties.Settings.Default.panel_std_dq02_label_color); } catch { }
+
+            var ctx = new ContextMenuStrip();
+            ctx.Items.Add("Change Font...", null, (s, e) =>
+            {
+                using (var fd = new FontDialog())
+                {
+                    fd.Font = label1.Font;
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        label1.Font = fd.Font;
+                        Properties.Settings.Default.panel_std_dq02_label_font = fd.Font;
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Change Color...", null, (s, e) =>
+            {
+                using (var cd = new ColorDialog())
+                {
+                    cd.Color = label1.ForeColor;
+                    if (cd.ShowDialog() == DialogResult.OK)
+                    {
+                        label1.ForeColor = cd.Color;
+                        Properties.Settings.Default.panel_std_dq02_label_color = ColorTranslator.ToHtml(cd.Color);
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Reset", null, (s, e) =>
+            {
+                label1.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+                label1.ForeColor = Color.White;
+                Properties.Settings.Default.panel_std_dq02_label_font = null;
+                Properties.Settings.Default.panel_std_dq02_label_color = "White";
+                Properties.Settings.Default.Save();
+            });
+            label1.ContextMenuStrip = ctx;
+        }
+
+        public void SetDQ02Value(string prefix, string value, string secondary)
+        {
+            if (label1 != null)
+                label1.Text = $"{prefix} {value}\n{secondary}";
         }
 
         private void ScrollTimer_Tick(object sender, EventArgs e)
