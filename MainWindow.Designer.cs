@@ -108,6 +108,7 @@
             btnDQ02Refresh = new Button();
             button3 = new Button();
             button4 = new Button();
+            button6 = new Button();
             lbDQ02Ports = new ListBox();
             tbDQ02Baud = new TextBox();
             lblDQ02Functions = new Label();
@@ -1171,6 +1172,7 @@
             tabDQ02.Controls.Add(btnDQ02Refresh);
             tabDQ02.Controls.Add(button3);
             tabDQ02.Controls.Add(button4);
+            tabDQ02.Controls.Add(button6);
             tabDQ02.Controls.Add(lbDQ02Ports);
             tabDQ02.Controls.Add(tbDQ02Baud);
             tabDQ02.Controls.Add(lblDQ02Functions);
@@ -1212,6 +1214,20 @@
             button5.Text = "Change Level";
             button5.UseVisualStyleBackColor = false;
             button5.Click += button5_Click;
+            // 
+            // button6
+            // 
+            button6.BackColor = Color.FromArgb(0, 64, 64);
+            button6.Cursor = Cursors.Hand;
+            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button6.ForeColor = Color.Cyan;
+            button6.Location = new Point(516, 248);
+            button6.Name = "button6";
+            button6.Size = new Size(155, 28);
+            button6.TabIndex = 32;
+            button6.Text = "Tryb: AUTO";
+            button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
             // 
             // tbDQ02Log
             // 
@@ -1439,7 +1455,7 @@
             lblDQ02Comparison.AutoSize = true;
             lblDQ02Comparison.Font = new Font("Segoe UI", 9F);
             lblDQ02Comparison.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Comparison.Location = new Point(3, 136);
+            lblDQ02Comparison.Location = new Point(10, 141);
             lblDQ02Comparison.Name = "lblDQ02Comparison";
             lblDQ02Comparison.Size = new Size(90, 15);
             lblDQ02Comparison.TabIndex = 22;
@@ -1472,7 +1488,7 @@
             lblDQ02Prefix.AutoSize = true;
             lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Prefix.ForeColor = Color.Gold;
-            lblDQ02Prefix.Location = new Point(8, 183);
+            lblDQ02Prefix.Location = new Point(10, 238);
             lblDQ02Prefix.Name = "lblDQ02Prefix";
             lblDQ02Prefix.Size = new Size(60, 51);
             lblDQ02Prefix.TabIndex = 25;
@@ -1483,7 +1499,7 @@
             lblDQ02Value.AutoSize = true;
             lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Value.ForeColor = Color.Gold;
-            lblDQ02Value.Location = new Point(105, 183);
+            lblDQ02Value.Location = new Point(105, 238);
             lblDQ02Value.Name = "lblDQ02Value";
             lblDQ02Value.Size = new Size(60, 51);
             lblDQ02Value.TabIndex = 26;
@@ -1493,7 +1509,7 @@
             // 
             lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblDQ02Secondary.ForeColor = Color.Cyan;
-            lblDQ02Secondary.Location = new Point(27, 281);
+            lblDQ02Secondary.Location = new Point(10, 302);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
             lblDQ02Secondary.Size = new Size(133, 57);
             lblDQ02Secondary.TabIndex = 27;
@@ -1504,11 +1520,10 @@
             tbDQ02UserNominal.BackColor = Color.FromArgb(24, 24, 24);
             tbDQ02UserNominal.Font = new Font("Segoe UI", 9F);
             tbDQ02UserNominal.ForeColor = Color.Gold;
-            tbDQ02UserNominal.Location = new Point(72, 154);
+            tbDQ02UserNominal.Location = new Point(10, 167);
             tbDQ02UserNominal.Name = "tbDQ02UserNominal";
             tbDQ02UserNominal.Size = new Size(80, 23);
             tbDQ02UserNominal.TabIndex = 28;
-            tbDQ02UserNominal.Text = "";
             tbDQ02UserNominal.TextAlign = HorizontalAlignment.Center;
             // 
             // tbDQ02UserTolerance
@@ -1516,11 +1531,10 @@
             tbDQ02UserTolerance.BackColor = Color.FromArgb(24, 24, 24);
             tbDQ02UserTolerance.Font = new Font("Segoe UI", 9F);
             tbDQ02UserTolerance.ForeColor = Color.Gold;
-            tbDQ02UserTolerance.Location = new Point(202, 154);
+            tbDQ02UserTolerance.Location = new Point(115, 167);
             tbDQ02UserTolerance.Name = "tbDQ02UserTolerance";
             tbDQ02UserTolerance.Size = new Size(50, 23);
             tbDQ02UserTolerance.TabIndex = 29;
-            tbDQ02UserTolerance.Text = "";
             tbDQ02UserTolerance.TextAlign = HorizontalAlignment.Center;
             // 
             // lblDQ02Deviation
@@ -1528,9 +1542,9 @@
             lblDQ02Deviation.AutoSize = true;
             lblDQ02Deviation.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Deviation.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Deviation.Location = new Point(3, 158);
+            lblDQ02Deviation.Location = new Point(10, 193);
             lblDQ02Deviation.Name = "lblDQ02Deviation";
-            lblDQ02Deviation.Size = new Size(70, 15);
+            lblDQ02Deviation.Size = new Size(79, 15);
             lblDQ02Deviation.TabIndex = 30;
             lblDQ02Deviation.Text = "Deviation: —";
             // 
@@ -1539,9 +1553,9 @@
             lblDQ02PassFail.AutoSize = true;
             lblDQ02PassFail.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02PassFail.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02PassFail.Location = new Point(270, 158);
+            lblDQ02PassFail.Location = new Point(185, 175);
             lblDQ02PassFail.Name = "lblDQ02PassFail";
-            lblDQ02PassFail.Size = new Size(40, 15);
+            lblDQ02PassFail.Size = new Size(19, 15);
             lblDQ02PassFail.TabIndex = 31;
             lblDQ02PassFail.Text = "—";
             // 
@@ -1701,5 +1715,6 @@
         private Label label3;
         private LinkLabel llWebAddress;
         private Button button5;
+        private Button button6;
     }
 }

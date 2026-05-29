@@ -23,6 +23,17 @@ namespace ZOYI
         StandardDisplayPanel standardDisplayPanel;
         AdancedDisplayPanel advancedDisplayPanel;
 
+        private readonly string[] measurementModes = new string[]
+        {
+            "FUNC:AUTO",
+            "FUNCtion:L",
+            "FUNCtion:C",
+            "FUNCtion:R",
+            "FUNCtion:Z",
+            "FUNCtion:BATT"
+        };
+        private int currentModeIndex = 0;
+
         MLua mLua;
         string luaPath = "FrameDecoder\\parse_std.lua";
         Tools tools;
@@ -1886,6 +1897,34 @@ namespace ZOYI
             {
                 MessageBox.Show("Port COM jest zamknięty!");
             }
+        }
+
+        private void ChangeMeasurementMode(string modeCommand)
+        {
+            if (dq02Comx.isConnected())
+            {
+                try
+                {
+                    dq02Comx.write(modeCommand + "\n");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Błąd podczas zmiany trybu: {ex.Message}", "Błąd");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Port COM jest zamknięty!", "Ostrzeżenie");
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string commandToSend = measurementModes[currentModeIndex];
+            ChangeMeasurementMode(commandToSend);
+            string cleanModeName = commandToSend.Replace("FUNCtion:", "").Replace("FUNC:", "");
+            button6.Text = $"Tryb: {cleanModeName}";
+            currentModeIndex = (currentModeIndex + 1) % measurementModes.Length;
         }
     }
 }
