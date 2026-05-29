@@ -100,6 +100,7 @@
             llWebAddress = new LinkLabel();
             btnWebServerStart = new Button();
             tabDQ02 = new TabPage();
+            button7 = new Button();
             button6 = new Button();
             button5 = new Button();
             tbDQ02Log = new TextBox();
@@ -130,7 +131,6 @@
             tbDQ02UserTolerance = new TextBox();
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
-            button7 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1203,13 +1203,27 @@
             tabDQ02.TabIndex = 12;
             tabDQ02.Text = "ZOYI DQ02";
             // 
+            // button7
+            // 
+            button7.BackColor = Color.FromArgb(0, 64, 64);
+            button7.Cursor = Cursors.Hand;
+            button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button7.ForeColor = Color.Cyan;
+            button7.Location = new Point(341, 160);
+            button7.Name = "button7";
+            button7.Size = new Size(155, 28);
+            button7.TabIndex = 33;
+            button7.Text = "X D Q 0 R";
+            button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
+            // 
             // button6
             // 
             button6.BackColor = Color.FromArgb(0, 64, 64);
             button6.Cursor = Cursors.Hand;
             button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button6.ForeColor = Color.Cyan;
-            button6.Location = new Point(516, 248);
+            button6.Location = new Point(275, 160);
             button6.Name = "button6";
             button6.Size = new Size(155, 28);
             button6.TabIndex = 32;
@@ -1560,17 +1574,6 @@
             lblDQ02PassFail.Size = new Size(19, 15);
             lblDQ02PassFail.TabIndex = 31;
             lblDQ02PassFail.Text = "—";
-            // 
-            // button7
-            // 
-            button7.ForeColor = SystemColors.ControlText;
-            button7.Location = new Point(462, 160);
-            button7.Name = "button7";
-            button7.Size = new Size(93, 30);
-            button7.TabIndex = 33;
-            button7.Text = "X D Q 0 R";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += button7_Click;
             // 
             // MainWindow
             // 
