@@ -475,7 +475,7 @@ namespace ZOYI
                             {
                                 if (parsed.IsValid)
                                 {
-                                    lblDQ02Functions.Text = $"Functions: {parsed.Function}";
+                                    lblDQ02Functions.Text = $"Functions: {parsed.RangeMode}";
                                     lblDQ02Speed.Text = $"Speed: {parsed.Speed}";
                                     lblDQ02Model.Text = $"Model: {parsed.ModelMode}";
 
@@ -567,6 +567,44 @@ namespace ZOYI
         {
             Directory.CreateDirectory("logs");
             File.WriteAllText("logs\\DQ02_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".log", tbDQ02Log.Text);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (dq02Comx.isConnected())
+            {
+                try
+                {
+                    dq02Comx.write("FREQuency\n");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Błąd: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Port COM jest zamknięty!");
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (dq02Comx.isConnected())
+            {
+                try
+                {
+                    dq02Comx.write("VOLTage\n");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Błąd: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Port COM jest zamknięty!");
+            }
         }
     }
 }

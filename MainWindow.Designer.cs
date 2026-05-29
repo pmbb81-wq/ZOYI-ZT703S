@@ -105,6 +105,8 @@
             btnDQ02ClearLog = new Button();
             btnDQ02SaveLog = new Button();
             btnDQ02Refresh = new Button();
+            button3 = new Button();
+            button4 = new Button();
             lbDQ02Ports = new ListBox();
             tbDQ02Baud = new TextBox();
             lblDQ02Functions = new Label();
@@ -122,6 +124,7 @@
             lblDQ02Prefix = new Label();
             lblDQ02Value = new Label();
             lblDQ02Secondary = new Label();
+            button5 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1156,11 +1159,14 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.Controls.Add(button5);
             tabDQ02.Controls.Add(tbDQ02Log);
             tabDQ02.Controls.Add(btnDQ02Connect);
             tabDQ02.Controls.Add(btnDQ02ClearLog);
             tabDQ02.Controls.Add(btnDQ02SaveLog);
             tabDQ02.Controls.Add(btnDQ02Refresh);
+            tabDQ02.Controls.Add(button3);
+            tabDQ02.Controls.Add(button4);
             tabDQ02.Controls.Add(lbDQ02Ports);
             tabDQ02.Controls.Add(tbDQ02Baud);
             tabDQ02.Controls.Add(lblDQ02Functions);
@@ -1191,7 +1197,7 @@
             tbDQ02Log.BackColor = Color.FromArgb(13, 13, 13);
             tbDQ02Log.Font = new Font("Consolas", 8F);
             tbDQ02Log.ForeColor = Color.FromArgb(0, 200, 0);
-            tbDQ02Log.Location = new Point(289, 213);
+            tbDQ02Log.Location = new Point(304, 210);
             tbDQ02Log.Multiline = true;
             tbDQ02Log.Name = "tbDQ02Log";
             tbDQ02Log.ReadOnly = true;
@@ -1206,7 +1212,7 @@
             btnDQ02Connect.Cursor = Cursors.Hand;
             btnDQ02Connect.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnDQ02Connect.ForeColor = Color.LightGreen;
-            btnDQ02Connect.Location = new Point(516, 27);
+            btnDQ02Connect.Location = new Point(580, 6);
             btnDQ02Connect.Name = "btnDQ02Connect";
             btnDQ02Connect.Size = new Size(155, 28);
             btnDQ02Connect.TabIndex = 7;
@@ -1248,7 +1254,7 @@
             btnDQ02Refresh.Cursor = Cursors.Hand;
             btnDQ02Refresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnDQ02Refresh.ForeColor = Color.LightGray;
-            btnDQ02Refresh.Location = new Point(516, 92);
+            btnDQ02Refresh.Location = new Point(580, 73);
             btnDQ02Refresh.Name = "btnDQ02Refresh";
             btnDQ02Refresh.Size = new Size(155, 28);
             btnDQ02Refresh.TabIndex = 10;
@@ -1256,13 +1262,41 @@
             btnDQ02Refresh.UseVisualStyleBackColor = false;
             btnDQ02Refresh.Click += btnDQ02RefreshPorts_Click;
             // 
+            // button3
+            // 
+            button3.BackColor = Color.FromArgb(0, 64, 64);
+            button3.Cursor = Cursors.Hand;
+            button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button3.ForeColor = Color.Cyan;
+            button3.Location = new Point(10, 58);
+            button3.Name = "button3";
+            button3.Size = new Size(155, 28);
+            button3.TabIndex = 28;
+            button3.Text = "Change Frequency";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
+            // button4
+            // 
+            button4.BackColor = Color.FromArgb(64, 0, 64);
+            button4.Cursor = Cursors.Hand;
+            button4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button4.ForeColor = Color.Magenta;
+            button4.Location = new Point(516, 214);
+            button4.Name = "button4";
+            button4.Size = new Size(155, 28);
+            button4.TabIndex = 29;
+            button4.Text = "Change Level";
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
+            // 
             // lbDQ02Ports
             // 
             lbDQ02Ports.BackColor = Color.FromArgb(24, 24, 24);
             lbDQ02Ports.Font = new Font("Consolas", 10F);
             lbDQ02Ports.ForeColor = Color.Gold;
             lbDQ02Ports.ItemHeight = 15;
-            lbDQ02Ports.Location = new Point(516, 125);
+            lbDQ02Ports.Location = new Point(580, 107);
             lbDQ02Ports.Name = "lbDQ02Ports";
             lbDQ02Ports.Size = new Size(155, 49);
             lbDQ02Ports.TabIndex = 11;
@@ -1272,7 +1306,7 @@
             tbDQ02Baud.BackColor = Color.FromArgb(24, 24, 24);
             tbDQ02Baud.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             tbDQ02Baud.ForeColor = Color.Gold;
-            tbDQ02Baud.Location = new Point(516, 61);
+            tbDQ02Baud.Location = new Point(580, 40);
             tbDQ02Baud.Name = "tbDQ02Baud";
             tbDQ02Baud.Size = new Size(155, 27);
             tbDQ02Baud.TabIndex = 12;
@@ -1350,7 +1384,7 @@
             lblDQ02LossParam.AutoSize = true;
             lblDQ02LossParam.Font = new Font("Segoe UI", 9F);
             lblDQ02LossParam.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02LossParam.Location = new Point(8, 66);
+            lblDQ02LossParam.Location = new Point(6, 99);
             lblDQ02LossParam.Name = "lblDQ02LossParam";
             lblDQ02LossParam.Size = new Size(113, 15);
             lblDQ02LossParam.TabIndex = 19;
@@ -1383,7 +1417,7 @@
             lblDQ02Comparison.AutoSize = true;
             lblDQ02Comparison.Font = new Font("Segoe UI", 9F);
             lblDQ02Comparison.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Comparison.Location = new Point(8, 94);
+            lblDQ02Comparison.Location = new Point(3, 136);
             lblDQ02Comparison.Name = "lblDQ02Comparison";
             lblDQ02Comparison.Size = new Size(90, 15);
             lblDQ02Comparison.TabIndex = 22;
@@ -1416,7 +1450,7 @@
             lblDQ02Prefix.AutoSize = true;
             lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Prefix.ForeColor = Color.Gold;
-            lblDQ02Prefix.Location = new Point(26, 119);
+            lblDQ02Prefix.Location = new Point(8, 183);
             lblDQ02Prefix.Name = "lblDQ02Prefix";
             lblDQ02Prefix.Size = new Size(60, 51);
             lblDQ02Prefix.TabIndex = 25;
@@ -1427,7 +1461,7 @@
             lblDQ02Value.AutoSize = true;
             lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Value.ForeColor = Color.Gold;
-            lblDQ02Value.Location = new Point(109, 119);
+            lblDQ02Value.Location = new Point(105, 183);
             lblDQ02Value.Name = "lblDQ02Value";
             lblDQ02Value.Size = new Size(60, 51);
             lblDQ02Value.TabIndex = 26;
@@ -1437,11 +1471,25 @@
             // 
             lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblDQ02Secondary.ForeColor = Color.Cyan;
-            lblDQ02Secondary.Location = new Point(8, 200);
+            lblDQ02Secondary.Location = new Point(27, 281);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
             lblDQ02Secondary.Size = new Size(133, 57);
             lblDQ02Secondary.TabIndex = 27;
             lblDQ02Secondary.Text = "0.000";
+            // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(0, 64, 64);
+            button5.Cursor = Cursors.Hand;
+            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button5.ForeColor = Color.Cyan;
+            button5.Location = new Point(516, 248);
+            button5.Name = "button5";
+            button5.Size = new Size(155, 28);
+            button5.TabIndex = 30;
+            button5.Text = "Change Level";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
             // 
             // MainWindow
             // 
@@ -1574,6 +1622,8 @@
         private Label lblDQ02Speed;
         private Label lblDQ02Model;
         private Button btnDQ02Refresh;
+        private Button button3;
+        private Button button4;
         private Label lblDQ02Freq;
         private Label lblDQ02Level;
         private Label lblDQ02Nominal;
@@ -1592,5 +1642,6 @@
         private TextBox tbWebServerPort;
         private Label label3;
         private LinkLabel llWebAddress;
+        private Button button5;
     }
 }
