@@ -476,6 +476,7 @@ namespace ZOYI
                                 if (parsed.IsValid)
                                 {
                                     lblDQ02Functions.Text = $"Functions: {parsed.RangeMode}";
+                                    button6.Text = $"Tryb: {parsed.RangeMode}";
                                     lblDQ02Speed.Text = $"Speed: {parsed.Speed}";
                                     lblDQ02Model.Text = $"Model: {parsed.ModelMode}";
 
