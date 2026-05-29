@@ -12,7 +12,8 @@ namespace ZOYI
         SerialPort? port;
         String portName = "";
         int baudrate;
-        bool bConnected = false;
+        volatile bool bConnected = false;
+        private readonly object portLock = new object();
 
         /*
          * 
@@ -29,25 +30,28 @@ namespace ZOYI
         {
             if (!bConnected)
             {
-                portName = com;
-                baudrate = baud;
-
-                try
+                lock (portLock)
                 {
-                    port!.PortName = portName;
-                    port.BaudRate = baudrate;
-                    port.Parity = Parity.None;
-                    port.DataBits = 8;
-                    port.StopBits = StopBits.One;
-                    port.ReadTimeout = 1000;
+                    portName = com;
+                    baudrate = baud;
 
-                    port.Open();
+                    try
+                    {
+                        port!.PortName = portName;
+                        port.BaudRate = baudrate;
+                        port.Parity = Parity.None;
+                        port.DataBits = 8;
+                        port.StopBits = StopBits.One;
+                        port.ReadTimeout = 1000;
 
-                    bConnected = true;
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"COMx connect: {ex.Message}");
+                        port.Open();
+
+                        bConnected = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"COMx connect: {ex.Message}");
+                    }
                 }
             }
         }
@@ -57,10 +61,13 @@ namespace ZOYI
          */
         public void disconnect()
         {
-            if (port!.IsOpen)
-                port.Close();
+            lock (portLock)
+            {
+                if (port!.IsOpen)
+                    port.Close();
 
-            bConnected = false;
+                bConnected = false;
+            }
         }
 
         /*
@@ -74,7 +81,10 @@ namespace ZOYI
             {
                 try
                 {
-                    readByte = port!.ReadByte();
+                    lock (portLock)
+                    {
+                        readByte = port!.ReadByte();
+                    }
                 }
                 catch (TimeoutException) { throw new TimeoutException(); }
                 catch (Exception ex) { throw new Exception($"COMx read: {ex.Message}"); }
@@ -95,7 +105,10 @@ namespace ZOYI
             {
                 try
                 {
-                    return port!.ReadByte();
+                    lock (portLock)
+                    {
+                        return port!.ReadByte();
+                    }
                 }
                 catch (TimeoutException)
                 {
@@ -115,7 +128,12 @@ namespace ZOYI
         public void write(string data)
         {
             if (bConnected)
-                port!.Write(data);
+            {
+                lock (portLock)
+                {
+                    port!.Write(data);
+                }
+            }
         }
 
         public async Task writeAsync(string data)
@@ -124,7 +142,13 @@ namespace ZOYI
             {
                 await Task.Run(() =>
                 {
-                    try { port!.Write(data); }
+                    try
+                    {
+                        lock (portLock)
+                        {
+                            port!.Write(data);
+                        }
+                    }
                     catch { bConnected = false; }
                 });
             }

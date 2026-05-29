@@ -108,7 +108,6 @@
             btnDQ02Refresh = new Button();
             button3 = new Button();
             button4 = new Button();
-            button6 = new Button();
             lbDQ02Ports = new ListBox();
             tbDQ02Baud = new TextBox();
             lblDQ02Functions = new Label();
@@ -130,6 +129,7 @@
             tbDQ02UserTolerance = new TextBox();
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
+            button6 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1164,6 +1164,7 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.Controls.Add(button6);
             tabDQ02.Controls.Add(button5);
             tabDQ02.Controls.Add(tbDQ02Log);
             tabDQ02.Controls.Add(btnDQ02Connect);
@@ -1172,7 +1173,6 @@
             tabDQ02.Controls.Add(btnDQ02Refresh);
             tabDQ02.Controls.Add(button3);
             tabDQ02.Controls.Add(button4);
-            tabDQ02.Controls.Add(button6);
             tabDQ02.Controls.Add(lbDQ02Ports);
             tabDQ02.Controls.Add(tbDQ02Baud);
             tabDQ02.Controls.Add(lblDQ02Functions);
@@ -1214,20 +1214,6 @@
             button5.Text = "Change Level";
             button5.UseVisualStyleBackColor = false;
             button5.Click += button5_Click;
-            // 
-            // button6
-            // 
-            button6.BackColor = Color.FromArgb(0, 64, 64);
-            button6.Cursor = Cursors.Hand;
-            button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            button6.ForeColor = Color.Cyan;
-            button6.Location = new Point(516, 248);
-            button6.Name = "button6";
-            button6.Size = new Size(155, 28);
-            button6.TabIndex = 32;
-            button6.Text = "Tryb: AUTO";
-            button6.UseVisualStyleBackColor = false;
-            button6.Click += button6_Click;
             // 
             // tbDQ02Log
             // 
@@ -1558,6 +1544,17 @@
             lblDQ02PassFail.Size = new Size(19, 15);
             lblDQ02PassFail.TabIndex = 31;
             lblDQ02PassFail.Text = "—";
+            // 
+            // button6
+            // 
+            button6.ForeColor = SystemColors.ControlText;
+            button6.Location = new Point(344, 160);
+            button6.Name = "button6";
+            button6.Size = new Size(99, 30);
+            button6.TabIndex = 32;
+            button6.Text = "LCRZBATT";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
             // 
             // MainWindow
             // 
