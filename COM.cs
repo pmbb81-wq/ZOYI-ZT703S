@@ -506,6 +506,31 @@ namespace ZOYI
                                     lblDQ02Value.Text = parsed.DisplayValue;
                                     lblDQ02Secondary.Text = parsed.DisplaySecondary;
 
+                                    // User comparison: nominal & tolerance
+                                    double userNominal = parsed.Nominal;
+                                    if (double.TryParse(tbDQ02UserNominal.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double un) && un > 0)
+                                        userNominal = un;
+
+                                    double userTolerance = parsed.Tolerance;
+                                    if (double.TryParse(tbDQ02UserTolerance.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double ut) && ut > 0)
+                                        userTolerance = ut;
+
+                                    lblDQ02Comparison.Text = $"Comparison: {DQ02Data.FormatNominal(userNominal, parsed.Function)} ±{userTolerance:F1}%";
+
+                                    if (userNominal > 0 && !double.IsNaN(parsed.PrimaryValue) && !double.IsInfinity(parsed.PrimaryValue))
+                                    {
+                                        double deviation = ((parsed.PrimaryValue - userNominal) / userNominal) * 100.0;
+                                        lblDQ02Deviation.Text = $"Deviation: {deviation:F2}%";
+                                        bool pass = Math.Abs(deviation) <= userTolerance;
+                                        lblDQ02PassFail.Text = pass ? "PASS" : "FAIL";
+                                        lblDQ02PassFail.ForeColor = pass ? Color.LightGreen : Color.Red;
+                                    }
+                                    else
+                                    {
+                                        lblDQ02Deviation.Text = "Deviation: —";
+                                        lblDQ02PassFail.Text = "—";
+                                    }
+
                                     standardDisplayPanel.SetDQ02Value(parsed.DisplayPrefix, parsed.DisplayValue, parsed.DisplaySecondary);
                                 }
                             }));

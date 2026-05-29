@@ -125,6 +125,10 @@
             lblDQ02Prefix = new Label();
             lblDQ02Value = new Label();
             lblDQ02Secondary = new Label();
+            tbDQ02UserNominal = new TextBox();
+            tbDQ02UserTolerance = new TextBox();
+            lblDQ02Deviation = new Label();
+            lblDQ02PassFail = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1184,6 +1188,10 @@
             tabDQ02.Controls.Add(lblDQ02Prefix);
             tabDQ02.Controls.Add(lblDQ02Value);
             tabDQ02.Controls.Add(lblDQ02Secondary);
+            tabDQ02.Controls.Add(tbDQ02UserNominal);
+            tabDQ02.Controls.Add(tbDQ02UserTolerance);
+            tabDQ02.Controls.Add(lblDQ02Deviation);
+            tabDQ02.Controls.Add(lblDQ02PassFail);
             tabDQ02.Location = new Point(4, 32);
             tabDQ02.Name = "tabDQ02";
             tabDQ02.Padding = new Padding(3);
@@ -1491,6 +1499,52 @@
             lblDQ02Secondary.TabIndex = 27;
             lblDQ02Secondary.Text = "0.000";
             // 
+            // tbDQ02UserNominal
+            // 
+            tbDQ02UserNominal.BackColor = Color.FromArgb(24, 24, 24);
+            tbDQ02UserNominal.Font = new Font("Segoe UI", 9F);
+            tbDQ02UserNominal.ForeColor = Color.Gold;
+            tbDQ02UserNominal.Location = new Point(72, 154);
+            tbDQ02UserNominal.Name = "tbDQ02UserNominal";
+            tbDQ02UserNominal.Size = new Size(80, 23);
+            tbDQ02UserNominal.TabIndex = 28;
+            tbDQ02UserNominal.Text = "";
+            tbDQ02UserNominal.TextAlign = HorizontalAlignment.Center;
+            // 
+            // tbDQ02UserTolerance
+            // 
+            tbDQ02UserTolerance.BackColor = Color.FromArgb(24, 24, 24);
+            tbDQ02UserTolerance.Font = new Font("Segoe UI", 9F);
+            tbDQ02UserTolerance.ForeColor = Color.Gold;
+            tbDQ02UserTolerance.Location = new Point(202, 154);
+            tbDQ02UserTolerance.Name = "tbDQ02UserTolerance";
+            tbDQ02UserTolerance.Size = new Size(50, 23);
+            tbDQ02UserTolerance.TabIndex = 29;
+            tbDQ02UserTolerance.Text = "";
+            tbDQ02UserTolerance.TextAlign = HorizontalAlignment.Center;
+            // 
+            // lblDQ02Deviation
+            // 
+            lblDQ02Deviation.AutoSize = true;
+            lblDQ02Deviation.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblDQ02Deviation.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02Deviation.Location = new Point(3, 158);
+            lblDQ02Deviation.Name = "lblDQ02Deviation";
+            lblDQ02Deviation.Size = new Size(70, 15);
+            lblDQ02Deviation.TabIndex = 30;
+            lblDQ02Deviation.Text = "Deviation: —";
+            // 
+            // lblDQ02PassFail
+            // 
+            lblDQ02PassFail.AutoSize = true;
+            lblDQ02PassFail.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblDQ02PassFail.ForeColor = Color.FromArgb(200, 200, 200);
+            lblDQ02PassFail.Location = new Point(270, 158);
+            lblDQ02PassFail.Name = "lblDQ02PassFail";
+            lblDQ02PassFail.Size = new Size(40, 15);
+            lblDQ02PassFail.TabIndex = 31;
+            lblDQ02PassFail.Text = "—";
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1636,6 +1690,10 @@
         private Label lblDQ02Prefix;
         private Label lblDQ02Value;
         private Label lblDQ02Secondary;
+        private TextBox tbDQ02UserNominal;
+        private TextBox tbDQ02UserTolerance;
+        private Label lblDQ02Deviation;
+        private Label lblDQ02PassFail;
         private Button btnWebServerStart;
         private Button btnWebServerStop;
         private Label label2;
