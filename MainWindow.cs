@@ -1922,5 +1922,27 @@ namespace ZOYI
                 MessageBox.Show("Port COM jest zamknięty!");
             }
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+
+            if (dq02Comx.isConnected())
+            {
+                try
+                {
+                    dq02Comx.write("FUNCtion:IMPedance:SUB\n"); //VOLTage\n    FUNCtion:IMPedance:SUB\n
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Błąd: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Port COM jest zamknięty!");
+            }
+
+
+        }
     }
 }

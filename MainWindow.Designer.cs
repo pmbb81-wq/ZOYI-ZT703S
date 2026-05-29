@@ -1209,7 +1209,7 @@
             button7.Cursor = Cursors.Hand;
             button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button7.ForeColor = Color.Cyan;
-            button7.Location = new Point(341, 160);
+            button7.Location = new Point(185, 341);
             button7.Name = "button7";
             button7.Size = new Size(155, 28);
             button7.TabIndex = 33;
@@ -1223,7 +1223,7 @@
             button6.Cursor = Cursors.Hand;
             button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button6.ForeColor = Color.Cyan;
-            button6.Location = new Point(275, 160);
+            button6.Location = new Point(18, 341);
             button6.Name = "button6";
             button6.Size = new Size(155, 28);
             button6.TabIndex = 32;
@@ -1251,12 +1251,12 @@
             tbDQ02Log.BackColor = Color.FromArgb(13, 13, 13);
             tbDQ02Log.Font = new Font("Consolas", 8F);
             tbDQ02Log.ForeColor = Color.FromArgb(0, 200, 0);
-            tbDQ02Log.Location = new Point(304, 210);
+            tbDQ02Log.Location = new Point(364, 210);
             tbDQ02Log.Multiline = true;
             tbDQ02Log.Name = "tbDQ02Log";
             tbDQ02Log.ReadOnly = true;
             tbDQ02Log.ScrollBars = ScrollBars.Vertical;
-            tbDQ02Log.Size = new Size(431, 128);
+            tbDQ02Log.Size = new Size(371, 128);
             tbDQ02Log.TabIndex = 6;
             tbDQ02Log.WordWrap = false;
             // 
@@ -1504,7 +1504,7 @@
             lblDQ02Prefix.AutoSize = true;
             lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Prefix.ForeColor = Color.Gold;
-            lblDQ02Prefix.Location = new Point(10, 238);
+            lblDQ02Prefix.Location = new Point(40, 227);
             lblDQ02Prefix.Name = "lblDQ02Prefix";
             lblDQ02Prefix.Size = new Size(60, 51);
             lblDQ02Prefix.TabIndex = 25;
@@ -1515,7 +1515,7 @@
             lblDQ02Value.AutoSize = true;
             lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Value.ForeColor = Color.Gold;
-            lblDQ02Value.Location = new Point(105, 238);
+            lblDQ02Value.Location = new Point(128, 227);
             lblDQ02Value.Name = "lblDQ02Value";
             lblDQ02Value.Size = new Size(60, 51);
             lblDQ02Value.TabIndex = 26;
@@ -1525,7 +1525,7 @@
             // 
             lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblDQ02Secondary.ForeColor = Color.Cyan;
-            lblDQ02Secondary.Location = new Point(10, 302);
+            lblDQ02Secondary.Location = new Point(40, 281);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
             lblDQ02Secondary.Size = new Size(133, 57);
             lblDQ02Secondary.TabIndex = 27;
