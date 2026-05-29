@@ -26,10 +26,11 @@ namespace ZOYI
         private readonly string[] measurementModes = new string[]
         {
             "FUNC:AUTO",
-            "FUNCtion:L",
-            "FUNCtion:C",
             "FUNCtion:R",
+            "FUNCtion:C",
+            "FUNCtion:L",
             "FUNCtion:Z",
+            "FUNCtion:ECAP",
             "FUNCtion:BATT"
         };
         private int currentModeIndex = 0;
@@ -1886,7 +1887,7 @@ namespace ZOYI
             {
                 try
                 {
-                    dq02Comx.write("VOLTage\n");
+                    dq02Comx.write("VOLTage\n"); //VOLTage\n    :FUNC:LCR:R\n
                 }
                 catch (Exception ex)
                 {
@@ -1906,7 +1907,7 @@ namespace ZOYI
             {
                 try
                 {
-                    dq02Comx.write(commandToSend + "\n");
+                    dq02Comx.write("FUNCtion:IMPedance:MAIN\n"); //VOLTage\n    :FUNC:LCR:R\n
                     string cleanModeName = commandToSend.Replace("FUNCtion:", "").Replace("FUNC:", "");
                     button6.Text = $"Tryb: {cleanModeName}";
                     currentModeIndex = (currentModeIndex + 1) % measurementModes.Length;
