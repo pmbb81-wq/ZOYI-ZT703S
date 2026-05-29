@@ -100,6 +100,7 @@
             llWebAddress = new LinkLabel();
             btnWebServerStart = new Button();
             tabDQ02 = new TabPage();
+            button5 = new Button();
             tbDQ02Log = new TextBox();
             btnDQ02Connect = new Button();
             btnDQ02ClearLog = new Button();
@@ -124,7 +125,6 @@
             lblDQ02Prefix = new Label();
             lblDQ02Value = new Label();
             lblDQ02Secondary = new Label();
-            button5 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1191,6 +1191,20 @@
             tabDQ02.TabIndex = 12;
             tabDQ02.Text = "ZOYI DQ02";
             // 
+            // button5
+            // 
+            button5.BackColor = Color.FromArgb(0, 64, 64);
+            button5.Cursor = Cursors.Hand;
+            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button5.ForeColor = Color.Cyan;
+            button5.Location = new Point(200, 58);
+            button5.Name = "button5";
+            button5.Size = new Size(155, 28);
+            button5.TabIndex = 30;
+            button5.Text = "Change Level";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
+            // 
             // tbDQ02Log
             // 
             tbDQ02Log.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -1395,7 +1409,7 @@
             lblDQ02Range.AutoSize = true;
             lblDQ02Range.Font = new Font("Segoe UI", 9F);
             lblDQ02Range.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Range.Location = new Point(200, 68);
+            lblDQ02Range.Location = new Point(200, 99);
             lblDQ02Range.Name = "lblDQ02Range";
             lblDQ02Range.Size = new Size(58, 15);
             lblDQ02Range.TabIndex = 20;
@@ -1428,7 +1442,7 @@
             lblDQ02Bias.AutoSize = true;
             lblDQ02Bias.Font = new Font("Segoe UI", 9F);
             lblDQ02Bias.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Bias.Location = new Point(200, 96);
+            lblDQ02Bias.Location = new Point(200, 136);
             lblDQ02Bias.Name = "lblDQ02Bias";
             lblDQ02Bias.Size = new Size(46, 15);
             lblDQ02Bias.TabIndex = 23;
@@ -1476,20 +1490,6 @@
             lblDQ02Secondary.Size = new Size(133, 57);
             lblDQ02Secondary.TabIndex = 27;
             lblDQ02Secondary.Text = "0.000";
-            // 
-            // button5
-            // 
-            button5.BackColor = Color.FromArgb(0, 64, 64);
-            button5.Cursor = Cursors.Hand;
-            button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            button5.ForeColor = Color.Cyan;
-            button5.Location = new Point(516, 248);
-            button5.Name = "button5";
-            button5.Size = new Size(155, 28);
-            button5.TabIndex = 30;
-            button5.Text = "Change Level";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
             // 
             // MainWindow
             // 
