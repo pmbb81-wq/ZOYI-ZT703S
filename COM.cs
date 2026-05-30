@@ -509,12 +509,20 @@ namespace ZOYI
 
                                     // User comparison: nominal & tolerance
                                     double userNominal = parsed.Nominal;
-                                    if (double.TryParse(tbDQ02UserNominal.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double un) && un > 0)
-                                        userNominal = un;
+                                    if (!string.IsNullOrWhiteSpace(tbDQ02UserNominal.Text))
+                                    {
+                                        if (!double.TryParse(tbDQ02UserNominal.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out userNominal) &&
+                                            !double.TryParse(tbDQ02UserNominal.Text, NumberStyles.Any, CultureInfo.CurrentCulture, out userNominal))
+                                            userNominal = -1;
+                                    }
 
                                     double userTolerance = parsed.Tolerance;
-                                    if (double.TryParse(tbDQ02UserTolerance.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out double ut) && ut > 0)
-                                        userTolerance = ut;
+                                    if (!string.IsNullOrWhiteSpace(tbDQ02UserTolerance.Text))
+                                    {
+                                        if (!double.TryParse(tbDQ02UserTolerance.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out userTolerance) &&
+                                            !double.TryParse(tbDQ02UserTolerance.Text, NumberStyles.Any, CultureInfo.CurrentCulture, out userTolerance))
+                                            userTolerance = -1;
+                                    }
 
                                     lblDQ02Comparison.Text = $"Comparison: {DQ02Data.FormatNominal(userNominal, parsed.Function)} ±{userTolerance:F1}%";
 
