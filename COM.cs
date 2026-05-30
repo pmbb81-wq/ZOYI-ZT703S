@@ -490,9 +490,6 @@ namespace ZOYI
                                     lblDQ02Freq.Text = $"Frequency: {freqStr}";
                                     lblDQ02Level.Text = $"Level: {levelStr}";
 
-                                    string nominalStr = DQ02Data.FormatNominal(parsed.Nominal, parsed.Function);
-                                    lblDQ02Nominal.Text = $"Nominal: {nominalStr}";
-
                                     lblDQ02LossParam.Text = $"Parameters: Loss: {parsed.SecondaryParam}";
                                     lblDQ02Range.Text = $"Range: {DQ02Data.FormatRange(parsed.RangeValue)}";
                                     lblDQ02Output.Text = $"Output: {parsed.Output}";
@@ -514,6 +511,11 @@ namespace ZOYI
                                         if (!DQ02Data.TryParseUserValue(tbDQ02UserNominal.Text, parsed.Function, out userNominal))
                                             userNominal = -1;
                                     }
+
+                                    string nominalStr = string.IsNullOrWhiteSpace(tbDQ02UserNominal.Text)
+                                        ? DQ02Data.FormatNominal(parsed.Nominal, parsed.Function)
+                                        : tbDQ02UserNominal.Text.Trim();
+                                    lblDQ02Nominal.Text = $"Nominal: {nominalStr}";
 
                                     double userTolerance = parsed.Tolerance;
                                     if (!string.IsNullOrWhiteSpace(tbDQ02UserTolerance.Text))
