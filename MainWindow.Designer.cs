@@ -131,6 +131,7 @@
             tbDQ02UserTolerance = new TextBox();
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
+            log = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1165,11 +1166,11 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.Controls.Add(log);
             tabDQ02.Controls.Add(button7);
             tabDQ02.Controls.Add(button6);
             tabDQ02.Controls.Add(button5);
             tabDQ02.Controls.Add(tbDQ02Log);
-            tabDQ02.Controls.Add(cbDQ02LogToggle);
             tabDQ02.Controls.Add(btnDQ02Connect);
             tabDQ02.Controls.Add(btnDQ02ClearLog);
             tabDQ02.Controls.Add(btnDQ02SaveLog);
@@ -1260,20 +1261,6 @@
             tbDQ02Log.Size = new Size(371, 128);
             tbDQ02Log.TabIndex = 6;
             tbDQ02Log.WordWrap = false;
-            // 
-            // cbDQ02LogToggle
-            // 
-            cbDQ02LogToggle.AutoSize = true;
-            cbDQ02LogToggle.Cursor = Cursors.Hand;
-            cbDQ02LogToggle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            cbDQ02LogToggle.ForeColor = Color.FromArgb(200, 200, 200);
-            cbDQ02LogToggle.Location = new Point(364, 348);
-            cbDQ02LogToggle.Name = "cbDQ02LogToggle";
-            cbDQ02LogToggle.Size = new Size(48, 19);
-            cbDQ02LogToggle.TabIndex = 34;
-            cbDQ02LogToggle.Text = "LOG";
-            cbDQ02LogToggle.UseVisualStyleBackColor = true;
-            cbDQ02LogToggle.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
             // 
             // btnDQ02Connect
             // 
@@ -1591,6 +1578,17 @@
             lblDQ02PassFail.TabIndex = 31;
             lblDQ02PassFail.Text = "—";
             // 
+            // log
+            // 
+            log.AutoSize = true;
+            log.Location = new Point(459, 346);
+            log.Name = "log";
+            log.Size = new Size(99, 24);
+            log.TabIndex = 34;
+            log.Text = "checkBox1";
+            log.UseVisualStyleBackColor = true;
+            log.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1749,6 +1747,6 @@
         private Button button5;
         private Button button6;
         private Button button7;
-        private CheckBox cbDQ02LogToggle;
+        private CheckBox log;
     }
 }
