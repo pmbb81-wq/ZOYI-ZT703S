@@ -344,6 +344,13 @@ namespace ZOYI
                 () => Properties.Settings.Default.dq02_secondary_color,
                 v => Properties.Settings.Default.dq02_secondary_color = v,
                 new Font("Segoe UI", 18F, FontStyle.Bold), Color.Cyan);
+
+            lblDQ02PassFail.ContextMenuStrip = MakeFontColorMenu(lblDQ02PassFail,
+                () => Properties.Settings.Default.dq02_passfail_font,
+                v => Properties.Settings.Default.dq02_passfail_font = v,
+                () => Properties.Settings.Default.dq02_passfail_color,
+                v => Properties.Settings.Default.dq02_passfail_color = v,
+                new Font("Segoe UI", 9F, FontStyle.Bold), Color.FromArgb(200, 200, 200));
         }
 
         private ContextMenuStrip MakeFontColorMenu(Label lbl,
