@@ -116,17 +116,18 @@ namespace ZOYI
                 return true;
 
             // Try with unit suffix: extract numeric part + suffix
-            int splitAt = -1;
-            for (int i = input.Length - 1; i >= 0; i--)
+            int splitAt = input.Length;
+            for (int i = 0; i < input.Length; i++)
             {
-                if (!char.IsDigit(input[i]) && input[i] != '.' && input[i] != ',' && input[i] != '-' && input[i] != 'e' && input[i] != 'E')
+                char c = input[i];
+                if (!char.IsDigit(c) && c != '.' && c != ',' && c != '-' && c != 'e' && c != 'E')
                 {
                     splitAt = i;
                     break;
                 }
             }
 
-            if (splitAt < 0 || splitAt >= input.Length - 1) return false;
+            if (splitAt >= input.Length || splitAt == 0) return false;
 
             string numPart = input.Substring(0, splitAt);
             string suffix = input.Substring(splitAt).ToUpperInvariant().Replace("µ", "U");
