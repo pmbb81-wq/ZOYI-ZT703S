@@ -625,5 +625,16 @@ namespace ZOYI.Properties {
                 this["panel_std_dq02_label_color"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font dq02_passfail_font {
+            get {
+                return ((global::System.Drawing.Font)(this["dq02_passfail_font"]));
+            }
+            set {
+                this["dq02_passfail_font"] = value;
+            }
+        }
     }
 }

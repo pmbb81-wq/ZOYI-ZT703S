@@ -344,6 +344,11 @@ namespace ZOYI
                 () => Properties.Settings.Default.dq02_secondary_color,
                 v => Properties.Settings.Default.dq02_secondary_color = v,
                 new Font("Segoe UI", 18F, FontStyle.Bold), Color.Cyan);
+
+            lblDQ02PassFail.ContextMenuStrip = MakeFontOnlyMenu(lblDQ02PassFail,
+                () => Properties.Settings.Default.dq02_passfail_font,
+                v => Properties.Settings.Default.dq02_passfail_font = v,
+                new Font("Segoe UI", 9F, FontStyle.Bold));
         }
 
         private ContextMenuStrip MakeFontColorMenu(Label lbl,
@@ -388,6 +393,35 @@ namespace ZOYI
                 lbl.ForeColor = defaultColor;
                 setFont(null);
                 setColor(ColorTranslator.ToHtml(defaultColor));
+                Properties.Settings.Default.Save();
+            });
+            return ctx;
+        }
+
+        private ContextMenuStrip MakeFontOnlyMenu(Label lbl,
+            Func<Font> getFont, Action<Font> setFont,
+            Font defaultFont)
+        {
+            if (getFont() != null) lbl.Font = getFont();
+
+            var ctx = new ContextMenuStrip();
+            ctx.Items.Add("Change Font...", null, (s, e) =>
+            {
+                using (var fd = new FontDialog())
+                {
+                    fd.Font = lbl.Font;
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        lbl.Font = fd.Font;
+                        setFont(fd.Font);
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Reset Font", null, (s, e) =>
+            {
+                lbl.Font = defaultFont;
+                setFont(null);
                 Properties.Settings.Default.Save();
             });
             return ctx;
