@@ -103,6 +103,71 @@ namespace ZOYI
             return FormatValue(val, func);
         }
 
+        public static bool TryParseUserValue(string input, string func, out double result)
+        {
+            result = 0;
+            if (string.IsNullOrWhiteSpace(input)) return false;
+
+            input = input.Trim().Replace(" ", "").Replace("Ω", "").Replace("θ", "");
+
+            // Try direct parse (scientific notation like "82e-6", "0.000082")
+            if (double.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out result) ||
+                double.TryParse(input, NumberStyles.Any, CultureInfo.CurrentCulture, out result))
+                return true;
+
+            // Try with unit suffix: extract numeric part + suffix
+            int splitAt = -1;
+            for (int i = input.Length - 1; i >= 0; i--)
+            {
+                if (!char.IsDigit(input[i]) && input[i] != '.' && input[i] != ',' && input[i] != '-' && input[i] != 'e' && input[i] != 'E')
+                {
+                    splitAt = i;
+                    break;
+                }
+            }
+
+            if (splitAt < 0 || splitAt >= input.Length - 1) return false;
+
+            string numPart = input.Substring(0, splitAt);
+            string suffix = input.Substring(splitAt).ToUpperInvariant().Replace("µ", "U");
+
+            if (!double.TryParse(numPart, NumberStyles.Any, CultureInfo.InvariantCulture, out double baseVal) &&
+                !double.TryParse(numPart, NumberStyles.Any, CultureInfo.CurrentCulture, out baseVal))
+                return false;
+
+            double multiplier = func switch
+            {
+                "C" => suffix switch
+                {
+                    "P" or "PF" => 1e-12,
+                    "N" or "NF" => 1e-9,
+                    "U" or "UF" => 1e-6,
+                    "M" or "MF" => 1e-3,
+                    "F" => 1,
+                    _ => -1
+                },
+                "L" => suffix switch
+                {
+                    "N" or "NH" => 1e-9,
+                    "U" or "UH" => 1e-6,
+                    "M" or "MH" => 1e-3,
+                    "H" => 1,
+                    _ => -1
+                },
+                "R" or "Z" => suffix switch
+                {
+                    "K" => 1e3,
+                    "M" => 1e6,
+                    _ => 1
+                },
+                _ => 1
+            };
+
+            if (multiplier < 0) return false;
+            result = baseVal * multiplier;
+            return true;
+        }
+
         /// <summary>
         /// Parse CSV line from ZOYI DQ02.
         /// Fields: primary, secondary, range, function, loss, range2, circuit, speed, trigger, freq, level, min, max, suffix, nominal, tolerance, output

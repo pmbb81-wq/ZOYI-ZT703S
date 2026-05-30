@@ -511,8 +511,7 @@ namespace ZOYI
                                     double userNominal = parsed.Nominal;
                                     if (!string.IsNullOrWhiteSpace(tbDQ02UserNominal.Text))
                                     {
-                                        if (!double.TryParse(tbDQ02UserNominal.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out userNominal) &&
-                                            !double.TryParse(tbDQ02UserNominal.Text, NumberStyles.Any, CultureInfo.CurrentCulture, out userNominal))
+                                        if (!DQ02Data.TryParseUserValue(tbDQ02UserNominal.Text, parsed.Function, out userNominal))
                                             userNominal = -1;
                                     }
 
