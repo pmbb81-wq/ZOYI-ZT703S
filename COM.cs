@@ -598,6 +598,11 @@ namespace ZOYI
             tbDQ02Log.Text = "";
         }
 
+        private void cbDQ02LogToggle_CheckedChanged(object sender, EventArgs e)
+        {
+            tbDQ02Log.Visible = !cbDQ02LogToggle.Checked;
+        }
+
         private void btnDQ02SaveLog_Click(object sender, EventArgs e)
         {
             Directory.CreateDirectory("logs");
