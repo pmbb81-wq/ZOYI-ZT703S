@@ -541,6 +541,86 @@ namespace ZOYI
                                         lblDQ02PassFail.Text = "—";
                                     }
 
+                                    // ESR calculation
+                                    double freqHz = 120;
+                                    string freqText = lblDQ02Freq.Text.Replace("Frequency: ", "").Trim();
+                                    if (freqText.EndsWith("kHz"))
+                                    {
+                                        if (double.TryParse(freqText.Replace("kHz", "").Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double f) ||
+                                            double.TryParse(freqText.Replace("kHz", "").Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out f))
+                                            freqHz = f * 1000;
+                                    }
+                                    else if (freqText.EndsWith("Hz"))
+                                    {
+                                        if (double.TryParse(freqText.Replace("Hz", "").Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double f) ||
+                                            double.TryParse(freqText.Replace("Hz", "").Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out f))
+                                            freqHz = f;
+                                    }
+
+                                    double capUf = 0;
+                                    string capInput = tbDQ02UserNominal.Text.Trim();
+                                    if (!string.IsNullOrWhiteSpace(capInput))
+                                    {
+                                        bool hasSuffix = capInput.Any(c => !char.IsDigit(c) && c != '.' && c != ',' && c != '-' && c != 'e' && c != 'E');
+                                        if (hasSuffix)
+                                        {
+                                            if (DQ02Data.TryParseUserValue(capInput, parsed.Function, out double capF))
+                                                capUf = capF * 1e6;
+                                        }
+                                        else
+                                        {
+                                            if (double.TryParse(capInput, NumberStyles.Any, CultureInfo.InvariantCulture, out double val) ||
+                                                double.TryParse(capInput, NumberStyles.Any, CultureInfo.CurrentCulture, out val))
+                                                capUf = val;
+                                        }
+                                    }
+
+                                    if (capUf > 0 && !double.IsNaN(parsed.SecondaryValue) && parsed.SecondaryValue > 0)
+                                    {
+                                        double capacityF = capUf / 1000000.0;
+
+                                        double tanDelta = 0.08;
+                                        double tempC = 85, volt = 0;
+                                        if (!double.TryParse(textBoxtemperature.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out tempC) &&
+                                            !double.TryParse(textBoxtemperature.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out tempC))
+                                            tempC = 85;
+                                        if (!double.TryParse(textBoxvoltage.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out volt) &&
+                                            !double.TryParse(textBoxvoltage.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out volt))
+                                            volt = 0;
+
+                                        if (tempC >= 105)
+                                            tanDelta = volt < 50 ? 0.10 : 0.08;
+                                        else
+                                            tanDelta = volt < 50 ? 0.12 : 0.10;
+                                        double nominalEsr = Math.Round(tanDelta / (2 * Math.PI * freqHz * capacityF), 3);
+                                        double limitWarning = nominalEsr * 1.5;
+                                        double limitReplace = nominalEsr * 2.0;
+
+                                        lblTargetESR.Text = $"ESR: {nominalEsr} Ω ({nominalEsr * 1000:F0} mΩ)";
+
+                                        if (parsed.SecondaryValue <= limitWarning)
+                                        {
+                                            lblStatus.Text = "SPRAWNY";
+                                            lblStatus.ForeColor = Color.Green;
+                                        }
+                                        else if (parsed.SecondaryValue <= limitReplace)
+                                        {
+                                            lblStatus.Text = "ZUŻYTY";
+                                            lblStatus.ForeColor = Color.Orange;
+                                        }
+                                        else
+                                        {
+                                            lblStatus.Text = "WYMIEŃ!";
+                                            lblStatus.ForeColor = Color.Red;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        lblTargetESR.Text = "ESR: —";
+                                        lblStatus.Text = "STATUS: —";
+                                        lblStatus.ForeColor = Color.FromArgb(200, 200, 200);
+                                    }
+
                                     standardDisplayPanel.SetDQ02Value(parsed.DisplayPrefix, parsed.DisplayValue, parsed.DisplaySecondary);
                                 }
                             }));
