@@ -531,8 +531,7 @@ namespace ZOYI
                                         lblDQ02Deviation.Text = $"Deviation: {deviation:F2}%";
                                         bool pass = Math.Abs(deviation) <= userTolerance;
                                         lblDQ02PassFail.Text = pass ? "PASS" : "FAIL";
-                                        if (Properties.Settings.Default.dq02_passfail_font == null)
-                                            lblDQ02PassFail.ForeColor = pass ? Color.LightGreen : Color.Red;
+                                        lblDQ02PassFail.ForeColor = pass ? Color.LightGreen : Color.Red;
                                     }
                                     else
                                     {
