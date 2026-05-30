@@ -131,7 +131,7 @@
             tbDQ02UserTolerance = new TextBox();
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
-            log = new CheckBox();
+            checkBox1 = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1166,7 +1166,7 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
-            tabDQ02.Controls.Add(log);
+            tabDQ02.Controls.Add(checkBox1);
             tabDQ02.Controls.Add(button7);
             tabDQ02.Controls.Add(button6);
             tabDQ02.Controls.Add(button5);
@@ -1578,16 +1578,16 @@
             lblDQ02PassFail.TabIndex = 31;
             lblDQ02PassFail.Text = "—";
             // 
-            // log
+            // checkBox1
             // 
-            log.AutoSize = true;
-            log.Location = new Point(459, 346);
-            log.Name = "log";
-            log.Size = new Size(99, 24);
-            log.TabIndex = 34;
-            log.Text = "checkBox1";
-            log.UseVisualStyleBackColor = true;
-            log.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(417, 346);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(92, 24);
+            checkBox1.TabIndex = 35;
+            checkBox1.Text = "Ukryj log";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
             // 
             // MainWindow
             // 
@@ -1747,6 +1747,6 @@
         private Button button5;
         private Button button6;
         private Button button7;
-        private CheckBox log;
+        private CheckBox checkBox1;
     }
 }

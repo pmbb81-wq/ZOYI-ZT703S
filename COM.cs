@@ -600,7 +600,7 @@ namespace ZOYI
 
         private void cbDQ02LogToggle_CheckedChanged(object sender, EventArgs e)
         {
-            tbDQ02Log.Visible = !log.Checked;
+            tbDQ02Log.Visible = !checkBox1.Checked;
         }
 
         private void btnDQ02SaveLog_Click(object sender, EventArgs e)
