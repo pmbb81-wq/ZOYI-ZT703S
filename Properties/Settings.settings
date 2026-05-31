@@ -158,5 +158,14 @@
     <Setting Name="dq02_passfail_font" Type="System.Drawing.Font" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="saved_control_positions" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
+    </Setting>
+    <Setting Name="lbl_status_font" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="lbl_target_esr_font" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

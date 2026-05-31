@@ -101,6 +101,41 @@ namespace ZOYI
 
             // 12. Umożliw przeciąganie wszystkich etykiet DQ02
             EnableDQ02LabelDragging();
+            RestoreControlPositions();
+
+            tbDQ02UserTolerance.TextChanged += (s, e) =>
+            {
+                string txt = tbDQ02UserTolerance.Text?.Replace("%", "").Trim();
+                lblDQ02Tolerance.Text = string.IsNullOrWhiteSpace(txt)
+                    ? "Tolerance: —"
+                    : $"Tolerance: {txt}%";
+            };
+
+            var ctxTan = new ContextMenuStrip();
+            ctxTan.Items.Add("Wpisz tanδ", null, (_, _) =>
+            {
+                var frm = new Form { Text = "tanδ", Size = new Size(300, 130), FormBorderStyle = FormBorderStyle.FixedDialog, StartPosition = FormStartPosition.CenterParent, MinimizeBox = false, MaximizeBox = false };
+                var tb = new TextBox { Left = 20, Top = 20, Width = 240 };
+                var btn = new Button { Text = "OK", Left = 100, Top = 60, Width = 80, DialogResult = DialogResult.OK };
+                frm.Controls.Add(tb);
+                frm.Controls.Add(btn);
+                frm.AcceptButton = btn;
+                if (frm.ShowDialog(this) == DialogResult.OK)
+                {
+                    string input = tb.Text.Trim().Replace(",", ".");
+                    if (double.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out double val) && val > 0)
+                    {
+                        _customTanDelta = val;
+                        label6.Text = $"tanδ = {val:F4} (RĘCZNIE)";
+                    }
+                }
+            });
+            ctxTan.Items.Add("Auto (z bazy)", null, (_, _) =>
+            {
+                _customTanDelta = null;
+                label6.Text = "tanδ: —";
+            });
+            label6.ContextMenuStrip = ctxTan;
         }
 
         private void SetWindowLocation()
@@ -170,6 +205,7 @@ namespace ZOYI
             comx.disconnect();
             standardDisplayPanel.Close();
 
+            SaveControlPositions();
             Properties.Settings.Default.main_form_pos_x = this.Location.X;
             Properties.Settings.Default.main_form_pos_y = this.Location.Y;
             Properties.Settings.Default.Save();
@@ -315,9 +351,17 @@ namespace ZOYI
         {
             foreach (Control c in tabDQ02.Controls)
             {
-                if (c is Label lbl && lbl.Name != null && lbl.Name.StartsWith("lblDQ02"))
+                if (c is Label lbl && lbl.Name != null && (lbl.Name.StartsWith("lblDQ02") || lbl.Name == "lblStatus" || lbl.Name == "lblTargetESR" || lbl.Name == "label6"))
                     MakeDraggable(lbl);
             }
+
+            MakeDraggable(button6, () => checkBox2.Checked);
+            MakeDraggable(button7, () => checkBox2.Checked);
+            MakeDraggable(label6, () => checkBox2.Checked);
+            MakeDraggable(tbDQ02UserNominal, () => checkBox2.Checked);
+            MakeDraggable(tbDQ02UserTolerance, () => checkBox2.Checked);
+            MakeDraggable(textBoxvoltage, () => checkBox2.Checked);
+            MakeDraggable(textBoxtemperature, () => checkBox2.Checked);
 
             SetupDQ02ValueContextMenu();
         }
@@ -349,6 +393,16 @@ namespace ZOYI
                 () => Properties.Settings.Default.dq02_passfail_font,
                 v => Properties.Settings.Default.dq02_passfail_font = v,
                 new Font("Segoe UI", 9F, FontStyle.Bold));
+
+            lblStatus.ContextMenuStrip = MakeFontOnlyMenu(lblStatus,
+                () => Properties.Settings.Default.lbl_status_font,
+                v => Properties.Settings.Default.lbl_status_font = v,
+                new Font("Segoe UI", 9F));
+
+            lblTargetESR.ContextMenuStrip = MakeFontOnlyMenu(lblTargetESR,
+                () => Properties.Settings.Default.lbl_target_esr_font,
+                v => Properties.Settings.Default.lbl_target_esr_font = v,
+                new Font("Segoe UI", 9F));
         }
 
         private ContextMenuStrip MakeFontColorMenu(Label lbl,
@@ -427,7 +481,7 @@ namespace ZOYI
             return ctx;
         }
 
-        private void MakeDraggable(Control ctrl)
+        private void MakeDraggable(Control ctrl, Func<bool> blockCheck = null)
         {
             bool dragging = false;
             Point startPoint = Point.Empty;
@@ -435,7 +489,7 @@ namespace ZOYI
 
             ctrl.MouseDown += (s, e) =>
             {
-                if (e.Button == MouseButtons.Left)
+                if (e.Button == MouseButtons.Left && (blockCheck == null || !blockCheck()))
                 {
                     dragging = true;
                     startPoint = Control.MousePosition;
@@ -458,8 +512,99 @@ namespace ZOYI
             ctrl.MouseUp += (s, e) =>
             {
                 if (e.Button == MouseButtons.Left)
+                {
                     dragging = false;
+                    SaveControlPositions();
+                }
             };
+        }
+
+        private void SaveControlPositions()
+        {
+            var draggableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "__checkBox1"
+            };
+            foreach (Control c in tabDQ02.Controls)
+            {
+                if (!string.IsNullOrEmpty(c.Name))
+                {
+                    if (c is Label lbl && (lbl.Name.StartsWith("lblDQ02") || lbl.Name == "lblStatus" || lbl.Name == "lblTargetESR" || lbl.Name == "label6"))
+                        draggableNames.Add(lbl.Name);
+                    else if (c is Button btn && (btn == button6 || btn == button7))
+                        draggableNames.Add(btn.Name);
+                    else if (c is TextBox tb && (tb.Name == "tbDQ02UserNominal" || tb.Name == "tbDQ02UserTolerance" || tb.Name == "textBoxvoltage" || tb.Name == "textBoxtemperature"))
+                        draggableNames.Add(tb.Name);
+                }
+            }
+
+            string data = "__checkBox1=" + (checkBox1.Checked ? "1" : "0") + "|__checkBox2=" + (checkBox2.Checked ? "1" : "0");
+            foreach (Control c in tabDQ02.Controls)
+            {
+                if (!string.IsNullOrEmpty(c.Name) && draggableNames.Contains(c.Name) && c != checkBox1)
+                {
+                    data += "|" + c.Name + "=" + c.Left + "," + c.Top;
+                }
+            }
+            Properties.Settings.Default.saved_control_positions = data;
+            Properties.Settings.Default.Save();
+        }
+
+        private void RestoreControlPositions()
+        {
+            string data = Properties.Settings.Default.saved_control_positions;
+            if (string.IsNullOrWhiteSpace(data)) return;
+
+            var draggableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "__checkBox1"
+            };
+            foreach (Control c in tabDQ02.Controls)
+            {
+                if (!string.IsNullOrEmpty(c.Name))
+                {
+                    if (c is Label lbl && (lbl.Name.StartsWith("lblDQ02") || lbl.Name == "lblStatus" || lbl.Name == "lblTargetESR" || lbl.Name == "label6"))
+                        draggableNames.Add(lbl.Name);
+                    else if (c is Button btn && (btn == button6 || btn == button7))
+                        draggableNames.Add(btn.Name);
+                    else if (c is TextBox tb && (tb.Name == "tbDQ02UserNominal" || tb.Name == "tbDQ02UserTolerance" || tb.Name == "textBoxvoltage" || tb.Name == "textBoxtemperature"))
+                        draggableNames.Add(tb.Name);
+                }
+            }
+
+            foreach (string entry in data.Split('|'))
+            {
+                string[] parts = entry.Split('=');
+                if (parts.Length != 2) continue;
+                string name = parts[0].Trim();
+
+                if (name == "__checkBox1")
+                {
+                    checkBox1.Checked = (parts[1].Trim() == "1");
+                    continue;
+                }
+
+                if (name == "__checkBox2")
+                {
+                    checkBox2.Checked = (parts[1].Trim() == "1");
+                    continue;
+                }
+
+                if (!draggableNames.Contains(name)) continue;
+
+                string[] coords = parts[1].Split(',');
+                if (coords.Length != 2) continue;
+
+                Control ctrl = tabDQ02.Controls[name];
+                if (ctrl == null) continue;
+
+                if (int.TryParse(coords[0].Trim(), out int left) &&
+                    int.TryParse(coords[1].Trim(), out int top))
+                {
+                    ctrl.Left = left;
+                    ctrl.Top = top;
+                }
+            }
         }
 
         private void btnMinimize_Click(object sender, EventArgs e)
@@ -1976,6 +2121,11 @@ namespace ZOYI
                 MessageBox.Show("Port COM jest zamknięty!");
             }
 
+
+        }
+
+        private void log_CheckedChanged(object sender, EventArgs e)
+        {
 
         }
     }

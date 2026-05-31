@@ -636,5 +636,38 @@ namespace ZOYI.Properties {
                 this["dq02_passfail_font"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public string saved_control_positions {
+            get {
+                return ((string)(this["saved_control_positions"]));
+            }
+            set {
+                this["saved_control_positions"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font lbl_status_font {
+            get {
+                return ((global::System.Drawing.Font)(this["lbl_status_font"]));
+            }
+            set {
+                this["lbl_status_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font lbl_target_esr_font {
+            get {
+                return ((global::System.Drawing.Font)(this["lbl_target_esr_font"]));
+            }
+            set {
+                this["lbl_target_esr_font"] = value;
+            }
+        }
     }
 }

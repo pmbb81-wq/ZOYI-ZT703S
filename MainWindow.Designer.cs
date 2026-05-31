@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             button1 = new Button();
             label1 = new Label();
@@ -100,6 +101,13 @@
             llWebAddress = new LinkLabel();
             btnWebServerStart = new Button();
             tabDQ02 = new TabPage();
+            label6 = new Label();
+            checkBox2 = new CheckBox();
+            textBoxtemperature = new TextBox();
+            textBoxvoltage = new TextBox();
+            lblStatus = new Label();
+            lblTargetESR = new Label();
+            checkBox1 = new CheckBox();
             button7 = new Button();
             button6 = new Button();
             button5 = new Button();
@@ -109,7 +117,6 @@
             btnDQ02SaveLog = new Button();
             btnDQ02Refresh = new Button();
             button3 = new Button();
-            button4 = new Button();
             lbDQ02Ports = new ListBox();
             tbDQ02Baud = new TextBox();
             lblDQ02Functions = new Label();
@@ -131,7 +138,7 @@
             tbDQ02UserTolerance = new TextBox();
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
-            checkBox1 = new CheckBox();
+            notifyIcon1 = new NotifyIcon(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1166,6 +1173,12 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.Controls.Add(label6);
+            tabDQ02.Controls.Add(checkBox2);
+            tabDQ02.Controls.Add(textBoxtemperature);
+            tabDQ02.Controls.Add(textBoxvoltage);
+            tabDQ02.Controls.Add(lblStatus);
+            tabDQ02.Controls.Add(lblTargetESR);
             tabDQ02.Controls.Add(checkBox1);
             tabDQ02.Controls.Add(button7);
             tabDQ02.Controls.Add(button6);
@@ -1176,7 +1189,6 @@
             tabDQ02.Controls.Add(btnDQ02SaveLog);
             tabDQ02.Controls.Add(btnDQ02Refresh);
             tabDQ02.Controls.Add(button3);
-            tabDQ02.Controls.Add(button4);
             tabDQ02.Controls.Add(lbDQ02Ports);
             tabDQ02.Controls.Add(tbDQ02Baud);
             tabDQ02.Controls.Add(lblDQ02Functions);
@@ -1205,15 +1217,83 @@
             tabDQ02.TabIndex = 12;
             tabDQ02.Text = "ZOYI DQ02";
             // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(379, 169);
+            label6.Name = "label6";
+            label6.Size = new Size(50, 20);
+            label6.TabIndex = 41;
+            label6.Text = "label6";
+            // 
+            // checkBox2
+            // 
+            checkBox2.AutoSize = true;
+            checkBox2.Location = new Point(379, 342);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(58, 24);
+            checkBox2.TabIndex = 40;
+            checkBox2.Text = "blok";
+            checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // textBoxtemperature
+            // 
+            textBoxtemperature.BackColor = SystemColors.MenuText;
+            textBoxtemperature.ForeColor = SystemColors.Info;
+            textBoxtemperature.Location = new Point(269, 340);
+            textBoxtemperature.Name = "textBoxtemperature";
+            textBoxtemperature.Size = new Size(80, 27);
+            textBoxtemperature.TabIndex = 39;
+            textBoxtemperature.Text = "TEMP";
+            // 
+            // textBoxvoltage
+            // 
+            textBoxvoltage.BackColor = SystemColors.MenuText;
+            textBoxvoltage.ForeColor = SystemColors.InactiveBorder;
+            textBoxvoltage.Location = new Point(182, 340);
+            textBoxvoltage.Name = "textBoxvoltage";
+            textBoxvoltage.Size = new Size(81, 27);
+            textBoxvoltage.TabIndex = 38;
+            textBoxvoltage.Text = "Vol";
+            // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.Location = new Point(11, 206);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(68, 20);
+            lblStatus.TabIndex = 37;
+            lblStatus.Text = "STATUS: ";
+            // 
+            // lblTargetESR
+            // 
+            lblTargetESR.AutoSize = true;
+            lblTargetESR.Location = new Point(11, 177);
+            lblTargetESR.Name = "lblTargetESR";
+            lblTargetESR.Size = new Size(42, 20);
+            lblTargetESR.TabIndex = 36;
+            lblTargetESR.Text = "ESR: ";
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(443, 344);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(92, 24);
+            checkBox1.TabIndex = 35;
+            checkBox1.Text = "Ukryj log";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
+            // 
             // button7
             // 
             button7.BackColor = Color.FromArgb(0, 64, 64);
             button7.Cursor = Cursors.Hand;
             button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button7.ForeColor = Color.Cyan;
-            button7.Location = new Point(185, 341);
+            button7.Location = new Point(564, 206);
             button7.Name = "button7";
-            button7.Size = new Size(155, 28);
+            button7.Size = new Size(171, 28);
             button7.TabIndex = 33;
             button7.Text = "X D Q 0 R";
             button7.UseVisualStyleBackColor = false;
@@ -1225,9 +1305,9 @@
             button6.Cursor = Cursors.Hand;
             button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button6.ForeColor = Color.Cyan;
-            button6.Location = new Point(18, 341);
+            button6.Location = new Point(564, 169);
             button6.Name = "button6";
-            button6.Size = new Size(155, 28);
+            button6.Size = new Size(171, 28);
             button6.TabIndex = 32;
             button6.Text = "Tryb: AUTO";
             button6.UseVisualStyleBackColor = false;
@@ -1253,12 +1333,12 @@
             tbDQ02Log.BackColor = Color.FromArgb(13, 13, 13);
             tbDQ02Log.Font = new Font("Consolas", 8F);
             tbDQ02Log.ForeColor = Color.FromArgb(0, 200, 0);
-            tbDQ02Log.Location = new Point(364, 210);
+            tbDQ02Log.Location = new Point(564, 275);
             tbDQ02Log.Multiline = true;
             tbDQ02Log.Name = "tbDQ02Log";
             tbDQ02Log.ReadOnly = true;
             tbDQ02Log.ScrollBars = ScrollBars.Vertical;
-            tbDQ02Log.Size = new Size(371, 128);
+            tbDQ02Log.Size = new Size(171, 63);
             tbDQ02Log.TabIndex = 6;
             tbDQ02Log.WordWrap = false;
             // 
@@ -1268,9 +1348,9 @@
             btnDQ02Connect.Cursor = Cursors.Hand;
             btnDQ02Connect.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnDQ02Connect.ForeColor = Color.LightGreen;
-            btnDQ02Connect.Location = new Point(580, 6);
+            btnDQ02Connect.Location = new Point(564, 6);
             btnDQ02Connect.Name = "btnDQ02Connect";
-            btnDQ02Connect.Size = new Size(155, 28);
+            btnDQ02Connect.Size = new Size(171, 28);
             btnDQ02Connect.TabIndex = 7;
             btnDQ02Connect.Text = "POŁĄCZ";
             btnDQ02Connect.UseVisualStyleBackColor = false;
@@ -1296,7 +1376,7 @@
             btnDQ02SaveLog.Cursor = Cursors.Hand;
             btnDQ02SaveLog.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             btnDQ02SaveLog.ForeColor = Color.CornflowerBlue;
-            btnDQ02SaveLog.Location = new Point(650, 344);
+            btnDQ02SaveLog.Location = new Point(665, 344);
             btnDQ02SaveLog.Name = "btnDQ02SaveLog";
             btnDQ02SaveLog.Size = new Size(70, 28);
             btnDQ02SaveLog.TabIndex = 9;
@@ -1310,9 +1390,9 @@
             btnDQ02Refresh.Cursor = Cursors.Hand;
             btnDQ02Refresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnDQ02Refresh.ForeColor = Color.LightGray;
-            btnDQ02Refresh.Location = new Point(580, 73);
+            btnDQ02Refresh.Location = new Point(564, 73);
             btnDQ02Refresh.Name = "btnDQ02Refresh";
-            btnDQ02Refresh.Size = new Size(155, 28);
+            btnDQ02Refresh.Size = new Size(171, 28);
             btnDQ02Refresh.TabIndex = 10;
             btnDQ02Refresh.Text = "REFRESH";
             btnDQ02Refresh.UseVisualStyleBackColor = false;
@@ -1332,29 +1412,15 @@
             button3.UseVisualStyleBackColor = false;
             button3.Click += button3_Click;
             // 
-            // button4
-            // 
-            button4.BackColor = Color.FromArgb(64, 0, 64);
-            button4.Cursor = Cursors.Hand;
-            button4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            button4.ForeColor = Color.Magenta;
-            button4.Location = new Point(516, 214);
-            button4.Name = "button4";
-            button4.Size = new Size(155, 28);
-            button4.TabIndex = 29;
-            button4.Text = "Change Level";
-            button4.UseVisualStyleBackColor = false;
-            button4.Click += button4_Click;
-            // 
             // lbDQ02Ports
             // 
             lbDQ02Ports.BackColor = Color.FromArgb(24, 24, 24);
             lbDQ02Ports.Font = new Font("Consolas", 10F);
             lbDQ02Ports.ForeColor = Color.Gold;
             lbDQ02Ports.ItemHeight = 15;
-            lbDQ02Ports.Location = new Point(580, 107);
+            lbDQ02Ports.Location = new Point(564, 107);
             lbDQ02Ports.Name = "lbDQ02Ports";
-            lbDQ02Ports.Size = new Size(155, 49);
+            lbDQ02Ports.Size = new Size(171, 49);
             lbDQ02Ports.TabIndex = 11;
             // 
             // tbDQ02Baud
@@ -1362,9 +1428,9 @@
             tbDQ02Baud.BackColor = Color.FromArgb(24, 24, 24);
             tbDQ02Baud.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             tbDQ02Baud.ForeColor = Color.Gold;
-            tbDQ02Baud.Location = new Point(580, 40);
+            tbDQ02Baud.Location = new Point(564, 40);
             tbDQ02Baud.Name = "tbDQ02Baud";
-            tbDQ02Baud.Size = new Size(155, 27);
+            tbDQ02Baud.Size = new Size(171, 27);
             tbDQ02Baud.TabIndex = 12;
             tbDQ02Baud.Text = "115200";
             tbDQ02Baud.TextAlign = HorizontalAlignment.Center;
@@ -1440,7 +1506,7 @@
             lblDQ02LossParam.AutoSize = true;
             lblDQ02LossParam.Font = new Font("Segoe UI", 9F);
             lblDQ02LossParam.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02LossParam.Location = new Point(6, 99);
+            lblDQ02LossParam.Location = new Point(11, 99);
             lblDQ02LossParam.Name = "lblDQ02LossParam";
             lblDQ02LossParam.Size = new Size(113, 15);
             lblDQ02LossParam.TabIndex = 19;
@@ -1473,7 +1539,7 @@
             lblDQ02Comparison.AutoSize = true;
             lblDQ02Comparison.Font = new Font("Segoe UI", 9F);
             lblDQ02Comparison.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Comparison.Location = new Point(10, 141);
+            lblDQ02Comparison.Location = new Point(10, 125);
             lblDQ02Comparison.Name = "lblDQ02Comparison";
             lblDQ02Comparison.Size = new Size(90, 15);
             lblDQ02Comparison.TabIndex = 22;
@@ -1506,7 +1572,7 @@
             lblDQ02Prefix.AutoSize = true;
             lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Prefix.ForeColor = Color.Gold;
-            lblDQ02Prefix.Location = new Point(40, 227);
+            lblDQ02Prefix.Location = new Point(11, 234);
             lblDQ02Prefix.Name = "lblDQ02Prefix";
             lblDQ02Prefix.Size = new Size(60, 51);
             lblDQ02Prefix.TabIndex = 25;
@@ -1517,7 +1583,7 @@
             lblDQ02Value.AutoSize = true;
             lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Value.ForeColor = Color.Gold;
-            lblDQ02Value.Location = new Point(128, 227);
+            lblDQ02Value.Location = new Point(77, 234);
             lblDQ02Value.Name = "lblDQ02Value";
             lblDQ02Value.Size = new Size(60, 51);
             lblDQ02Value.TabIndex = 26;
@@ -1528,7 +1594,7 @@
             lblDQ02Secondary.AutoSize = true;
             lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblDQ02Secondary.ForeColor = Color.Cyan;
-            lblDQ02Secondary.Location = new Point(40, 281);
+            lblDQ02Secondary.Location = new Point(10, 285);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
             lblDQ02Secondary.Size = new Size(77, 32);
             lblDQ02Secondary.TabIndex = 27;
@@ -1539,10 +1605,11 @@
             tbDQ02UserNominal.BackColor = Color.FromArgb(24, 24, 24);
             tbDQ02UserNominal.Font = new Font("Segoe UI", 9F);
             tbDQ02UserNominal.ForeColor = Color.Gold;
-            tbDQ02UserNominal.Location = new Point(10, 167);
+            tbDQ02UserNominal.Location = new Point(9, 344);
             tbDQ02UserNominal.Name = "tbDQ02UserNominal";
             tbDQ02UserNominal.Size = new Size(80, 23);
             tbDQ02UserNominal.TabIndex = 28;
+            tbDQ02UserNominal.Text = "uF";
             tbDQ02UserNominal.TextAlign = HorizontalAlignment.Center;
             // 
             // tbDQ02UserTolerance
@@ -1550,10 +1617,11 @@
             tbDQ02UserTolerance.BackColor = Color.FromArgb(24, 24, 24);
             tbDQ02UserTolerance.Font = new Font("Segoe UI", 9F);
             tbDQ02UserTolerance.ForeColor = Color.Gold;
-            tbDQ02UserTolerance.Location = new Point(115, 167);
+            tbDQ02UserTolerance.Location = new Point(95, 344);
             tbDQ02UserTolerance.Name = "tbDQ02UserTolerance";
-            tbDQ02UserTolerance.Size = new Size(50, 23);
+            tbDQ02UserTolerance.Size = new Size(81, 23);
             tbDQ02UserTolerance.TabIndex = 29;
+            tbDQ02UserTolerance.Text = "%";
             tbDQ02UserTolerance.TextAlign = HorizontalAlignment.Center;
             // 
             // lblDQ02Deviation
@@ -1561,7 +1629,7 @@
             lblDQ02Deviation.AutoSize = true;
             lblDQ02Deviation.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Deviation.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Deviation.Location = new Point(10, 193);
+            lblDQ02Deviation.Location = new Point(11, 151);
             lblDQ02Deviation.Name = "lblDQ02Deviation";
             lblDQ02Deviation.Size = new Size(79, 15);
             lblDQ02Deviation.TabIndex = 30;
@@ -1572,22 +1640,16 @@
             lblDQ02PassFail.AutoSize = true;
             lblDQ02PassFail.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02PassFail.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02PassFail.Location = new Point(185, 175);
+            lblDQ02PassFail.Location = new Point(383, 136);
             lblDQ02PassFail.Name = "lblDQ02PassFail";
             lblDQ02PassFail.Size = new Size(19, 15);
             lblDQ02PassFail.TabIndex = 31;
             lblDQ02PassFail.Text = "—";
             // 
-            // checkBox1
+            // notifyIcon1
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(417, 346);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(92, 24);
-            checkBox1.TabIndex = 35;
-            checkBox1.Text = "Ukryj log";
-            checkBox1.UseVisualStyleBackColor = true;
-            checkBox1.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
+            notifyIcon1.Text = "notifyIcon1";
+            notifyIcon1.Visible = true;
             // 
             // MainWindow
             // 
@@ -1721,7 +1783,6 @@
         private Label lblDQ02Model;
         private Button btnDQ02Refresh;
         private Button button3;
-        private Button button4;
         private Label lblDQ02Freq;
         private Label lblDQ02Level;
         private Label lblDQ02Nominal;
@@ -1748,5 +1809,12 @@
         private Button button6;
         private Button button7;
         private CheckBox checkBox1;
+        private Label lblTargetESR;
+        private Label lblStatus;
+        private TextBox textBoxtemperature;
+        private TextBox textBoxvoltage;
+        private CheckBox checkBox2;
+        private NotifyIcon notifyIcon1;
+        private Label label6;
     }
 }

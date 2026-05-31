@@ -16,6 +16,18 @@ namespace ZOYI
         PARSE_MODE COMparseMode = PARSE_MODE.EXT;
         CancellationTokenSource ctsReadCOM;
 
+        private static List<EsrCsvRow> _bazaEsr = null;
+        private static readonly object _bazaLock = new();
+        private double? _customTanDelta = null;
+
+        private class EsrCsvRow
+        {
+            public double PojemnoscUf { get; set; }
+            public double NapiecieV { get; set; }
+            public double TemperaturaC { get; set; }
+            public double MaxTanDelta { get; set; }
+        }
+
         /*
          * 
          */
@@ -496,9 +508,12 @@ namespace ZOYI
                                     lblDQ02Comparison.Text = $"Comparison: —";
                                     string biasVoltage = (parsed.MinLimit / 1000.0).ToString("F1") + " V";
                                     lblDQ02Bias.Text = $"Bias: {biasVoltage}";
-                                    lblDQ02Tolerance.Text = parsed.Tolerance > 0
-                                        ? $"Tolerance: {parsed.Tolerance:F1}%"
-                                        : "Tolerance: —";
+                                    string userTol = tbDQ02UserTolerance.Text?.Replace("%", "").Trim();
+                                    lblDQ02Tolerance.Text = !string.IsNullOrWhiteSpace(userTol)
+                                        ? $"Tolerance: {userTol}%"
+                                        : parsed.Tolerance > 0
+                                            ? $"Tolerance: {parsed.Tolerance:F1}%"
+                                            : "Tolerance: —";
 
                                     lblDQ02Prefix.Text = parsed.DisplayPrefix + ":";
                                     lblDQ02Value.Text = parsed.DisplayValue;
@@ -542,83 +557,93 @@ namespace ZOYI
                                     }
 
                                     // ESR calculation
-                                    double freqHz = 120;
-                                    string freqText = lblDQ02Freq.Text.Replace("Frequency: ", "").Trim();
-                                    if (freqText.EndsWith("kHz"))
+                                    try
                                     {
-                                        if (double.TryParse(freqText.Replace("kHz", "").Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double f) ||
-                                            double.TryParse(freqText.Replace("kHz", "").Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out f))
-                                            freqHz = f * 1000;
-                                    }
-                                    else if (freqText.EndsWith("Hz"))
-                                    {
-                                        if (double.TryParse(freqText.Replace("Hz", "").Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out double f) ||
-                                            double.TryParse(freqText.Replace("Hz", "").Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out f))
-                                            freqHz = f;
-                                    }
-
-                                    double capUf = 0;
-                                    string capInput = tbDQ02UserNominal.Text.Trim();
-                                    if (!string.IsNullOrWhiteSpace(capInput))
-                                    {
-                                        bool hasSuffix = capInput.Any(c => !char.IsDigit(c) && c != '.' && c != ',' && c != '-' && c != 'e' && c != 'E');
-                                        if (hasSuffix)
+                                        double nominalCapacityUf = 0;
+                                        string capInput = tbDQ02UserNominal.Text.Trim();
+                                        if (!string.IsNullOrWhiteSpace(capInput))
                                         {
-                                            if (DQ02Data.TryParseUserValue(capInput, parsed.Function, out double capF))
-                                                capUf = capF * 1e6;
+                                            bool hasSuffix = capInput.Any(c => !char.IsDigit(c) && c != '.' && c != ',' && c != '-' && c != 'e' && c != 'E');
+                                            if (hasSuffix)
+                                            {
+                                                if (DQ02Data.TryParseUserValue(capInput, parsed.Function, out double capF))
+                                                    nominalCapacityUf = capF * 1e6;
+                                            }
+                                            else
+                                            {
+                                                if (double.TryParse(capInput, NumberStyles.Any, CultureInfo.InvariantCulture, out double val) ||
+                                                    double.TryParse(capInput, NumberStyles.Any, CultureInfo.CurrentCulture, out val))
+                                                    nominalCapacityUf = val;
+                                            }
+                                        }
+
+                                        double frequency = ParsujCzestotliwosc(lblDQ02Freq.Text);
+                                        double capacityF = nominalCapacityUf / 1000000.0;
+
+                                        int voltage = 0;
+                                        if (!int.TryParse(textBoxvoltage.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out voltage) &&
+                                            !int.TryParse(textBoxvoltage.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out voltage))
+                                            voltage = 0;
+
+                                        int celciusTemp = 85;
+                                        string tempText = textBoxtemperature.Text.Trim();
+                                        if (!string.IsNullOrWhiteSpace(tempText))
+                                        {
+                                            if (!int.TryParse(tempText, NumberStyles.Any, CultureInfo.InvariantCulture, out celciusTemp) &&
+                                                !int.TryParse(tempText, NumberStyles.Any, CultureInfo.CurrentCulture, out celciusTemp))
+                                                celciusTemp = 85;
+                                        }
+                                        double measuredEsr = parsed.SecondaryValue;
+                                        if (double.IsNaN(measuredEsr) || measuredEsr <= 0)
+                                        {
+                                            string esrText = lblDQ02Secondary.Text.Replace(" Ω", "").Replace("ESR:", "").Trim();
+                                            if (!double.TryParse(esrText, NumberStyles.Any, CultureInfo.InvariantCulture, out measuredEsr) &&
+                                                !double.TryParse(esrText, NumberStyles.Any, CultureInfo.CurrentCulture, out measuredEsr))
+                                                measuredEsr = -1;
+                                        }
+
+                                        if (nominalCapacityUf > 0 && measuredEsr > 0 && capacityF > 0)
+                                        {
+                                            double tanDelta = _customTanDelta ?? SzukajTanDeltaZBazy(nominalCapacityUf, voltage, celciusTemp);
+                                            label6.Text = _customTanDelta.HasValue ? $"tanδ = {tanDelta:F4} (RĘCZNIE)" : $"tanδ = {tanDelta:F4}";
+                                            double targetEsr = Math.Round(tanDelta / (2 * Math.PI * frequency * capacityF), 3);
+                                            double targetEsrMiliOmy = Math.Round(targetEsr * 1000, 0);
+
+                                            lblTargetESR.Text = $"{targetEsr} Ω ({targetEsrMiliOmy} mΩ) | mierzony: {measuredEsr * 1000:F0} mΩ";
+
+                                            double limitWarning = targetEsr * 1.5;
+                                            double limitReplace = targetEsr * 2.0;
+
+                                            if (measuredEsr <= limitWarning)
+                                            {
+                                                lblStatus.Text = "Kondensator jest SPRAWNY";
+                                                lblStatus.ForeColor = Color.Green;
+                                            }
+                                            else if (measuredEsr <= limitReplace)
+                                            {
+                                                lblStatus.Text = "Kondensator już LEKKO WYSYCHA";
+                                                lblStatus.ForeColor = Color.Orange;
+                                            }
+                                            else
+                                            {
+                                                lblStatus.Text = "Kondensator jest USZKODZONY";
+                                                lblStatus.ForeColor = Color.Red;
+                                            }
                                         }
                                         else
                                         {
-                                            if (double.TryParse(capInput, NumberStyles.Any, CultureInfo.InvariantCulture, out double val) ||
-                                                double.TryParse(capInput, NumberStyles.Any, CultureInfo.CurrentCulture, out val))
-                                                capUf = val;
+                                            label6.Text = "tanδ: —";
+                                            lblTargetESR.Text = "ESR: —";
+                                            lblStatus.Text = "STATUS: —";
+                                            lblStatus.ForeColor = Color.FromArgb(200, 200, 200);
                                         }
                                     }
-
-                                    if (capUf > 0 && !double.IsNaN(parsed.SecondaryValue) && parsed.SecondaryValue > 0)
+                                    catch
                                     {
-                                        double capacityF = capUf / 1000000.0;
-
-                                        double tanDelta = 0.08;
-                                        double tempC = 85, volt = 0;
-                                        if (!double.TryParse(textBoxtemperature.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out tempC) &&
-                                            !double.TryParse(textBoxtemperature.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out tempC))
-                                            tempC = 85;
-                                        if (!double.TryParse(textBoxvoltage.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out volt) &&
-                                            !double.TryParse(textBoxvoltage.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out volt))
-                                            volt = 0;
-
-                                        if (tempC >= 105)
-                                            tanDelta = volt < 50 ? 0.10 : 0.08;
-                                        else
-                                            tanDelta = volt < 50 ? 0.12 : 0.10;
-                                        double nominalEsr = Math.Round(tanDelta / (2 * Math.PI * freqHz * capacityF), 3);
-                                        double limitWarning = nominalEsr * 1.5;
-                                        double limitReplace = nominalEsr * 2.0;
-
-                                        lblTargetESR.Text = $"ESR: {nominalEsr} Ω ({nominalEsr * 1000:F0} mΩ)";
-
-                                        if (parsed.SecondaryValue <= limitWarning)
-                                        {
-                                            lblStatus.Text = "SPRAWNY";
-                                            lblStatus.ForeColor = Color.Green;
-                                        }
-                                        else if (parsed.SecondaryValue <= limitReplace)
-                                        {
-                                            lblStatus.Text = "ZUŻYTY";
-                                            lblStatus.ForeColor = Color.Orange;
-                                        }
-                                        else
-                                        {
-                                            lblStatus.Text = "WYMIEŃ!";
-                                            lblStatus.ForeColor = Color.Red;
-                                        }
-                                    }
-                                    else
-                                    {
+                                        label6.Text = "tanδ: —";
                                         lblTargetESR.Text = "ESR: —";
-                                        lblStatus.Text = "STATUS: —";
-                                        lblStatus.ForeColor = Color.FromArgb(200, 200, 200);
+                                        lblStatus.Text = "BŁĄD DANYCH!";
+                                        lblStatus.ForeColor = Color.DarkRed;
                                     }
 
                                     standardDisplayPanel.SetDQ02Value(parsed.DisplayPrefix, parsed.DisplayValue, parsed.DisplaySecondary);
@@ -725,6 +750,114 @@ namespace ZOYI
             {
                 MessageBox.Show("Port COM jest zamknięty!");
             }
+        }
+
+        private double ParsujCzestotliwosc(string freqText)
+        {
+            string clean = freqText.ToLowerInvariant().Replace("frequency:", "").Replace(" ", "").Trim();
+            if (clean.Contains("khz"))
+            {
+                string digits = clean.Replace("khz", "");
+                if (double.TryParse(digits, NumberStyles.Any, CultureInfo.InvariantCulture, out double f) ||
+                    double.TryParse(digits, NumberStyles.Any, CultureInfo.CurrentCulture, out f))
+                    return f * 1000;
+            }
+            if (clean.Contains("hz"))
+            {
+                string digits = clean.Replace("hz", "");
+                if (double.TryParse(digits, NumberStyles.Any, CultureInfo.InvariantCulture, out double f) ||
+                    double.TryParse(digits, NumberStyles.Any, CultureInfo.CurrentCulture, out f))
+                    return f;
+            }
+            if (double.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, out double val) ||
+                double.TryParse(clean, NumberStyles.Any, CultureInfo.CurrentCulture, out val))
+                return val;
+            return 120;
+        }
+
+        private void ZaladujBazeEsr()
+        {
+            if (_bazaEsr != null) return;
+            lock (_bazaLock)
+            {
+                if (_bazaEsr != null) return;
+                string path = Path.Combine(Application.StartupPath, "baza_esr.csv");
+                if (!File.Exists(path)) { _bazaEsr = new List<EsrCsvRow>(0); return; }
+
+                _bazaEsr = File.ReadAllLines(path)
+                    .Skip(1)
+                    .Select(line => line.Split(','))
+                    .Where(parts => parts.Length == 4)
+                    .Select(parts => new EsrCsvRow
+                    {
+                        PojemnoscUf = double.TryParse(parts[0].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var c) ? c : 0,
+                        NapiecieV = double.TryParse(parts[1].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var v) ? v : 0,
+                        TemperaturaC = double.TryParse(parts[2].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var t) ? t : 0,
+                        MaxTanDelta = double.TryParse(parts[3].Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out var d) ? d : 0,
+                    })
+                    .ToList();
+            }
+        }
+
+        private double SzukajTanDeltaZBazy(double capacityUf, int voltage, int temperature)
+        {
+            ZaladujBazeEsr();
+            if (_bazaEsr == null || _bazaEsr.Count == 0)
+                return ObliczTanDeltaSzczegolowo(voltage, temperature >= 95);
+
+            double tempTarget = temperature >= 95 ? 105 : 85;
+
+            var candidates = _bazaEsr
+                .Where(r => Math.Abs(r.TemperaturaC - tempTarget) < 0.5)
+                .OrderBy(r => Math.Abs(r.NapiecieV - voltage))
+                .ThenBy(r => Math.Abs(r.PojemnoscUf - capacityUf))
+                .ToList();
+
+            if (candidates.Count == 0)
+                return ObliczTanDeltaSzczegolowo(voltage, temperature >= 95);
+
+            var best = candidates.First();
+            double capDiff = Math.Abs(best.PojemnoscUf - capacityUf);
+            double voltDiff = Math.Abs(best.NapiecieV - voltage);
+
+            // If closest match is far off, fall back to formula
+            if (voltDiff > voltage * 0.5 + 10 && capDiff > capacityUf * 0.5 + 10)
+                return ObliczTanDeltaSzczegolowo(voltage, temperature >= 95);
+
+            return best.MaxTanDelta;
+        }
+
+        private double ObliczTanDeltaSzczegolowo(int vol, bool is105)
+        {
+            if (vol <= 2)   return is105 ? 0.24 : 0.26;
+            if (vol <= 4)   return is105 ? 0.22 : 0.24;
+            if (vol <= 6)   return is105 ? 0.20 : 0.22;
+            if (vol <= 7)   return is105 ? 0.18 : 0.20;
+            if (vol <= 10)  return is105 ? 0.16 : 0.19;
+            if (vol <= 16)  return is105 ? 0.14 : 0.16;
+            if (vol <= 20)  return is105 ? 0.13 : 0.15;
+            if (vol <= 25)  return is105 ? 0.12 : 0.14;
+            if (vol <= 35)  return is105 ? 0.10 : 0.12;
+            if (vol <= 50)  return is105 ? 0.08 : 0.10;
+            if (vol <= 63)  return is105 ? 0.08 : 0.09;
+            if (vol <= 80)  return is105 ? 0.08 : 0.08;
+            if (vol <= 100) return is105 ? 0.07 : 0.08;
+            if (vol <= 125) return is105 ? 0.08 : 0.10;
+            if (vol <= 160) return is105 ? 0.12 : 0.15;
+            if (vol <= 200) return is105 ? 0.12 : 0.15;
+            if (vol <= 250) return is105 ? 0.12 : 0.15;
+            if (vol <= 315) return is105 ? 0.15 : 0.15;
+            if (vol <= 350) return is105 ? 0.15 : 0.20;
+            if (vol <= 385) return is105 ? 0.15 : 0.20;
+            if (vol <= 400) return is105 ? 0.15 : 0.20;
+            if (vol <= 420) return is105 ? 0.17 : 0.20;
+            if (vol <= 450) return is105 ? 0.20 : 0.20;
+            if (vol <= 500) return is105 ? 0.20 : 0.25;
+            if (vol <= 550) return is105 ? 0.22 : 0.25;
+            if (vol <= 600) return is105 ? 0.24 : 0.30;
+            if (vol <= 650) return is105 ? 0.24 : 0.30;
+            if (vol <= 710) return is105 ? 0.25 : 0.32;
+            return is105 ? 0.25 : 0.35;
         }
     }
 }
