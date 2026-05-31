@@ -1,3 +1,99 @@
+# 2026.05.31 ADD ZOYI ZT-DQ02 and ZT-MD2
+
+
+
+
+<img width="770" height="473" alt="z1" src="https://github.com/user-attachments/assets/0becdb55-b46c-4c04-bdea-5b27f093e648" />
+
+How it's works?
+```
+How the Application Measures ESR (Summary)
+
+The application calculates the Equivalent Series Resistance (ESR) by modeling the real-world capacitor as an ideal capacitor connected in series with a resistor (SER mode).
+
+    AC Signal Injection: The device applies a low-amplitude Alternating Current (AC) voltage signal across the capacitor at a specific test frequency (such as 120 Hz or 100 kHz). The low voltage ensures that nearby semiconductor components on a circuit board do not turn on during an in-circuit test.
+
+    Impedance Measurement: The system measures the resulting current flowing through the capacitor and the phase shift between the voltage and the current waveforms. This allows the application to calculate the total impedance (Z) of the component.
+
+    Mathematical Separation: Using the phase angle (θ) or the dissipation factor (tanδ), the software splits the total impedance into its two functional components: the capacitive reactance (Xc​, which stores energy) and the purely resistive part (Rs​, which dissipates energy as heat).
+
+    ESR Extraction: The isolated resistive value (Rs​) is directly displayed as the real ESR in milliohms (mΩ) or ohms (Ω). Finally, the application compares this reading against pre-programmed manufacturer thresholds (derived from standard tanδ formulas) to determine if the capacitor is healthy or degraded.
+
+
+```
+
+1. Retrieving Capacity (nominalCapacityUf)
+
+    From tbDQ02UserNominal.Text
+
+    If it contains a suffix (e.g., 100uF, 1nF) → parsed via TryParseUserValue(), the result in Farads is multiplied by 1e6 → µF
+
+    If it is a number only → treated as µF
+
+    If empty → 0 (ESR will not be calculated)
+
+2. Retrieving Frequency (frequency)
+
+    From lblDQ02Freq.Text via ParsujCzestotliwosc():
+
+        "1 kHz" → 1000
+
+        "100 Hz" → 100
+
+    If it is a number only → 120 (default value)
+
+3. Retrieving Voltage (voltage)
+
+    From textBoxvoltage.Text parsed as int
+
+4. Retrieving Temperature (celciusTemp)
+
+    From textBoxtemperature.Text parsed as int
+
+    If empty/invalid → 85°C (default)
+
+5. Retrieving Measured ESR (measuredEsr)
+
+    First, checks parsed.SecondaryValue (field 1 in the DQ02 CSV file)
+
+    If NaN or ≤ 0 → fallback: reads from lblDQ02Secondary.Text stripping out " Ω" and "ESR:"
+
+6. Looking up tanδ from the Database (SzukajTanDeltaZBazy)
+
+    Loads baza_esr.csv (executed once using lazy loading)
+
+    Temperature logic: if ≥95 → treated as 105°C, otherwise 85°C
+
+    From the matching temperature rows: finds the closest voltage match, then the closest capacity match
+
+    If _customTanDelta is set (manually in label6) → it is used instead of the CSV data
+
+    If no close match is found → fallback to ObliczTanDeltaSzczegolowo() (a custom formula based on voltage and temperature)
+
+7. ESR Formula
+targetEsr=2⋅π⋅frequency⋅capacityFtanδ​
+
+    where capacityF = nominalCapacityUf / 1_000_000
+
+    Example for 100µF, 100Hz, tanδ=0.12:
+    targetEsr=2⋅3.14159⋅100⋅0.00010.12​=0.062830.12​≈1.91 Ω
+
+8. Condition Assessment
+
+    limitWarning = targetEsr * 1.5
+
+    limitReplace = targetEsr * 2.0
+
+    measuredEsr ≤ limitWarning → HEALTHY / OK (green)
+
+    measuredEsr ≤ limitReplace → SLIGHTLY DEGRADED / DRYING OUT (orange)
+
+    remaining cases → FAULTY / DAMAGED (red)
+
+
+
+
+
 # NADCHODZI WEBSERWER:
 <img width="394" height="805" alt="zoyi mobile web" src="https://github.com/user-attachments/assets/a2254827-d2e2-4155-b277-f71407d75f94" />
 
