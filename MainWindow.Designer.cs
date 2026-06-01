@@ -101,6 +101,8 @@
             llWebAddress = new LinkLabel();
             btnWebServerStart = new Button();
             tabDQ02 = new TabPage();
+            button8 = new Button();
+            button4 = new Button();
             label6 = new Label();
             checkBox2 = new CheckBox();
             textBoxtemperature = new TextBox();
@@ -139,6 +141,7 @@
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
             notifyIcon1 = new NotifyIcon(components);
+            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1173,6 +1176,8 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.Controls.Add(button8);
+            tabDQ02.Controls.Add(button4);
             tabDQ02.Controls.Add(label6);
             tabDQ02.Controls.Add(checkBox2);
             tabDQ02.Controls.Add(textBoxtemperature);
@@ -1217,19 +1222,48 @@
             tabDQ02.TabIndex = 12;
             tabDQ02.Text = "ZOYI DQ02";
             // 
+            // button8
+            // 
+            button8.BackColor = Color.FromArgb(0, 64, 64);
+            button8.Cursor = Cursors.Hand;
+            button8.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button8.ForeColor = Color.Cyan;
+            button8.Location = new Point(564, 327);
+            button8.Name = "button8";
+            button8.Size = new Size(171, 28);
+            button8.TabIndex = 43;
+            button8.Text = "ZAPISZ CSV";
+            button8.UseVisualStyleBackColor = false;
+            button8.Click += button8_Click;
+            // 
+            // button4
+            // 
+            button4.BackColor = Color.FromArgb(0, 64, 64);
+            button4.Cursor = Cursors.Hand;
+            button4.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button4.ForeColor = Color.Cyan;
+            button4.Location = new Point(564, 293);
+            button4.Name = "button4";
+            button4.Size = new Size(171, 28);
+            button4.TabIndex = 42;
+            button4.Text = "AI HELP";
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
+            // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(379, 169);
+            label6.Location = new Point(200, 128);
             label6.Name = "label6";
             label6.Size = new Size(50, 20);
             label6.TabIndex = 41;
             label6.Text = "label6";
+            label6.Click += label6_Click;
             // 
             // checkBox2
             // 
             checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(379, 342);
+            checkBox2.Location = new Point(371, 344);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(58, 24);
             checkBox2.TabIndex = 40;
@@ -1283,6 +1317,7 @@
             checkBox1.TabIndex = 35;
             checkBox1.Text = "Ukryj log";
             checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.Visible = false;
             checkBox1.CheckedChanged += cbDQ02LogToggle_CheckedChanged;
             // 
             // button7
@@ -1291,7 +1326,7 @@
             button7.Cursor = Cursors.Hand;
             button7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button7.ForeColor = Color.Cyan;
-            button7.Location = new Point(564, 206);
+            button7.Location = new Point(564, 195);
             button7.Name = "button7";
             button7.Size = new Size(171, 28);
             button7.TabIndex = 33;
@@ -1305,7 +1340,7 @@
             button6.Cursor = Cursors.Hand;
             button6.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button6.ForeColor = Color.Cyan;
-            button6.Location = new Point(564, 169);
+            button6.Location = new Point(564, 162);
             button6.Name = "button6";
             button6.Size = new Size(171, 28);
             button6.TabIndex = 32;
@@ -1319,9 +1354,9 @@
             button5.Cursor = Cursors.Hand;
             button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button5.ForeColor = Color.Cyan;
-            button5.Location = new Point(200, 58);
+            button5.Location = new Point(564, 261);
             button5.Name = "button5";
-            button5.Size = new Size(155, 28);
+            button5.Size = new Size(171, 28);
             button5.TabIndex = 30;
             button5.Text = "Change Level";
             button5.UseVisualStyleBackColor = false;
@@ -1333,21 +1368,22 @@
             tbDQ02Log.BackColor = Color.FromArgb(13, 13, 13);
             tbDQ02Log.Font = new Font("Consolas", 8F);
             tbDQ02Log.ForeColor = Color.FromArgb(0, 200, 0);
-            tbDQ02Log.Location = new Point(564, 275);
+            tbDQ02Log.Location = new Point(564, 306);
             tbDQ02Log.Multiline = true;
             tbDQ02Log.Name = "tbDQ02Log";
             tbDQ02Log.ReadOnly = true;
             tbDQ02Log.ScrollBars = ScrollBars.Vertical;
-            tbDQ02Log.Size = new Size(171, 63);
+            tbDQ02Log.Size = new Size(171, 32);
             tbDQ02Log.TabIndex = 6;
+            tbDQ02Log.Visible = false;
             tbDQ02Log.WordWrap = false;
             // 
             // btnDQ02Connect
             // 
-            btnDQ02Connect.BackColor = Color.FromArgb(0, 64, 0);
+            btnDQ02Connect.BackColor = Color.FromArgb(0, 64, 64);
             btnDQ02Connect.Cursor = Cursors.Hand;
-            btnDQ02Connect.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnDQ02Connect.ForeColor = Color.LightGreen;
+            btnDQ02Connect.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnDQ02Connect.ForeColor = Color.Cyan;
             btnDQ02Connect.Location = new Point(564, 6);
             btnDQ02Connect.Name = "btnDQ02Connect";
             btnDQ02Connect.Size = new Size(171, 28);
@@ -1368,6 +1404,7 @@
             btnDQ02ClearLog.TabIndex = 8;
             btnDQ02ClearLog.Text = "CLEAR";
             btnDQ02ClearLog.UseVisualStyleBackColor = false;
+            btnDQ02ClearLog.Visible = false;
             btnDQ02ClearLog.Click += btnDQ02ClearLog_Click;
             // 
             // btnDQ02SaveLog
@@ -1382,14 +1419,15 @@
             btnDQ02SaveLog.TabIndex = 9;
             btnDQ02SaveLog.Text = "SAVE";
             btnDQ02SaveLog.UseVisualStyleBackColor = false;
+            btnDQ02SaveLog.Visible = false;
             btnDQ02SaveLog.Click += btnDQ02SaveLog_Click;
             // 
             // btnDQ02Refresh
             // 
-            btnDQ02Refresh.BackColor = Color.FromArgb(32, 32, 32);
+            btnDQ02Refresh.BackColor = Color.FromArgb(0, 64, 64);
             btnDQ02Refresh.Cursor = Cursors.Hand;
             btnDQ02Refresh.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            btnDQ02Refresh.ForeColor = Color.LightGray;
+            btnDQ02Refresh.ForeColor = Color.Cyan;
             btnDQ02Refresh.Location = new Point(564, 73);
             btnDQ02Refresh.Name = "btnDQ02Refresh";
             btnDQ02Refresh.Size = new Size(171, 28);
@@ -1404,9 +1442,9 @@
             button3.Cursor = Cursors.Hand;
             button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             button3.ForeColor = Color.Cyan;
-            button3.Location = new Point(10, 58);
+            button3.Location = new Point(564, 229);
             button3.Name = "button3";
-            button3.Size = new Size(155, 28);
+            button3.Size = new Size(171, 28);
             button3.TabIndex = 28;
             button3.Text = "Change Frequency";
             button3.UseVisualStyleBackColor = false;
@@ -1473,7 +1511,7 @@
             lblDQ02Freq.AutoSize = true;
             lblDQ02Freq.Font = new Font("Segoe UI", 9F);
             lblDQ02Freq.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Freq.Location = new Point(8, 35);
+            lblDQ02Freq.Location = new Point(10, 34);
             lblDQ02Freq.Name = "lblDQ02Freq";
             lblDQ02Freq.Size = new Size(80, 15);
             lblDQ02Freq.TabIndex = 16;
@@ -1506,7 +1544,7 @@
             lblDQ02LossParam.AutoSize = true;
             lblDQ02LossParam.Font = new Font("Segoe UI", 9F);
             lblDQ02LossParam.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02LossParam.Location = new Point(11, 99);
+            lblDQ02LossParam.Location = new Point(11, 65);
             lblDQ02LossParam.Name = "lblDQ02LossParam";
             lblDQ02LossParam.Size = new Size(113, 15);
             lblDQ02LossParam.TabIndex = 19;
@@ -1517,7 +1555,7 @@
             lblDQ02Range.AutoSize = true;
             lblDQ02Range.Font = new Font("Segoe UI", 9F);
             lblDQ02Range.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Range.Location = new Point(200, 99);
+            lblDQ02Range.Location = new Point(200, 65);
             lblDQ02Range.Name = "lblDQ02Range";
             lblDQ02Range.Size = new Size(58, 15);
             lblDQ02Range.TabIndex = 20;
@@ -1539,7 +1577,7 @@
             lblDQ02Comparison.AutoSize = true;
             lblDQ02Comparison.Font = new Font("Segoe UI", 9F);
             lblDQ02Comparison.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Comparison.Location = new Point(10, 125);
+            lblDQ02Comparison.Location = new Point(11, 95);
             lblDQ02Comparison.Name = "lblDQ02Comparison";
             lblDQ02Comparison.Size = new Size(90, 15);
             lblDQ02Comparison.TabIndex = 22;
@@ -1550,7 +1588,7 @@
             lblDQ02Bias.AutoSize = true;
             lblDQ02Bias.Font = new Font("Segoe UI", 9F);
             lblDQ02Bias.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Bias.Location = new Point(200, 136);
+            lblDQ02Bias.Location = new Point(200, 95);
             lblDQ02Bias.Name = "lblDQ02Bias";
             lblDQ02Bias.Size = new Size(46, 15);
             lblDQ02Bias.TabIndex = 23;
@@ -1629,7 +1667,7 @@
             lblDQ02Deviation.AutoSize = true;
             lblDQ02Deviation.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Deviation.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Deviation.Location = new Point(11, 151);
+            lblDQ02Deviation.Location = new Point(11, 132);
             lblDQ02Deviation.Name = "lblDQ02Deviation";
             lblDQ02Deviation.Size = new Size(79, 15);
             lblDQ02Deviation.TabIndex = 30;
@@ -1640,7 +1678,7 @@
             lblDQ02PassFail.AutoSize = true;
             lblDQ02PassFail.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02PassFail.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02PassFail.Location = new Point(383, 136);
+            lblDQ02PassFail.Location = new Point(380, 141);
             lblDQ02PassFail.Name = "lblDQ02PassFail";
             lblDQ02PassFail.Size = new Size(19, 15);
             lblDQ02PassFail.TabIndex = 31;
@@ -1650,6 +1688,10 @@
             // 
             notifyIcon1.Text = "notifyIcon1";
             notifyIcon1.Visible = true;
+            // 
+            // toolTip1
+            // 
+            toolTip1.IsBalloon = true;
             // 
             // MainWindow
             // 
@@ -1816,5 +1858,8 @@
         private CheckBox checkBox2;
         private NotifyIcon notifyIcon1;
         private Label label6;
+        private ToolTip toolTip1;
+        private Button button4;
+        private Button button8;
     }
 }

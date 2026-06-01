@@ -167,5 +167,8 @@
     <Setting Name="lbl_target_esr_font" Type="System.Drawing.Font" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="show_startup_warning" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

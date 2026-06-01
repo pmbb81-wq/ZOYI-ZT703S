@@ -669,5 +669,17 @@ namespace ZOYI.Properties {
                 this["lbl_target_esr_font"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool show_startup_warning {
+            get {
+                return ((bool)(this["show_startup_warning"]));
+            }
+            set {
+                this["show_startup_warning"] = value;
+            }
+        }
     }
 }

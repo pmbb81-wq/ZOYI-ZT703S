@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IO.Ports;
 using System.Media;
+using System.Net.Http;
 using System.Speech.Synthesis;
 
 namespace ZOYI
@@ -67,10 +68,12 @@ namespace ZOYI
         float fAlarmUnderValue = 0.0f;
         Thread alarmSoundThread;
         bool bBeepPlaying = false;
+        System.Windows.Forms.Timer _updateTimer;
 
         public MainWindow()
         {
             InitializeComponent();
+            this.Text = $"ZOYI ZT-703S — v{Application.ProductVersion}";
             frame_dec = new FrameDecoder();
             comx = new COMx();
             dq02Comx = new COMx();
@@ -96,10 +99,25 @@ namespace ZOYI
             // 10. Inicjalizacja menedżera skrótów klawiaturowych
             InitializeShortcuts();
 
-            // 11. Sprawdzenie aktualizacji
-            this.Shown += async (s, e) => await CheckForUpdateAsync();
+            // 11. Ostrzeżenie startowe
+            if (Properties.Settings.Default.show_startup_warning)
+            {
+                var wf = new WarningForm();
+                wf.ShowDialog(this);
+                if (wf.DontShowAgain)
+                    Properties.Settings.Default.show_startup_warning = false;
+            }
 
-            // 12. Umożliw przeciąganie wszystkich etykiet DQ02
+            // 12. Sprawdzenie aktualizacji
+            _updateTimer = new System.Windows.Forms.Timer { Interval = 300000 };
+            _updateTimer.Tick += async (_, _) => await CheckForUpdateAsync();
+            this.Shown += async (s, e) =>
+            {
+                await CheckForUpdateAsync();
+                _updateTimer.Start();
+            };
+
+            // 13. Umożliw przeciąganie wszystkich etykiet DQ02
             EnableDQ02LabelDragging();
             RestoreControlPositions();
 
@@ -136,6 +154,28 @@ namespace ZOYI
                 label6.Text = "tanδ: —";
             });
             label6.ContextMenuStrip = ctxTan;
+
+            toolTip1.SetToolTip(checkBox1, "Ukrywa okno podgladu logu.");
+            toolTip1.SetToolTip(checkBox2, "Blokuje i odblokowuje przesuwanie wszytkimi elementami na formatcce.");
+
+            toolTip1.SetToolTip(button3, "Zmienia czestotliwosc pomiaru w hercach.");
+            toolTip1.SetToolTip(btnDQ02Connect, "Laczy lub rozlacza z wybranym portem COM."); 
+            toolTip1.SetToolTip(btnDQ02Refresh, "Odswierza porty COM ktore sa dostepne w komputerze.");
+            toolTip1.SetToolTip(button7, "Zmienia tryby poboczne  miernika. X/D/Q/0/ESR.");
+            toolTip1.SetToolTip(button5, "Zmienia level napiecia 100mv/300mv/600mv");
+            toolTip1.SetToolTip(button4, "AI HELP. Pomaga w szybkim streszczeniu badanego kondensatora a takze umozliwia wyszukanie kondensatora w sklepach nad ktorym prowadzimy diagnoze");
+            toolTip1.SetToolTip(button8, "Zapisuje plik CSV z wszystkimi wartosciami jakie sa mierzone.");
+            toolTip1.SetToolTip(tbDQ02UserNominal, "Tutaj wpisujemy wartosc kondensatora ktory mierzymy. 1000uF to np 1mF.");
+            toolTip1.SetToolTip(tbDQ02UserTolerance, "Tutaj wpisujemy wartosc tolerancji pojemnosci w procentach ale tylko sama liczbe bez znaku procenta.");
+            toolTip1.SetToolTip(textBoxvoltage, "Tutaj wpisujemy napiecie naszego mierzonego kondensatora.");
+            toolTip1.SetToolTip(textBoxtemperature, "Tutaj wpisujemy wartosc temperatury jaka jest napisana na kondensatorze.");
+            toolTip1.SetToolTip(button6, "Zmienia tryby pracy miernika AUTO/R/L/Z/ECAP/BATT.");
+            toolTip1.SetToolTip(label6, "Klikniecie prawym myszki pozwala zmienic tanges na swoj lub z bazy csv.");
+            toolTip1.SetToolTip(lblDQ02PassFail, "Jezeli wartosc pojemnosci nominalnej w stosunku do wartosci mierzonej\n rozni sie w wpisanej tolerancji to pokaze FAIL lub PASS.");
+            toolTip1.SetToolTip(lblDQ02Deviation, "Pokazuje w czasie rzeczywistym roznice tolerancji pojemnosci kondensatora wzgledem nominalnej.");
+            //toolTip1.SetToolTip(button3, "Zmienia czestotliwosc pomiaru w hercach.");
+
+            LoadESRImage();
         }
 
         private void SetWindowLocation()
@@ -352,12 +392,15 @@ namespace ZOYI
             foreach (Control c in tabDQ02.Controls)
             {
                 if (c is Label lbl && lbl.Name != null && (lbl.Name.StartsWith("lblDQ02") || lbl.Name == "lblStatus" || lbl.Name == "lblTargetESR" || lbl.Name == "label6"))
-                    MakeDraggable(lbl);
+                    MakeDraggable(lbl, () => checkBox2.Checked);
             }
 
+            MakeDraggable(button3, () => checkBox2.Checked);
+            MakeDraggable(button4, () => checkBox2.Checked);
+            MakeDraggable(button5, () => checkBox2.Checked);
             MakeDraggable(button6, () => checkBox2.Checked);
             MakeDraggable(button7, () => checkBox2.Checked);
-            MakeDraggable(label6, () => checkBox2.Checked);
+            MakeDraggable(button8, () => checkBox2.Checked);
             MakeDraggable(tbDQ02UserNominal, () => checkBox2.Checked);
             MakeDraggable(tbDQ02UserTolerance, () => checkBox2.Checked);
             MakeDraggable(textBoxvoltage, () => checkBox2.Checked);
@@ -531,7 +574,7 @@ namespace ZOYI
                 {
                     if (c is Label lbl && (lbl.Name.StartsWith("lblDQ02") || lbl.Name == "lblStatus" || lbl.Name == "lblTargetESR" || lbl.Name == "label6"))
                         draggableNames.Add(lbl.Name);
-                    else if (c is Button btn && (btn == button6 || btn == button7))
+                    else if (c is Button btn && (btn == button3 || btn == button4 || btn == button5 || btn == button6 || btn == button7 || btn == button8))
                         draggableNames.Add(btn.Name);
                     else if (c is TextBox tb && (tb.Name == "tbDQ02UserNominal" || tb.Name == "tbDQ02UserTolerance" || tb.Name == "textBoxvoltage" || tb.Name == "textBoxtemperature"))
                         draggableNames.Add(tb.Name);
@@ -565,7 +608,7 @@ namespace ZOYI
                 {
                     if (c is Label lbl && (lbl.Name.StartsWith("lblDQ02") || lbl.Name == "lblStatus" || lbl.Name == "lblTargetESR" || lbl.Name == "label6"))
                         draggableNames.Add(lbl.Name);
-                    else if (c is Button btn && (btn == button6 || btn == button7))
+                    else if (c is Button btn && (btn == button3 || btn == button4 || btn == button5 || btn == button6 || btn == button7 || btn == button8))
                         draggableNames.Add(btn.Name);
                     else if (c is TextBox tb && (tb.Name == "tbDQ02UserNominal" || tb.Name == "tbDQ02UserTolerance" || tb.Name == "textBoxvoltage" || tb.Name == "textBoxtemperature"))
                         draggableNames.Add(tb.Name);
@@ -647,12 +690,13 @@ namespace ZOYI
 
         private void LoadESRImage()
         {
+            string imgDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
             string esrPath = null;
             string[] extensions = { ".png", ".jpg", ".jpeg", ".bmp" };
 
             foreach (var ext in extensions)
             {
-                string path = "Images\\esr_table" + ext;
+                string path = Path.Combine(imgDir, "esr_table" + ext);
                 if (File.Exists(path))
                 {
                     esrPath = path;
@@ -663,10 +707,6 @@ namespace ZOYI
             if (esrPath != null)
             {
                 pbESR.Image = Image.FromFile(esrPath);
-            }
-            else
-            {
-                pbESR.Image = (Image)Properties.Resources.ResourceManager.GetObject("tabPage3.BackgroundImage");
             }
         }
 
@@ -1487,16 +1527,105 @@ namespace ZOYI
         {
             try
             {
-                var release = await UpdateChecker.CheckForUpdate();
-                if (release == null) return;
+                string url = "https://raw.githubusercontent.com/pmbb81-wq/ZOYI-ZT703S/main/aktualizacja.md";
+                using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+                // pierwsze zapytanie (odrzucamy – omija cache)
+                await http.GetStringAsync(url);
+                await Task.Delay(1000);
+                // drugie zapytanie (bierzemy pod uwagę)
+                string body = await http.GetStringAsync(url);
+                string firstLine = body.Trim().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+                string remoteVersion = firstLine.TrimStart('v', 'V').Trim();
 
-                string skipped = Properties.Settings.Default.skipped_version;
-                if (release.TagName == skipped) return;
+                var asmVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                string currentVersion = $"{asmVersion.Major}.{asmVersion.Minor}";
 
-                var dlg = new UpdateDialog(release);
+                if (!Version.TryParse(remoteVersion, out var rv) || !Version.TryParse(currentVersion, out var cv))
+                    return;
+                if (rv <= cv) return;
+
+                var dlg = new Form
+                {
+                    Text = "Aktualizacja",
+                    Size = new Size(400, 180),
+                    FormBorderStyle = FormBorderStyle.FixedDialog,
+                    StartPosition = FormStartPosition.CenterParent,
+                    MaximizeBox = false,
+                    MinimizeBox = false,
+                    BackColor = Color.FromArgb(30, 30, 30),
+                    ForeColor = Color.White
+                };
+
+                var lbl = new Label
+                {
+                    Text = $"Dostępna jest nowa wersja {remoteVersion}!",
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    ForeColor = Color.Cyan,
+                    BackColor = Color.FromArgb(30, 30, 30),
+                    Location = new Point(10, 20),
+                    Width = 364,
+                    Height = 40
+                };
+
+                var btnPobierz = new Button
+                {
+                    Text = "POBIERZ",
+                    Location = new Point(10, 90),
+                    Width = 110,
+                    Height = 35,
+                    BackColor = Color.FromArgb(0, 64, 64),
+                    ForeColor = Color.Cyan,
+                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                    FlatStyle = FlatStyle.Flat
+                };
+                btnPobierz.Click += (_, _) =>
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "https://github.com/pmbb81-wq/ZOYI-ZT703S/releases",
+                        UseShellExecute = true
+                    });
+                    dlg.Close();
+                };
+
+                var btnSprawdzPozniej = new Button
+                {
+                    Text = "Sprawdź później",
+                    Location = new Point(140, 90),
+                    Width = 110,
+                    Height = 35,
+                    BackColor = Color.FromArgb(60, 60, 60),
+                    ForeColor = Color.White,
+                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                    FlatStyle = FlatStyle.Flat,
+                    DialogResult = DialogResult.Cancel
+                };
+
+                var btnAnuluj = new Button
+                {
+                    Text = "Anuluj",
+                    Location = new Point(270, 90),
+                    Width = 110,
+                    Height = 35,
+                    BackColor = Color.FromArgb(60, 60, 60),
+                    ForeColor = Color.White,
+                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                    FlatStyle = FlatStyle.Flat,
+                    DialogResult = DialogResult.Cancel
+                };
+
+                dlg.Controls.Add(lbl);
+                dlg.Controls.Add(btnPobierz);
+                dlg.Controls.Add(btnSprawdzPozniej);
+                dlg.Controls.Add(btnAnuluj);
                 dlg.ShowDialog(this);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Błąd sprawdzania aktualizacji:\n{ex.Message}", "Update Error");
+            }
         }
 
         private Bitmap DrawBJTNPN()
@@ -2062,6 +2191,7 @@ namespace ZOYI
 
         private void button5_Click(object sender, EventArgs e)
         {
+            if (!checkBox2.Checked) return;
             if (dq02Comx.isConnected())
             {
                 try
@@ -2081,6 +2211,7 @@ namespace ZOYI
 
         private void button6_Click(object sender, EventArgs e)
         {
+            if (!checkBox2.Checked) return;
             string commandToSend = measurementModes[currentModeIndex];
             if (dq02Comx.isConnected())
             {
@@ -2104,7 +2235,7 @@ namespace ZOYI
 
         private void button7_Click(object sender, EventArgs e)
         {
-
+            if (!checkBox2.Checked) return;
             if (dq02Comx.isConnected())
             {
                 try
@@ -2125,6 +2256,11 @@ namespace ZOYI
         }
 
         private void log_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
         {
 
         }

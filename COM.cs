@@ -319,6 +319,11 @@ namespace ZOYI
         CancellationTokenSource ctsDQ02;
         StreamWriter? dq02LogFile;
         string dq02LogPath = "";
+        StreamWriter? dq02HumanLog;
+        string dq02HumanLogPath = "";
+        DateTime _lastHumanLogWrite = DateTime.MinValue;
+        bool _isHumanLogging = false;
+        System.Windows.Forms.Timer _blinkTimer;
 
         private void dq02OpenLog()
         {
@@ -375,6 +380,15 @@ namespace ZOYI
                 dq02LogFile?.Dispose();
                 dq02LogFile = null;
                 Console.WriteLine($"DQ02 log closed: {dq02LogPath}");
+
+                _isHumanLogging = false;
+                _blinkTimer?.Stop();
+                _blinkTimer?.Dispose();
+                _blinkTimer = null;
+                dq02HumanLog?.Close();
+                dq02HumanLog?.Dispose();
+                dq02HumanLog = null;
+                button8.Text = "ZAPISZ CSV";
             }
             catch (Exception ex)
             {
@@ -389,6 +403,7 @@ namespace ZOYI
 
         private async void btnDQ02Connect_Click(object sender, EventArgs e)
         {
+            if (!checkBox2.Checked) return;
             if (!dq02Comx.isConnected())
             {
                 try
@@ -647,6 +662,15 @@ namespace ZOYI
                                     }
 
                                     standardDisplayPanel.SetDQ02Value(parsed.DisplayPrefix, parsed.DisplayValue, parsed.DisplaySecondary);
+
+                                    // Human log while button8 logging active
+                                    if (_isHumanLogging && dq02HumanLog != null && (DateTime.Now - _lastHumanLogWrite).TotalMilliseconds >= 500)
+                                    {
+                                        _lastHumanLogWrite = DateTime.Now;
+                                        string now = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                        dq02HumanLog.WriteLine($"{now};{tbDQ02UserNominal.Text.Trim()};{textBoxvoltage.Text.Trim()};{textBoxtemperature.Text.Trim()};{lblDQ02Value.Text.Trim()};{lblDQ02Secondary.Text.Trim()};{lblTargetESR.Text.Trim()};{lblStatus.Text.Trim()};{lblDQ02Comparison.Text.Trim()};{lblDQ02PassFail.Text.Trim()};{lblDQ02Deviation.Text.Trim()};{lblDQ02Freq.Text.Trim()};{lblDQ02Nominal.Text.Trim()}");
+                                        dq02HumanLog.Flush();
+                                    }
                                 }
                             }));
                         }
@@ -716,6 +740,7 @@ namespace ZOYI
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (!checkBox2.Checked) return;
             if (dq02Comx.isConnected())
             {
                 try
@@ -735,11 +760,12 @@ namespace ZOYI
 
         private void button4_Click(object sender, EventArgs e)
         {
+            if (!checkBox2.Checked) return;
             if (dq02Comx.isConnected())
             {
                 try
                 {
-                    dq02Comx.write("VOLTage\n");
+                   // dq02Comx.write("VOLTage\n");
                 }
                 catch (Exception ex)
                 {
@@ -749,6 +775,95 @@ namespace ZOYI
             else
             {
                 MessageBox.Show("Port COM jest zamknięty!");
+            }
+
+            string cap = tbDQ02UserNominal.Text.Trim();
+            string tol = tbDQ02UserTolerance.Text.Trim().Replace("%", "");
+            string volt = textBoxvoltage.Text.Trim();
+            string temp = textBoxtemperature.Text.Trim();
+            string tdelta = label6.Text.Trim();
+            string esr = lblDQ02Secondary.Text.Trim();
+            string targetEsr = lblTargetESR.Text.Trim();
+            string status = lblStatus.Text.Trim();
+
+            string query = "Powiedz mi wszystko o mierzonym kondensatorze: "
+                + $"pojemność {cap}, tolerancja {tol}%, napięcie {volt}V, "
+                + $"temperatura {temp}°C, tanδ {tdelta}, "
+                + $"zmierzony ESR {esr}, ESR docelowy {targetEsr}, "
+                + $"status: {status}"
+                + $" Znajdź kondensatory z tymi parametrami na AliExpress, Allegro, Mouser, TME i innych sklepach.";
+
+            try
+            {
+                string url = "https://www.google.com/search?q=" + Uri.EscapeDataString(query);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Nie można otworzyć przeglądarki: {ex.Message}");
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (!checkBox2.Checked) return;
+            try
+            {
+                if (!_isHumanLogging)
+                {
+                    // Start logging
+                    Directory.CreateDirectory("logs");
+                    dq02HumanLogPath = "logs\\DQ02_human_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
+                    dq02HumanLog = new StreamWriter(dq02HumanLogPath, false, Encoding.UTF8);
+                    dq02HumanLog.WriteLine("Czas;Pojemnosc_nominalna_uF;Napiecie_V;Temperatura_C;Wartosc_glowna;ESR_zmierzony;ESR_docelowy;Status;Porownanie;PassFail;Odchylenie;Czestotliwosc;Wartosc_nominalna");
+                    dq02HumanLog.Flush();
+                    _isHumanLogging = true;
+                    _lastHumanLogWrite = DateTime.MinValue;
+
+                    _blinkTimer = new System.Windows.Forms.Timer { Interval = 500 };
+                    bool blinkState = false;
+                    _blinkTimer.Tick += (_, _) =>
+                    {
+                        blinkState = !blinkState;
+                        button8.Text = blinkState ? "" : "ZAPISUJE...";
+                    };
+                    _blinkTimer.Start();
+                    button8.Text = "ZAPISUJE...";
+                }
+                else
+                {
+                    // Stop logging
+                    _isHumanLogging = false;
+                    _blinkTimer?.Stop();
+                    _blinkTimer?.Dispose();
+                    _blinkTimer = null;
+
+                    dq02HumanLog?.Flush();
+                    dq02HumanLog?.Close();
+                    dq02HumanLog?.Dispose();
+                    dq02HumanLog = null;
+
+                    using var sfd = new SaveFileDialog
+                    {
+                        Filter = "CSV (*.csv)|*.csv",
+                        FileName = Path.GetFileName(dq02HumanLogPath),
+                        InitialDirectory = Path.GetDirectoryName(Path.GetFullPath(dq02HumanLogPath))
+                    };
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        File.Copy(dq02HumanLogPath, sfd.FileName, true);
+                        MessageBox.Show($"Zapisano: {sfd.FileName}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    button8.Text = "ZAPISZ CSV";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Błąd: {ex.Message}", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
