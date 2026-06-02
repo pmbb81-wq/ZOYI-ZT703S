@@ -357,28 +357,28 @@
             if (unit.indexOf('uF') !== -1) return 20000;
             if (unit.indexOf('mF') !== -1) return 200;
             if (unit.indexOf('F') !== -1) return 1;
+            if (unit.indexOf('Ω') !== -1 && unit.indexOf('k') === -1 && unit.indexOf('M') === -1) {
+                var abs = Math.abs(val || 0);
+                if (abs <= 10) return 10;
+                if (abs <= 100) return 100;
+                if (abs <= 1000) return 1000;
+                if (abs <= 10000) return 10000;
+                return 100000;
+            }
             if (unit.indexOf('k') !== -1) {
                 var abs = Math.abs(val || 0);
-                if (abs <= 4) return 4;
-                if (abs <= 40) return 40;
-                if (abs <= 400) return 400;
-                if (abs <= 4000) return 4000;
-                return 40000;
+                if (abs <= 10) return 10;
+                if (abs <= 100) return 100;
+                if (abs <= 1000) return 1000;
+                if (abs <= 10000) return 10000;
+                return 100000;
             }
             if (unit.indexOf('M') !== -1) {
                 var abs = Math.abs(val || 0);
-                if (abs <= 4) return 4;
-                if (abs <= 40) return 40;
-                if (abs <= 400) return 400;
-                return 4000;
-            }
-            if (unit.indexOf('Ω') !== -1) {
-                var abs = Math.abs(val || 0);
-                if (abs <= 40) return 40;
-                if (abs <= 400) return 400;
-                if (abs <= 4000) return 4000;
-                if (abs <= 40000) return 40000;
-                return 400000;
+                if (abs <= 10) return 10;
+                if (abs <= 100) return 100;
+                if (abs <= 1000) return 1000;
+                return 10000;
             }
             return 1;
         }
