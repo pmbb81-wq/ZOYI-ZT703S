@@ -57,6 +57,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            position: relative;
         }
 
         .card {
@@ -64,6 +65,16 @@
             border: 1px solid #2a3550;
             border-radius: 12px;
             overflow: hidden;
+            resize: both;
+            display: flex;
+            flex-direction: column;
+            transform-origin: 0 0;
+        }
+        .card::-webkit-resizer {
+            background: rgba(34,211,238,0.25);
+            border-radius: 0 0 12px 0;
+            border-left: 1px solid #2a3550;
+            border-top: 1px solid #2a3550;
         }
 
         .card-head {
@@ -75,9 +86,71 @@
             letter-spacing: 0.08em;
             color: #8892a8;
             font-weight: 600;
+            cursor: grab; user-select: none;
         }
+        .card-head:hover { background: rgba(255,255,255,0.06); }
 
-        .card-body { padding: 20px 16px; text-align: center; }
+        .card.dragging { z-index: 100; cursor: grabbing; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        .card.dragging .card-head { cursor: grabbing; }
+        .card-body { flex: 1; padding: 20px 16px; text-align: center; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.6);
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .font-dialog {
+            background: #1a2234; border: 1px solid #2a3550; border-radius: 12px;
+            padding: 20px; min-width: 480px; max-width: 560px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+        }
+        .font-dialog h3 { margin: 0 0 16px; font-size: 1rem; color: #f0f4fc; font-weight: 400; }
+        .font-dialog .cols { display: flex; gap: 12px; }
+        .font-dialog .col { flex: 1; }
+        .font-dialog .col label { display: block; font-size: 0.7rem; color: #8892a8; margin-bottom: 4px; text-transform: uppercase; }
+        .font-dialog .col select {
+            width: 100%; background: #0f1724; border: 1px solid #2a3550; color: #f0f4fc;
+            border-radius: 4px; padding: 6px; font-size: 0.85rem;
+        }
+        .font-dialog .col select option { background: #0f1724; color: #f0f4fc; }
+        .font-dialog .color-row { margin-top: 12px; display: flex; align-items: center; gap: 8px; }
+        .font-dialog .color-row label { font-size: 0.75rem; color: #8892a8; text-transform: uppercase; }
+        .font-dialog .color-row input[type="color"] {
+            width: 40px; height: 30px; padding: 2px; background: #0f1724;
+            border: 1px solid #2a3550; border-radius: 4px; cursor: pointer;
+        }
+        .font-dialog .preview {
+            margin-top: 14px; padding: 14px; background: #0f1724; border-radius: 6px;
+            border: 1px solid #2a3550; text-align: center; min-height: 36px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .font-dialog .preview span { font-size: 1.2rem; }
+        .font-dialog .btns { margin-top: 14px; display: flex; gap: 8px; justify-content: flex-end; }
+        .font-dialog .btns button {
+            background: #0f1724; border: 1px solid #2a3550; color: #f0f4fc;
+            border-radius: 6px; padding: 8px 20px; cursor: pointer; font-size: 0.85rem;
+        }
+        .font-dialog .btns button:hover { background: #2a3550; }
+        .font-dialog .btns button.primary { background: #0d9488; border-color: #0d9488; }
+        .font-dialog .btns button.primary:hover { background: #14b8a6; }
+
+        .card-color-popup {
+            position: fixed; z-index: 10000; background: #1a2234; border: 1px solid #2a3550;
+            border-radius: 8px; padding: 10px; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            min-width: 180px;
+        }
+        .card-color-popup .ccp-presets { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+        .card-color-popup .ccp-presets span {
+            width: 28px; height: 28px; border-radius: 4px; cursor: pointer; border: 2px solid transparent;
+        }
+        .card-color-popup .ccp-presets span:hover { border-color: #60a5fa; }
+        .card-color-popup .ccp-row { display: flex; align-items: center; gap: 6px; }
+        .card-color-popup .ccp-row input[type="color"] { width: 36px; height: 28px; padding: 2px; background: #0f1724; border: 1px solid #2a3550; border-radius: 4px; cursor: pointer; }
+        .card-color-popup .ccp-row button {
+            background: #0d9488; border: none; color: #fff; border-radius: 4px;
+            padding: 4px 14px; cursor: pointer; font-size: 0.8rem;
+        }
+        .card-color-popup .ccp-row button:hover { background: #14b8a6; }
 
         .value-row {
             display: flex;
@@ -98,6 +171,7 @@
             color: #8892a8;
         }
 
+        #gaugeCard .card-body { padding: 6px 12px; display: flex; align-items: center; justify-content: center; }
         .bargraph {
             width: 100%;
             height: 12px;
@@ -114,12 +188,6 @@
             background: linear-gradient(90deg, #22d3ee, #3b82f6);
             border-radius: 6px;
             transition: width 0.3s ease;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
         }
 
         .info-card .card-body {
@@ -174,31 +242,77 @@
             </div>
         </div>
 
-        <div class="grid">
-            <div class="card info-card">
-                <div class="card-head">LAST</div>
-                <div class="card-body"><span class="info-val" id="last">--</span></div>
+        <div class="card" id="gaugeCard">
+            <div class="card-head">Angular Gauge</div>
+            <div class="card-body" style="overflow:hidden;">
+                <svg id="gaugeSvg" width="100%" height="280" viewBox="0 0 300 280" style="display:block;"></svg>
             </div>
-            <div class="card info-card">
-                <div class="card-head">MIN</div>
-                <div class="card-body"><span class="info-val" id="min">--</span></div>
-            </div>
-            <div class="card info-card">
-                <div class="card-head">MAX</div>
-                <div class="card-body"><span class="info-val" id="max">--</span></div>
-            </div>
-            <div class="card info-card">
-                <div class="card-head">Status</div>
-                <div class="card-body"><span class="info-val" id="mode2">--</span></div>
-            </div>
-            <div class="card info-card">
-                <div class="card-head">Frequency</div>
-                <div class="card-body"><span class="info-val" id="freq">--</span></div>
-            </div>
+        </div>
+
+        <div class="card info-card">
+            <div class="card-head">LAST</div>
+            <div class="card-body"><span class="info-val" id="last">--</span></div>
+        </div>
+        <div class="card info-card">
+            <div class="card-head">MIN</div>
+            <div class="card-body"><span class="info-val" id="min">--</span></div>
+        </div>
+        <div class="card info-card">
+            <div class="card-head">MAX</div>
+            <div class="card-body"><span class="info-val" id="max">--</span></div>
+        </div>
+        <div class="card info-card">
+            <div class="card-head">Status</div>
+            <div class="card-body"><span class="info-val" id="mode2">--</span></div>
+        </div>
+        <div class="card info-card">
+            <div class="card-head">Frequency</div>
+            <div class="card-body"><span class="info-val" id="freq">--</span></div>
         </div>
     </div>
 
     <div class="footer">ZOYI Terminal V2 — Web Monitor</div>
+
+    <div class="card-color-popup" id="cardColorPopup">
+        <div class="ccp-presets"></div>
+        <div class="ccp-row"><input type="color" id="ccpColor"><button id="ccpOk">OK</button></div>
+    </div>
+
+    <div class="modal-overlay" id="fontDialogOverlay">
+        <div class="font-dialog">
+            <h3>Wybór czcionki</h3>
+            <div class="cols">
+                <div class="col">
+                    <label>Czcionka</label>
+                    <select id="fontSelect" size="10"></select>
+                </div>
+                <div class="col">
+                    <label>Styl</label>
+                    <select id="styleSelect" size="10">
+                        <option value="normal">Regular</option>
+                        <option value="italic">Italic</option>
+                        <option value="bold">Bold</option>
+                        <option value="bold italic">Bold Italic</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Rozmiar</label>
+                    <select id="sizeSelect" size="10"></select>
+                </div>
+            </div>
+            <div class="color-row">
+                <label>Kolor</label>
+                <input type="color" id="colorPicker" value="#22d3ee">
+            </div>
+            <div class="preview">
+                <span id="previewText">AaBbCc 123</span>
+            </div>
+            <div class="btns">
+                <button id="fontDlgCancel">Anuluj</button>
+                <button id="fontDlgOk" class="primary">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         var dot = document.getElementById('dot');
@@ -283,6 +397,133 @@
             bar.style.background = 'linear-gradient(90deg, rgb(' + r + ',' + g + ',' + b + '), rgba(' + Math.max(r-40,0) + ',' + Math.max(g-40,0) + ',' + Math.max(b-40,0) + '))';
         }
 
+        // ---- angular gauge ----
+        function niceStep(max) {
+            var raw = max / 5;
+            var mag = Math.pow(10, Math.floor(Math.log10(raw)));
+            var norm = raw / mag;
+            var step;
+            if (norm <= 1.5) step = 1;
+            else if (norm <= 3.5) step = 2;
+            else if (norm <= 7.5) step = 5;
+            else step = 10;
+            return step * mag;
+        }
+
+        var gaugeStyles = [
+            { name:'Klasyczny', sections:['#10b981','#22d3ee','#eab308','#ef4444'], bg:'#0f1724', needle:'#f0f4fc', ticks:'#3a4560', text:'#6a7590', dot:'#22d3ee', ring:'rgba(255,255,255,0.04)' },
+            { name:'Neon', sections:['#00ff88','#00ffff','#ff00ff','#ff0044'], bg:'#001122', needle:'#00ff88', ticks:'#005533', text:'#00aa66', dot:'#00ff88', ring:'rgba(0,255,136,0.08)' },
+            { name:'Zloto', sections:['#fbbf24','#f59e0b','#d97706','#b45309'], bg:'#1a1500', needle:'#fbbf24', ticks:'#665500', text:'#aa8800', dot:'#fbbf24', ring:'rgba(251,191,36,0.08)' },
+            { name:'Fiolet', sections:['#a78bfa','#8b5cf6','#7c3aed','#6d28d9'], bg:'#0f0a1a', needle:'#a78bfa', ticks:'#3a2060', text:'#7a50b0', dot:'#a78bfa', ring:'rgba(167,139,250,0.08)' },
+            { name:'Ocean', sections:['#2dd4bf','#06b6d4','#0284c7','#0369a1'], bg:'#001520', needle:'#2dd4bf', ticks:'#004455', text:'#0088aa', dot:'#2dd4bf', ring:'rgba(45,212,191,0.08)' },
+            { name:'Ruby', sections:['#fb7185','#f43f5e','#e11d48','#be123c'], bg:'#1a0508', needle:'#fb7185', ticks:'#551522', text:'#aa2a44', dot:'#fb7185', ring:'rgba(251,113,133,0.08)' },
+            { name:'Monochrom', sections:['#6b7280','#4b5563','#374151','#1f2937'], bg:'#0d0d0d', needle:'#d1d5db', ticks:'#3a3a3a', text:'#6a6a6a', dot:'#9ca3af', ring:'rgba(255,255,255,0.03)' },
+            { name:'Szlachetny', sections:['#34d399','#60a5fa','#c084fc','#f472b6'], bg:'#0a0f1a', needle:'#f0f4fc', ticks:'#2a3a55', text:'#5a6a95', dot:'#60a5fa', ring:'rgba(255,255,255,0.06)' },
+            { name:'Pomarańcz', sections:['#fdba74','#fb923c','#f97316','#ea580c'], bg:'#1a0e00', needle:'#fdba74', ticks:'#553010', text:'#aa6020', dot:'#fb923c', ring:'rgba(253,186,116,0.08)' },
+            { name:'Mroczny', sections:['#2dd4bf','#818cf8','#f472b6','#fb7185'], bg:'#050508', needle:'#e2e8f0', ticks:'#222244', text:'#5555aa', dot:'#818cf8', ring:'rgba(129,140,248,0.06)' }
+        ];
+        var gaugeStyleIdx = 0;
+
+        function drawGauge(val, unit) {
+            var svg = document.getElementById('gaugeSvg');
+            if (!svg) return;
+            var cx = 150, cy = 175, r = 110;
+            var startDeg = 135, endDeg = 405;
+            var range = endDeg - startDeg;
+            var n = (val !== null && val !== '--' && val !== undefined) ? parseFloat(val) : null;
+            var abs = (n !== null && !isNaN(n)) ? Math.abs(n) : 0;
+            var max = 5;
+            if (unit) {
+                var m = getRangeMax(unit, abs);
+                if (m && m > 0) max = m;
+            }
+            if (abs > max) max = abs * 1.2;
+            var pct = max > 0 ? Math.min(abs / max, 1) : 0;
+            var vAngle = startDeg + pct * range;
+            var st = gaugeStyles[gaugeStyleIdx];
+
+            function polar(deg, radius) {
+                var rad = deg * Math.PI / 180;
+                return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+            }
+
+            var sections = [
+                { end: 0.25, color: st.sections[0] },
+                { end: 0.50, color: st.sections[1] },
+                { end: 0.75, color: st.sections[2] },
+                { end: 1, color: st.sections[3] }
+            ];
+
+            var html = '';
+            var gap = 2;
+
+            var pS = polar(startDeg, r), pE = polar(endDeg, r);
+            html += '<path d="M ' + pS.x + ' ' + pS.y + ' A ' + r + ' ' + r + ' 0 1 1 ' + pE.x + ' ' + pE.y + '" fill="none" stroke="' + st.bg + '" stroke-width="20"/>';
+
+            var prevDeg = startDeg;
+            for (var i = 0; i < sections.length; i++) {
+                var secStart = prevDeg + gap;
+                var secEnd = startDeg + sections[i].end * range - gap;
+                if (secEnd <= secStart) continue;
+                var sp = polar(secStart, r), ep = polar(secEnd, r);
+                var la = (secEnd - secStart) > 180 ? 1 : 0;
+                html += '<path d="M ' + sp.x + ' ' + sp.y + ' A ' + r + ' ' + r + ' 0 ' + la + ' 1 ' + ep.x + ' ' + ep.y + '" fill="none" stroke="' + sections[i].color + '" stroke-width="20" stroke-linecap="round" opacity="0.9"/>';
+                prevDeg = startDeg + sections[i].end * range;
+            }
+
+            html += '<path d="M ' + pS.x + ' ' + pS.y + ' A ' + r + ' ' + r + ' 0 1 1 ' + pE.x + ' ' + pE.y + '" fill="none" stroke="' + st.ring + '" stroke-width="20" pointer-events="none"/>';
+
+            var step = niceStep(max);
+            var tickR = r + 24, tickMid = r + 14, tickLabelR = r + 40;
+            var tickVals = [];
+            for (var tv = 0; tv <= max * 1.001; tv += step) tickVals.push(tv);
+            if (tickVals[tickVals.length - 1] < max * 0.99) tickVals.push(max);
+            for (var t = 0; t < tickVals.length; t++) {
+                var tpct = max > 0 ? tickVals[t] / max : 0;
+                var td = startDeg + tpct * range;
+                var tp = polar(td, tickR), tm = polar(td, tickMid);
+                var isMain = (tickVals[t] % (step * 2) < 0.001) || tickVals[t] === max || tickVals[t] === 0;
+                html += '<line x1="' + tm.x + '" y1="' + tm.y + '" x2="' + tp.x + '" y2="' + tp.y + '" stroke="' + st.ticks + '" stroke-width="' + (isMain ? '2' : '1') + '"/>';
+                var lp = polar(td, tickLabelR);
+                var lv = tickVals[t];
+                var label = lv < 1 ? lv.toFixed(3) : (lv < 10 ? lv.toFixed(2) : (lv < 100 ? lv.toFixed(1) : Math.round(lv).toString()));
+                html += '<text x="' + lp.x + '" y="' + (lp.y + 3.5) + '" text-anchor="middle" fill="' + st.text + '" font-size="8" font-family="Segoe UI" font-weight="' + (isMain ? '600' : '400') + '">' + label + '</text>';
+            }
+
+            var nRad = vAngle * Math.PI / 180;
+            var nLen = r - 8, nBase = 18, nW = 3.5;
+            var nTip = { x: cx + nLen * Math.cos(nRad), y: cy + nLen * Math.sin(nRad) };
+            var nB1 = { x: cx + nBase * Math.cos(nRad + Math.PI), y: cy + nBase * Math.sin(nRad + Math.PI) };
+            var nS1 = { x: cx + nW * Math.cos(nRad + Math.PI/2), y: cy + nW * Math.sin(nRad + Math.PI/2) };
+            var nS2 = { x: cx + nW * Math.cos(nRad - Math.PI/2), y: cy + nW * Math.sin(nRad - Math.PI/2) };
+            html += '<polygon points="' + nS1.x + ',' + nS1.y + ' ' + nTip.x + ',' + nTip.y + ' ' + nS2.x + ',' + nS2.y + ' ' + nB1.x + ',' + nB1.y + '" fill="' + st.needle + '" opacity="0.95"/>';
+            html += '<circle cx="' + cx + '" cy="' + cy + '" r="10" fill="' + st.bg + '" stroke="' + st.ticks + '" stroke-width="2"/>';
+            html += '<circle cx="' + cx + '" cy="' + cy + '" r="3.5" fill="' + st.dot + '"/>';
+
+            var displayVal = (n !== null && !isNaN(n)) ? (abs < 1 ? abs.toFixed(4) : (abs < 10 ? abs.toFixed(3) : abs.toFixed(2))) : '--';
+            html += '<text x="' + cx + '" y="' + (cy + 58) + '" text-anchor="middle" fill="' + st.needle + '" font-size="22" font-weight="700" font-family="Segoe UI">' + displayVal + '</text>';
+            if (unit) {
+                html += '<text x="' + cx + '" y="' + (cy + 78) + '" text-anchor="middle" fill="' + st.text + '" font-size="12" font-family="Segoe UI">' + unit + '</text>';
+            }
+
+            // style name
+            html += '<text x="' + cx + '" y="18" text-anchor="middle" fill="' + st.text + '" font-size="9" font-family="Segoe UI" opacity="0.6">' + st.name + '</text>';
+
+            svg.innerHTML = html;
+        }
+        drawGauge(null, null);
+
+        // cycle 10 gauge styles on click
+        var gaugeCard = document.getElementById('gaugeCard');
+        if (gaugeCard) {
+            gaugeCard.addEventListener('click', function(e) {
+                if (gaugeCard.classList.contains('dragging')) return;
+                if (e.target.closest('.card-head') || e.target.closest('select') || e.target.closest('input') || e.target.closest('.card-color-popup')) return;
+                gaugeStyleIdx = (gaugeStyleIdx + 1) % gaugeStyles.length;
+                drawGauge(null, null);
+            });
+        }
+
         function update(d) {
             if (d.Label) document.getElementById('label').textContent = d.Label;
             if (d.Value) document.getElementById('value').textContent = d.Value;
@@ -292,6 +533,7 @@
 
             var num = parseNum(d.Value);
             updateBar(num, d.Unit);
+            drawGauge(num, d.Unit);
 
             if (num !== null && Math.abs(num) >= STABLE_THRESHOLD) {
                 if (num !== lastStable) {
@@ -327,9 +569,356 @@
         }
 
         connect();
+
+        function makeDraggable(el) {
+            if (!el) return;
+            var key = 'card_pos_' + (el.id || Math.random().toString(36).slice(2));
+            el.dataset.dragKey = key;
+
+            function restorePosition() {
+                var saved = localStorage.getItem(key);
+                if (saved) {
+                    try {
+                        var p = JSON.parse(saved);
+                        if (p.l || p.t) {
+                            el.style.position = 'relative';
+                            el.style.left = p.l + 'px';
+                            el.style.top = p.t + 'px';
+                        }
+                    } catch(e) {}
+                }
+            }
+            restorePosition();
+
+            var handle = el.querySelector('.card-head');
+            if (!handle) return;
+
+            handle.addEventListener('mousedown', function(e) {
+                if (e.button !== 0) return;
+                e.preventDefault();
+                var rect = el.getBoundingClientRect();
+
+                // temporarily remove relative offset to get natural flow position for clone start
+                var oldLeft = parseFloat(el.style.left) || 0;
+                var oldTop = parseFloat(el.style.top) || 0;
+                var oldPos = el.style.position;
+
+                el.style.visibility = 'hidden';
+
+                var clone = el.cloneNode(true);
+                clone.style.position = 'fixed';
+                clone.style.left = rect.left + 'px';
+                clone.style.top = rect.top + 'px';
+                clone.style.width = rect.width + 'px';
+                clone.style.height = rect.height + 'px';
+                clone.style.margin = '0';
+                clone.style.zIndex = 10000;
+                clone.style.pointerEvents = 'none';
+                clone.classList.add('dragging');
+                clone.style.visibility = 'visible';
+                clone.style.cursor = 'grabbing';
+                document.body.appendChild(clone);
+
+                var startX = e.clientX, startY = e.clientY;
+
+                function onMove(ev) {
+                    clone.style.left = (rect.left + ev.clientX - startX) + 'px';
+                    clone.style.top = (rect.top + ev.clientY - startY) + 'px';
+                }
+                function onUp(ev) {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    clone.remove();
+                    el.style.visibility = '';
+
+                    var dx = ev.clientX - startX;
+                    var dy = ev.clientY - startY;
+
+                    if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
+                        el.style.position = oldPos;
+                        el.style.left = oldLeft ? oldLeft + 'px' : '';
+                        el.style.top = oldTop ? oldTop + 'px' : '';
+                        localStorage.removeItem(key);
+                    } else {
+                        var newL = oldLeft + dx;
+                        var newT = oldTop + dy;
+                        el.style.position = 'relative';
+                        el.style.left = newL + 'px';
+                        el.style.top = newT + 'px';
+                        localStorage.setItem(key, JSON.stringify({l: newL, t: newT}));
+                    }
+                }
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+        }
+
+        document.querySelectorAll('.card').forEach(makeDraggable);
+
+        var valEl = document.getElementById('value');
+        var overlay = document.getElementById('fontDialogOverlay');
+        var fontSelect = document.getElementById('fontSelect');
+        var styleSelect = document.getElementById('styleSelect');
+        var sizeSelect = document.getElementById('sizeSelect');
+        var colorPicker = document.getElementById('colorPicker');
+        var previewText = document.getElementById('previewText');
+
+        var savedFont = localStorage.getItem('valueFontFamily') || 'Segoe UI';
+        var savedStyle = localStorage.getItem('valueFontStyle') || 'normal';
+        var savedSize = localStorage.getItem('valueFontSize') || '24';
+        var savedColor = localStorage.getItem('valueColor') || '#22d3ee';
+
+        // apply saved style to value element
+        var w = savedStyle.indexOf('bold') >= 0 ? 'bold' : 'normal';
+        var st = savedStyle === 'italic' ? 'italic' : (savedStyle === 'bold italic' ? 'italic' : 'normal');
+        valEl.style.fontFamily = savedFont;
+        valEl.style.fontWeight = w;
+        valEl.style.fontStyle = st;
+        valEl.style.fontSize = (parseInt(savedSize) / 16) + 'rem';
+        valEl.style.color = savedColor;
+
+        var pendingFont, pendingStyle, pendingSize, pendingColor;
+
+        // populate size select
+        var sizes = [8,9,10,11,12,14,16,18,20,22,24,26,28,36,48,72];
+        sizes.forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            sizeSelect.appendChild(opt);
+        });
+
+        function updatePreview() {
+            var ff = pendingFont || savedFont;
+            var fs = pendingStyle || savedStyle;
+            var fsize = pendingSize || savedSize;
+            var fc = pendingColor || savedColor;
+            var weight = fs.indexOf('bold') >= 0 ? 'bold' : 'normal';
+            var style = fs.indexOf('italic') >= 0 && fs.indexOf('bold') < 0 ? 'italic' : fs === 'italic' ? 'italic' : 'normal';
+            if (fs === 'bold italic') { weight = 'bold'; style = 'italic'; }
+            previewText.style.fontFamily = ff;
+            previewText.style.fontWeight = weight;
+            previewText.style.fontStyle = style;
+            previewText.style.fontSize = (parseInt(fsize) / 16) + 'rem';
+            previewText.style.color = fc;
+        }
+
+        function populateFonts(fonts) {
+            fonts.sort();
+            fonts.forEach(function(f) {
+                var opt = document.createElement('option');
+                opt.value = f;
+                opt.textContent = f;
+                fontSelect.appendChild(opt);
+            });
+            fontSelect.value = savedFont;
+        }
+
+        var allFonts = ['Arial','Arial Black','Arial Narrow','Arial Rounded MT','Bahnschrift','Baskerville Old Face','Bauhaus 93','Bell MT','Berlin Sans FB','Bernard MT','Blackadder ITC','Bodoni MT','Book Antiqua','Bookman Old Style','Bradley Hand ITC','Calibri','Cambria','Cambria Math','Candara','Castellar','Century','Century Gothic','Century Schoolbook','Colonna MT','Comic Sans MS','Consolas','Constantia','Cooper Black','Copperplate Gothic','Corbel','Courier New','Curlz MT','Ebrima','Edwardian Script','Elephant','Engravers MT','Eras ITC','Felix Titling','Footlight MT','Franklin Gothic','Freestyle Script','Gabriola','Gadugi','Georgia','Gigi','Gill Sans MT','Gloucester MT','Goudy Old Style','Goudy Stout','Haettenschweiler','Harrington','High Tower Text','HoloLens MDL2','Impact','Imprint MT','Informal Roman','Ink Free','Javanese Text','Jokerman','Juice ITC','Kristen ITC','Kunstler Script','Lao UI','Leelawadee UI','Lucida Bright','Lucida Calligraphy','Lucida Console','Lucida Fax','Lucida Handwriting','Lucida Sans','Lucida Sans Unicode','Magneto','Maiandra GD','Malgun Gothic','Marlett','Matura MT','Microsoft Himalaya','Microsoft JhengHei','Microsoft New Tai Lue','Microsoft PhagsPa','Microsoft Sans Serif','Microsoft Tai Le','Microsoft YaHei','Microsoft Yi Baiti','MingLiU','Mistral','Modern No. 20','Mongolian Baiti','Monotype Corsiva','MS Gothic','MS Outlook','MS PGothic','MS Reference Sans','MS UI Gothic','MT Extra','MV Boli','Myanmar Text','Niagara Engraved','Niagara Solid','NSimSun','OCR A Extended','Old English Text','Onxy','Palace Script MT','Palatino Linotype','Papyrus','Parchment','Perpetua','Perpetua Titling MT','Playbill','Poor Richard','Pristina','Rage Italic','Ravie','Rockwell','Rockwell Extra Bold','Script MT','Segoe MDL2 Assets','Segoe Print','Segoe Script','Segoe UI','Segoe UI Emoji','Segoe UI Historic','Segoe UI Light','Segoe UI Semibold','Segoe UI Semilight','Segoe UI Symbol','Showcard Gothic','SimSun','Sitka Banner','Sitka Display','Sitka Heading','Sitka Small','Sitka Subheading','Sitka Text','Snap ITC','Stencil','Sylfaen','Symbol','Tahoma','Tempus Sans ITC','Times New Roman','Trebuchet MS','Tw Cen MT','Verdana','Viner Hand ITC','Vivaldi','Vladimir Script','Webdings','Wide Latin','Wingdings','Wingdings 2','Wingdings 3'];
+
+        // load fallback fonts immediately, then try full system fonts on first user gesture
+        var fontsLoaded = false;
+        function loadSystemFonts() {
+            if (fontsLoaded) return;
+            if (navigator.fonts && navigator.fonts.queryLocalFonts) {
+                navigator.fonts.queryLocalFonts().then(function(fs) {
+                    var names = {};
+                    fs.forEach(function(f) { names[f.family] = true; });
+                    var sorted = Object.keys(names).sort();
+                    fontSelect.innerHTML = '';
+                    sorted.forEach(function(f) {
+                        var opt = document.createElement('option');
+                        opt.value = f; opt.textContent = f;
+                        fontSelect.appendChild(opt);
+                    });
+                    fontSelect.value = savedFont;
+                    fontsLoaded = true;
+                }).catch(function() {});
+            }
+        }
+        populateFonts(allFonts);
+
+        styleSelect.value = savedStyle;
+        sizeSelect.value = parseInt(savedSize);
+        colorPicker.value = savedColor;
+        updatePreview();
+
+        // open font dialog on right-click
+        function openFontDialog(e) {
+            e.preventDefault();
+            loadSystemFonts();
+            pendingFont = fontSelect.value;
+            pendingStyle = styleSelect.value;
+            pendingSize = sizeSelect.value;
+            pendingColor = colorPicker.value;
+            overlay.classList.add('open');
+        }
+        valEl.addEventListener('contextmenu', openFontDialog);
+        var valRow = valEl.closest('.value-row');
+        if (valRow) valRow.addEventListener('contextmenu', function(e) {
+            if (e.target === valEl) return; // already handled by valEl
+            openFontDialog(e);
+        });
+
+        // live preview on change
+        fontSelect.addEventListener('change', function() { pendingFont = this.value; updatePreview(); });
+        styleSelect.addEventListener('change', function() { pendingStyle = this.value; updatePreview(); });
+        sizeSelect.addEventListener('change', function() { pendingSize = this.value; updatePreview(); });
+        colorPicker.addEventListener('input', function() { pendingColor = this.value; updatePreview(); });
+
+        // OK
+        document.getElementById('fontDlgOk').addEventListener('click', function() {
+            savedFont = pendingFont || fontSelect.value;
+            savedStyle = pendingStyle || styleSelect.value;
+            savedSize = pendingSize || sizeSelect.value;
+            savedColor = pendingColor || colorPicker.value;
+
+            var weight = savedStyle.indexOf('bold') >= 0 ? 'bold' : 'normal';
+            var style = savedStyle === 'italic' ? 'italic' : (savedStyle === 'bold italic' ? 'italic' : 'normal');
+
+            valEl.style.fontFamily = savedFont;
+            valEl.style.fontWeight = weight;
+            valEl.style.fontStyle = style;
+            valEl.style.fontSize = (parseInt(savedSize) / 16) + 'rem';
+            valEl.style.color = savedColor;
+
+            localStorage.setItem('valueFontFamily', savedFont);
+            localStorage.setItem('valueFontStyle', savedStyle);
+            localStorage.setItem('valueFontSize', savedSize);
+            localStorage.setItem('valueColor', savedColor);
+
+            overlay.classList.remove('open');
+        });
+
+        // Cancel
+        document.getElementById('fontDlgCancel').addEventListener('click', function() {
+            overlay.classList.remove('open');
+        });
+
+        // close on overlay click
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) overlay.classList.remove('open');
+        });
+
+        // ---- card-body background color picker ----
+        var ccp = document.getElementById('cardColorPopup');
+        var ccpPresets = ccp.querySelector('.ccp-presets');
+        var ccpColor = document.getElementById('ccpColor');
+        var ccpOk = document.getElementById('ccpOk');
+        var currentTarget = null;
+        var currentKey = null;
+
+        // 48 preset colors (full palette)
+        var presetColors = [
+            '#1a2234','#1e293b','#0f1724','#0d1117','#111827','#1c1917','#1a1a2e','#16213e',
+            '#0f3460','#2d1b2e','#1b2838','#1e3a5f','#1a202c','#2d3748','#2c1810','#1e2a3a',
+            '#4a1942','#1a365d','#1a4731','#3b1f2e','#2d1b4e','#1e3a3a','#3a2a1a','#2a1a3a',
+            '#6b21a8','#2563eb','#059669','#dc2626','#ca8a04','#ea580c','#db2777','#0891b2',
+            '#7c3aed','#0284c7','#10b981','#ef4444','#eab308','#f97316','#ec4899','#06b6d4',
+            '#4f46e5','#0ea5e9','#34d399','#f87171','#fbbf24','#fb923c','#f472b6','#22d3ee'
+        ];
+
+        presetColors.forEach(function(c) {
+            var el = document.createElement('span');
+            el.style.background = c;
+            el.addEventListener('click', function() {
+                if (currentTarget && currentKey) {
+                    currentTarget.style.background = c;
+                    localStorage.setItem(currentKey, c);
+                }
+                ccp.style.display = 'none';
+            });
+            ccpPresets.appendChild(el);
+        });
+
+        document.querySelectorAll('.card-body').forEach(function(body) {
+            var card = body.closest('.card');
+            if (!card) return;
+            var head = card.querySelector('.card-head');
+            var label = card.id || (head ? head.textContent.trim() : 'unknown');
+            var key = 'cardbody_bg_' + label.toLowerCase().replace(/\s+/g, '_');
+            var saved = localStorage.getItem(key);
+            if (saved) body.style.background = saved;
+
+            body.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                currentTarget = body;
+                currentKey = key;
+                ccpColor.value = saved || '#1a2234';
+                ccp.style.left = e.clientX + 'px';
+                ccp.style.top = e.clientY + 'px';
+                ccp.style.display = 'block';
+            });
+        });
+
+        ccpColor.addEventListener('input', function() {
+            if (currentTarget && currentKey) {
+                currentTarget.style.background = this.value;
+            }
+        });
+
+        ccpOk.addEventListener('click', function() {
+            if (currentTarget && currentKey) {
+                localStorage.setItem(currentKey, ccpColor.value);
+            }
+            ccp.style.display = 'none';
+        });
+
+        // ---- save card sizes on resize ----
+        var resizeTimers = {};
+        var ro = new ResizeObserver(function(entries) {
+            entries.forEach(function(entry) {
+                var card = entry.target;
+                var head = card.querySelector('.card-head');
+                var key = 'card_size_' + (card.id || (head ? head.textContent.trim().toLowerCase().replace(/\s+/g, '_') : 'unknown'));
+                if (resizeTimers[key]) clearTimeout(resizeTimers[key]);
+                resizeTimers[key] = setTimeout(function() {
+                    localStorage.setItem(key, JSON.stringify({
+                        w: card.offsetWidth,
+                        h: card.offsetHeight
+                    }));
+                }, 300);
+            });
+        });
+        document.querySelectorAll('.card').forEach(function(card) {
+            var head = card.querySelector('.card-head');
+            var key = 'card_size_' + (card.id || (head ? head.textContent.trim().toLowerCase().replace(/\s+/g, '_') : 'unknown'));
+            var saved = localStorage.getItem(key);
+            if (saved) {
+                try {
+                    var s = JSON.parse(saved);
+                    card.style.width = s.w + 'px';
+                    card.style.height = s.h + 'px';
+                } catch(e) {}
+            }
+            ro.observe(card);
+        });
+
+        // ---- debug: Ctrl+right-click any element to see details ----
+        document.addEventListener('contextmenu', function(e) {
+            if (!e.ctrlKey) return;
+            e.preventDefault();
+            var el = e.target;
+            var info = 'Tag: <' + el.tagName.toLowerCase() + '>\n' +
+                'ID: ' + (el.id || '(brak)') + '\n' +
+                'Class: ' + (el.className || '(brak)') + '\n' +
+                'Tekst: "' + (el.textContent || '').trim().substring(0, 50) + '"\n' +
+                'Parent: <' + (el.parentElement ? el.parentElement.tagName.toLowerCase() : '?') + '>.' + (el.parentElement ? el.parentElement.className || '' : '');
+            console.log('=== DEBUG ELEMENT ===', info);
+            alert(info);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (ccp.style.display === 'block' && !ccp.contains(e.target)) {
+                if (currentTarget && currentKey) {
+                    var saved = localStorage.getItem(currentKey);
+                    if (saved) currentTarget.style.background = saved;
+                }
+                ccp.style.display = 'none';
+            }
+        });
     </script>
     <div style="text-align:center;padding:10px;border-top:1px solid #2a3550;margin-top:auto;width:100%;font-size:0.85rem;">
         <a href="t6.html" style="color:#10b981;text-decoration:none;" target="_blank">Symulator Pomiaru Tranzystorów</a>
     </div>
-</body>
-</html>
+</body></html>
