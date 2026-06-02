@@ -245,7 +245,7 @@
         <div class="card" id="gaugeCard">
             <div class="card-head">Angular Gauge</div>
             <div class="card-body" style="overflow:hidden;">
-                <svg id="gaugeSvg" width="100%" height="280" viewBox="0 0 300 280" style="display:block;"></svg>
+                <svg id="gaugeSvg" viewBox="0 0 300 280" style="display:block;width:100%;height:auto;aspect-ratio:300/280;"></svg>
             </div>
         </div>
 
@@ -438,6 +438,8 @@
                 if (m && m > 0) max = m;
             }
             if (abs > max) max = abs * 1.2;
+            // override with fixed max AFTER overflow check
+            if (gaugeFixedMax !== null && gaugeFixedMax > 0) max = gaugeFixedMax;
             var pct = max > 0 ? Math.min(abs / max, 1) : 0;
             var vAngle = startDeg + pct * range;
             var st = gaugeStyles[gaugeStyleIdx];
@@ -491,7 +493,7 @@
             html += '<path d="M ' + pS.x + ' ' + pS.y + ' A ' + r + ' ' + r + ' 0 1 1 ' + pE.x + ' ' + pE.y + '" fill="none" stroke="' + st.ring + '" stroke-width="20" pointer-events="none"/>';
 
             var step = niceStep(max);
-            var tickR = r + 24, tickMid = r + 14, tickLabelR = r + 40;
+            var tickR = r + 24, tickMid = r + 14, tickLabelR = r - 34;
             var tickVals = [];
             for (var tv = 0; tv <= max * 1.001; tv += step) tickVals.push(tv);
             if (tickVals[tickVals.length - 1] < max * 0.99) tickVals.push(max);
@@ -504,7 +506,7 @@
                 var lp = polar(td, tickLabelR);
                 var lv = tickVals[t];
                 var label = lv < 1 ? lv.toFixed(3) : (lv < 10 ? lv.toFixed(2) : (lv < 100 ? lv.toFixed(1) : Math.round(lv).toString()));
-                html += '<text x="' + lp.x + '" y="' + (lp.y + 3.5) + '" text-anchor="middle" fill="' + st.text + '" font-size="8" font-family="Segoe UI" font-weight="' + (isMain ? '600' : '400') + '">' + label + '</text>';
+                html += '<text x="' + lp.x + '" y="' + (lp.y + 3) + '" text-anchor="middle" fill="' + st.text + '" font-size="8.5" font-family="Segoe UI" font-weight="' + (isMain ? '600' : '400') + '" opacity="0.9">' + label + '</text>';
             }
 
             var nRad = vAngle * Math.PI / 180;
@@ -553,13 +555,22 @@
             updateBar(num, d.Unit);
             
             // Set target for smooth gauge animation
-            if (num !== null && !isNaN(num)) {
+            // scale-dependent noise floor: on extended scales, ignore sub-0.5V readings
+            var noiseFloor = (gaugeFixedMax !== null && gaugeFixedMax > 5) ? 0.5 : 0.001;
+            if (num !== null && !isNaN(num) && Math.abs(num) > noiseFloor) {
                 gaugeTarget = Math.abs(num);
+                if (gaugeTarget > 0.01 && d.Unit) {
+                    gaugeStableUnit = d.Unit;
+                    gaugeFixedMax = getRangeMax(gaugeStableUnit, gaugeTarget);
+                }
                 if (!gaugeAnimating) {
                     startGaugeAnimation();
                 }
             } else {
                 gaugeTarget = null;
+                if (!gaugeAnimating && gaugeValue !== null && gaugeValue !== 0) {
+                    startGaugeAnimation();
+                }
             }
 
             if (num !== null && Math.abs(num) >= STABLE_THRESHOLD) {
@@ -606,15 +617,19 @@
 
         function animateGauge() {
             if (gaugeTarget === null) {
-                // no target, animate to zero
+                // no target -> animate to zero on last known stable scale
                 if (gaugeValue !== null && gaugeValue !== 0) {
                     gaugeValue = Math.max(0, gaugeValue - 0.05 * Math.abs(gaugeValue));
                     if (Math.abs(gaugeValue) < 0.01) gaugeValue = 0;
-                    drawGauge(gaugeValue, document.getElementById('unit')?.textContent || '');
+                    drawGauge(gaugeValue, gaugeStableUnit);
                     gaugeAnimationFrame = requestAnimationFrame(animateGauge);
                 } else {
+                    // at zero with no signal -> switch to default 5V scale without moving needle
+                    gaugeFixedMax = null;
+                    drawGauge(0, '');
                     gaugeAnimating = false;
                     gaugeAnimationFrame = null;
+                    gaugeStableUnit = '';
                 }
             } else {
                 // animate towards target
@@ -622,13 +637,13 @@
                 var diff = gaugeTarget - gaugeValue;
                 if (Math.abs(diff) < 0.01) {
                     gaugeValue = gaugeTarget;
-                    drawGauge(gaugeValue, document.getElementById('unit')?.textContent || '');
+                    drawGauge(gaugeValue, gaugeStableUnit);
                     gaugeAnimating = false;
                     gaugeAnimationFrame = null;
                 } else {
                     // ease out: move faster when far, slower when close
                     gaugeValue += diff * 0.1;
-                    drawGauge(gaugeValue, document.getElementById('unit')?.textContent || '');
+                    drawGauge(gaugeValue, gaugeStableUnit);
                     gaugeAnimationFrame = requestAnimationFrame(animateGauge);
                 }
             }
@@ -760,6 +775,8 @@
         var gaugeTarget = null;     // target value to animate to
         var gaugeAnimating = false; // whether animation is in progress
         var gaugeAnimationFrame = null; // animation frame request
+        var gaugeStableUnit = '';   // last stable unit (kept during zero/no-signal animation)
+        var gaugeFixedMax = null;   // fixed max scale during active measurement (null = auto from getRangeMax)
 
         // populate size select
         var sizes = [8,9,10,11,12,14,16,18,20,22,24,26,28,36,48,72];
