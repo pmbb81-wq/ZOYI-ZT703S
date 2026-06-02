@@ -533,7 +533,16 @@
 
             var num = parseNum(d.Value);
             updateBar(num, d.Unit);
-            drawGauge(num, d.Unit);
+            
+            // Set target for smooth gauge animation
+            if (num !== null && !isNaN(num)) {
+                gaugeTarget = Math.abs(num);
+                if (!gaugeAnimating) {
+                    startGaugeAnimation();
+                }
+            } else {
+                gaugeTarget = null;
+            }
 
             if (num !== null && Math.abs(num) >= STABLE_THRESHOLD) {
                 if (num !== lastStable) {
@@ -569,6 +578,55 @@
         }
 
         connect();
+
+        // ---- smooth gauge animation ----
+        function startGaugeAnimation() {
+            if (gaugeAnimating) return;
+            gaugeAnimating = true;
+            animateGauge();
+        }
+
+        function animateGauge() {
+            if (gaugeTarget === null) {
+                // no target, animate to zero
+                if (gaugeValue !== null && gaugeValue !== 0) {
+                    gaugeValue = Math.max(0, gaugeValue - 0.05 * Math.abs(gaugeValue));
+                    if (Math.abs(gaugeValue) < 0.01) gaugeValue = 0;
+                    drawGauge(gaugeValue, document.getElementById('unit')?.textContent || '');
+                    gaugeAnimationFrame = requestAnimationFrame(animateGauge);
+                } else {
+                    gaugeAnimating = false;
+                    gaugeAnimationFrame = null;
+                }
+            } else {
+                // animate towards target
+                if (gaugeValue === null) gaugeValue = 0;
+                var diff = gaugeTarget - gaugeValue;
+                if (Math.abs(diff) < 0.01) {
+                    gaugeValue = gaugeTarget;
+                    drawGauge(gaugeValue, document.getElementById('unit')?.textContent || '');
+                    gaugeAnimating = false;
+                    gaugeAnimationFrame = null;
+                } else {
+                    // ease out: move faster when far, slower when close
+                    gaugeValue += diff * 0.1;
+                    drawGauge(gaugeValue, document.getElementById('unit')?.textContent || '');
+                    gaugeAnimationFrame = requestAnimationFrame(animateGauge);
+                }
+            }
+        }
+
+        // handle visibility change to pause/resume animation
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                if (gaugeAnimationFrame) {
+                    cancelAnimationFrame(gaugeAnimationFrame);
+                    gaugeAnimationFrame = null;
+                }
+            } else if (gaugeTarget !== null && !gaugeAnimating) {
+                startGaugeAnimation();
+            }
+        });
 
         function makeDraggable(el) {
             if (!el) return;
@@ -678,6 +736,12 @@
         valEl.style.color = savedColor;
 
         var pendingFont, pendingStyle, pendingSize, pendingColor;
+
+        // gauge animation variables
+        var gaugeValue = null;      // current displayed value
+        var gaugeTarget = null;     // target value to animate to
+        var gaugeAnimating = false; // whether animation is in progress
+        var gaugeAnimationFrame = null; // animation frame request
 
         // populate size select
         var sizes = [8,9,10,11,12,14,16,18,20,22,24,26,28,36,48,72];
