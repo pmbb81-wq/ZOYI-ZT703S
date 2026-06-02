@@ -447,30 +447,47 @@
                 return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
             }
 
-            var sections = [
-                { end: 0.25, color: st.sections[0] },
-                { end: 0.50, color: st.sections[1] },
-                { end: 0.75, color: st.sections[2] },
-                { end: 1, color: st.sections[3] }
-            ];
-
             var html = '';
-            var gap = 2;
 
+            // color at a given fraction 0..1 of full scale (same gradient as bargraph)
+            function gColor(f) {
+                var r, g, b;
+                if (f < 0.5) {
+                    var t = f / 0.5;
+                    r = Math.round(34 + t * (245 - 34));
+                    g = Math.round(211 + t * (157 - 211));
+                    b = Math.round(238 + t * (11 - 238));
+                } else {
+                    var t = (f - 0.5) / 0.5;
+                    r = Math.round(245 + t * (239 - 245));
+                    g = Math.round(157 + t * (68 - 157));
+                    b = Math.round(11 + t * (68 - 11));
+                }
+                return 'rgb(' + r + ',' + g + ',' + b + ')';
+            }
+
+            // background arc (full, subtle)
             var pS = polar(startDeg, r), pE = polar(endDeg, r);
             html += '<path d="M ' + pS.x + ' ' + pS.y + ' A ' + r + ' ' + r + ' 0 1 1 ' + pE.x + ' ' + pE.y + '" fill="none" stroke="' + st.bg + '" stroke-width="20"/>';
 
-            var prevDeg = startDeg;
-            for (var i = 0; i < sections.length; i++) {
-                var secStart = prevDeg + gap;
-                var secEnd = startDeg + sections[i].end * range - gap;
-                if (secEnd <= secStart) continue;
-                var sp = polar(secStart, r), ep = polar(secEnd, r);
-                var la = (secEnd - secStart) > 180 ? 1 : 0;
-                html += '<path d="M ' + sp.x + ' ' + sp.y + ' A ' + r + ' ' + r + ' 0 ' + la + ' 1 ' + ep.x + ' ' + ep.y + '" fill="none" stroke="' + sections[i].color + '" stroke-width="20" stroke-linecap="round" opacity="0.9"/>';
-                prevDeg = startDeg + sections[i].end * range;
+            // value arc from 0 to current pct, drawn in small segments with smooth green→red gradient
+            if (pct > 0) {
+                var segCount = 36;
+                var segDegTot = range * pct;
+                var segDeg = segDegTot / segCount;
+                for (var si = 0; si < segCount; si++) {
+                    var sA = startDeg + si * segDeg;
+                    var eA = sA + segDeg;
+                    if (eA > startDeg + segDegTot) eA = startDeg + segDegTot;
+                    var sp = polar(sA, r), sep = polar(eA, r);
+                    var globalF = pct * (si + 0.5) / segCount;
+                    var col = gColor(globalF);
+                    var la = (eA - sA) > 180 ? 1 : 0;
+                    html += '<path d="M ' + sp.x + ' ' + sp.y + ' A ' + r + ' ' + r + ' 0 ' + la + ' 1 ' + sep.x + ' ' + sep.y + '" fill="none" stroke="' + col + '" stroke-width="20" stroke-linecap="butt"/>';
+                }
             }
 
+            // ring overlay
             html += '<path d="M ' + pS.x + ' ' + pS.y + ' A ' + r + ' ' + r + ' 0 1 1 ' + pE.x + ' ' + pE.y + '" fill="none" stroke="' + st.ring + '" stroke-width="20" pointer-events="none"/>';
 
             var step = niceStep(max);
@@ -496,12 +513,13 @@
             var nB1 = { x: cx + nBase * Math.cos(nRad + Math.PI), y: cy + nBase * Math.sin(nRad + Math.PI) };
             var nS1 = { x: cx + nW * Math.cos(nRad + Math.PI/2), y: cy + nW * Math.sin(nRad + Math.PI/2) };
             var nS2 = { x: cx + nW * Math.cos(nRad - Math.PI/2), y: cy + nW * Math.sin(nRad - Math.PI/2) };
-            html += '<polygon points="' + nS1.x + ',' + nS1.y + ' ' + nTip.x + ',' + nTip.y + ' ' + nS2.x + ',' + nS2.y + ' ' + nB1.x + ',' + nB1.y + '" fill="' + st.needle + '" opacity="0.95"/>';
+            var needleCol = pct > 0 ? gColor(Math.min(pct, 1)) : st.needle;
+            html += '<polygon points="' + nS1.x + ',' + nS1.y + ' ' + nTip.x + ',' + nTip.y + ' ' + nS2.x + ',' + nS2.y + ' ' + nB1.x + ',' + nB1.y + '" fill="' + needleCol + '" opacity="0.95"/>';
             html += '<circle cx="' + cx + '" cy="' + cy + '" r="10" fill="' + st.bg + '" stroke="' + st.ticks + '" stroke-width="2"/>';
-            html += '<circle cx="' + cx + '" cy="' + cy + '" r="3.5" fill="' + st.dot + '"/>';
+            html += '<circle cx="' + cx + '" cy="' + cy + '" r="3.5" fill="' + needleCol + '"/>';
 
             var displayVal = (n !== null && !isNaN(n)) ? (abs < 1 ? abs.toFixed(4) : (abs < 10 ? abs.toFixed(3) : abs.toFixed(2))) : '--';
-            html += '<text x="' + cx + '" y="' + (cy + 58) + '" text-anchor="middle" fill="' + st.needle + '" font-size="22" font-weight="700" font-family="Segoe UI">' + displayVal + '</text>';
+            html += '<text x="' + cx + '" y="' + (cy + 58) + '" text-anchor="middle" fill="' + needleCol + '" font-size="22" font-weight="700" font-family="Segoe UI">' + displayVal + '</text>';
             if (unit) {
                 html += '<text x="' + cx + '" y="' + (cy + 78) + '" text-anchor="middle" fill="' + st.text + '" font-size="12" font-family="Segoe UI">' + unit + '</text>';
             }
