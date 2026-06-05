@@ -1,0 +1,51 @@
+Przeplyw danych dla ridenLblOvpVal
+====================================
+
+1. START APLIKACJI (InitializeRidenTab)
+   MainWindow.Riden.cs:39
+     ridenTxtOVP.Text = Properties.Settings.Default.riden_ovp;  // "30"
+     ridenLblOvpVal.Text = ovpStart.ToString("F2") + " V";      // "30.00 V"
+
+2. POLACZENIE TCP (urządzenie laczy sie do nas na port 8080)
+   Riden6012.cs:77 -> WorkerLoopTcp
+     -> AcceptTcpClientAsync -> _stream
+     -> SynchronizujStanPoczatkowy()  (linia 130)
+         -> wysyla FC=0x03 addr 0, count 50
+         -> czeka na odpowiedz
+         -> ParseFrame() zapisuje do _registers[]
+            -> _registers[10] = surowa wartosc OVP (np. 3000)
+         -> OnDataUpdated?.Invoke()
+     -> PetlaOdczytu() (normalna praca)
+
+3. AKTUALIZACJA UI (RidenDataUpdated)
+   MainWindow.Riden.cs:51
+     ridenLblOvpVal.Text = _riden.OVP.ToString("F2") + " V";
+       gdzie _riden.OVP = _registers[10] / 100f   (Riden6012.cs:30)
+       np. 3000 / 100f = 30.00 -> "30.00 V"
+
+4. PETLA POMIAROWA (PetlaOdczytu)
+   Riden6012.cs:173
+     Co cykl: MakeReadRequest() -> alternuje FC=0x03 / FC=0x04
+     FC=0x03: ParseFrame zapisuje _registers[] + OnDataUpdated
+     FC=0x04: ParseFrame zapisuje _vout, _iout + OnDataUpdated
+     Kazdy OnDataUpdated -> RidenDataUpdated() -> odswieza ridenLblOvpVal
+
+5. USTAWIENIE OVP (przycisk ridenBtnSetOVP)
+   MainWindow.cs:2276 -> ridenBtnSetOVP_Click
+     -> ParseValue(ridenTxtOVP.Text, 0, 60, "V")
+        np. "30" -> 30.0f
+     -> _riden.UstawOVP(30.0f)
+        -> WyslijZapis(10, (ushort)(30.0 * 100))  // 3000
+        -> FC=0x06 do rejestru 0x0A z wartoscia 0x0BB8 (3000)
+     -> echo ramki -> ParseFrame(func=0x06) aktualizuje _registers[10] = 3000
+     -> OnDataUpdated -> ridenLblOvpVal.Text = "30.00 V"
+
+6. ZAMKNIECIE APLIKACJI
+   MainWindow.cs:254
+     Properties.Settings.Default.riden_ovp = ridenTxtOVP.Text;
+     -> zapisuje aktualna wartosc tekstu na nastepny start
+
+REJESTR MODBUS:
+  adres 0x0A (10) -> OVP
+  surowa wartosc x100 (np. 3000 = 30.00V)
+  write: FC=0x06, wartosc tez x100

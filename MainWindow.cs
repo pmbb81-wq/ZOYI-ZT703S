@@ -784,6 +784,12 @@ namespace ZOYI
             tools.refreshTools();
         }
 
+        private void btnPcapAnalyzer_Click(object? sender, EventArgs e)
+        {
+            using var form = new PcapAnalyzerForm();
+            form.ShowDialog(this);
+        }
+
         private void tbarArcTicks_Scroll(object sender, EventArgs e)
         {
             if (tbarArcTicks.Value < tbarThicksCount.Value)

@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO.Ports;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace ZOYI;
 
@@ -15,18 +16,23 @@ public class Riden6012 : IDisposable
     private CancellationTokenSource? _cts;
     private readonly ushort[] _registers = new ushort[256];
     private readonly object _lock = new();
+    private readonly ConcurrentQueue<(byte adres, ushort wartosc)> _pendingWrites = new();
 
     public bool Polaczony => _client?.Connected ?? _serialPort?.IsOpen ?? false;
     public string OstatniBlad { get; private set; } = "";
     public bool TrybUSB => _serialPort?.IsOpen ?? false;
 
+    public ushort RawVout => _registers[10];
     public float Vout => _registers[10] / 100f;
     public float Iout => _registers[11] / 100f;
     public float Power => _registers[13] / 100f;
     public float Vset => _registers[8] / 100f;
     public float Iset => _registers[9] / 100f;
-    public float OVP => _registers[10] / 100f;
-    public float OCP => _registers[11] / 100f;
+    public ushort RawVin => _registers[14];
+    public float Vin => _registers[14] / 100f;
+    public float OVP => _registers[82] / 100f;
+    public float OCP => _registers[83] / 100f;
+    public int Temperature => _registers[4] == 0 ? _registers[5] : -_registers[5];
     public bool OutputOn => _registers[18] == 1;
 
     public event Action? OnDataUpdated;
@@ -132,7 +138,7 @@ public class Riden6012 : IDisposable
             req[2] = 0x00;
             req[3] = 0x00;
             req[4] = 0x00;
-            req[5] = 0x32;
+            req[5] = 0x78;
             byte[] crc = CalculateCRC(req, 0, 6);
             req[6] = crc[0];
             req[7] = crc[1];
@@ -140,7 +146,7 @@ public class Riden6012 : IDisposable
             lock (_lock) { _stream.Write(req, 0, req.Length); }
             OnDebugData?.Invoke(">> " + BitConverter.ToString(req) + " (sync)");
 
-            byte[] buf = new byte[256];
+            byte[] buf = new byte[512];
             int pos = 0;
             int attempts = 0;
             while (attempts < 20)
@@ -176,6 +182,7 @@ public class Riden6012 : IDisposable
             try
             {
                 if (_stream is null) { Thread.Sleep(100); continue; }
+                OproczKolejkeZapisow();
                 byte[] req = MakeReadRequest();
                 lock (_lock) { _stream.Write(req, 0, req.Length); }
                 try { OnDebugData?.Invoke(">> " + BitConverter.ToString(req)); } catch { }
@@ -231,7 +238,7 @@ public class Riden6012 : IDisposable
         req[2] = 0x00;
         req[3] = 0x00;
         req[4] = 0x00;
-        req[5] = 0x32;
+        req[5] = 0x78;
         byte[] crc = CalculateCRC(req, 0, 6);
         req[6] = crc[0];
         req[7] = crc[1];
@@ -325,31 +332,57 @@ public class Riden6012 : IDisposable
     public void WylaczWyjscie() => WyslijZapis(18, 0);
     public void UstawNapiecie(float volts) => WyslijZapis(8, (ushort)(volts * 100));
     public void UstawPrad(float amps) => WyslijZapis(9, (ushort)(amps * 100));
-    public void UstawOVP(float volts) => WyslijZapis(10, (ushort)(volts * 100));
-    public void UstawOCP(float amps) => WyslijZapis(11, (ushort)(amps * 100));
+    public void UstawOVP(float volts) => WyslijZapis(82, (ushort)(volts * 100));
+    public void UstawOCP(float amps) => WyslijZapis(83, (ushort)(amps * 100));
     public void WyslijRaw(byte adres, ushort wartosc) => WyslijZapis(adres, wartosc);
 
     private void WyslijZapis(byte adres, ushort wartosc)
     {
-        if (_stream is null) return;
-        byte[] req = new byte[11];
-        req[0] = 0x01;
-        req[1] = 0x10;
-        req[2] = 0x00;
-        req[3] = adres;
-        req[4] = 0x00;
-        req[5] = 0x01;
-        req[6] = 0x02;
-        req[7] = (byte)(wartosc >> 8);
-        req[8] = (byte)(wartosc & 0xFF);
-        byte[] crc = CalculateCRC(req, 0, 9);
-        req[9] = crc[0];
-        req[10] = crc[1];
-        lock (_lock) { _stream.Write(req, 0, 11); }
-        OnDebugData?.Invoke(">> " + BitConverter.ToString(req));
+        _pendingWrites.Enqueue((adres, wartosc));
         if (adres < _registers.Length)
             _registers[adres] = wartosc;
         OnDataUpdated?.Invoke();
+    }
+
+    private void OproczKolejkeZapisow()
+    {
+        if (_stream is null) return;
+        while (_pendingWrites.TryDequeue(out var w))
+        {
+            byte[] req = new byte[11];
+            req[0] = 0x01;
+            req[1] = 0x10;
+            req[2] = 0x00;
+            req[3] = w.adres;
+            req[4] = 0x00;
+            req[5] = 0x01;
+            req[6] = 0x02;
+            req[7] = (byte)(w.wartosc >> 8);
+            req[8] = (byte)(w.wartosc & 0xFF);
+            byte[] crc = CalculateCRC(req, 0, 9);
+            req[9] = crc[0];
+            req[10] = crc[1];
+            lock (_lock) { _stream.Write(req, 0, 11); }
+            OnDebugData?.Invoke(">> " + BitConverter.ToString(req));
+            // Czytaj echo odpowiedzi (FC=0x10)
+            try
+            {
+                byte[] resp = new byte[8];
+                int pos = 0;
+                while (pos < 8)
+                {
+                    int n = _stream.Read(resp, pos, 8 - pos);
+                    if (n == 0) break;
+                    pos += n;
+                }
+                if (pos == 8 && resp[1] == 0x10 && resp[0] == 0x01)
+                {
+                    OnDataUpdated?.Invoke();
+                    OnDebugData?.Invoke("<< " + BitConverter.ToString(resp) + " (echo)");
+                }
+            }
+            catch { }
+        }
     }
 
     public static byte[] CalculateCRC(byte[] data, int offset, int length)

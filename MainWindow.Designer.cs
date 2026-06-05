@@ -49,6 +49,7 @@
             btnToolsRefresh = new Button();
             btnToolsEdit = new Button();
             panelTools = new Panel();
+            btnPcapAnalyzer = new Button();
             tabPage2 = new TabPage();
             groupBox3 = new GroupBox();
             lblThicksCount = new Label();
@@ -141,13 +142,15 @@
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
             tabRIDEN = new TabPage();
+            labeltemp = new Label();
             pictureBox2 = new PictureBox();
+            ridenLblVinDesc = new Label();
+            label7 = new Label();
             ridenLblVsetDesc = new Label();
             ridenLblIsetDesc = new Label();
             ridenLblVoutDesc = new Label();
             ridenLblIoutDesc = new Label();
             ridenLblMocDesc = new Label();
-            ridenLblWyjDesc = new Label();
             ridenBtnConnect = new Button();
             ridenLblLocalIP = new Label();
             ridenCmbPort = new ComboBox();
@@ -169,11 +172,9 @@
             ridenLblStatus = new Label();
             ridenTbLog = new TextBox();
             ridenBtnClearLog = new Button();
-            ridenLblOvpDesc = new Label();
             ridenLblOvpVal = new Label();
             ridenTxtOVP = new TextBox();
             ridenBtnSetOVP = new Button();
-            ridenLblOcpDesc = new Label();
             ridenLblOcpVal = new Label();
             ridenTxtOCP = new TextBox();
             ridenBtnSetOCP = new Button();
@@ -461,6 +462,20 @@
             panelTools.Name = "panelTools";
             panelTools.Size = new Size(626, 367);
             panelTools.TabIndex = 0;
+            // 
+            // btnPcapAnalyzer
+            // 
+            btnPcapAnalyzer.BackColor = Color.FromArgb(64, 0, 0);
+            btnPcapAnalyzer.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnPcapAnalyzer.ForeColor = Color.LightCoral;
+            btnPcapAnalyzer.Location = new Point(590, 324);
+            btnPcapAnalyzer.Name = "btnPcapAnalyzer";
+            btnPcapAnalyzer.Size = new Size(150, 32);
+            btnPcapAnalyzer.TabIndex = 37;
+            btnPcapAnalyzer.Text = "ANALIZATOR PCAP";
+            btnPcapAnalyzer.UseVisualStyleBackColor = false;
+            btnPcapAnalyzer.Visible = false;
+            btnPcapAnalyzer.Click += btnPcapAnalyzer_Click;
             // 
             // tabPage2
             // 
@@ -1729,13 +1744,16 @@
             // tabRIDEN
             // 
             tabRIDEN.BackColor = Color.FromArgb(34, 34, 34);
+            tabRIDEN.BackgroundImageLayout = ImageLayout.Stretch;
+            tabRIDEN.Controls.Add(labeltemp);
             tabRIDEN.Controls.Add(pictureBox2);
+            tabRIDEN.Controls.Add(ridenLblVinDesc);
+            tabRIDEN.Controls.Add(label7);
             tabRIDEN.Controls.Add(ridenLblVsetDesc);
             tabRIDEN.Controls.Add(ridenLblIsetDesc);
             tabRIDEN.Controls.Add(ridenLblVoutDesc);
             tabRIDEN.Controls.Add(ridenLblIoutDesc);
             tabRIDEN.Controls.Add(ridenLblMocDesc);
-            tabRIDEN.Controls.Add(ridenLblWyjDesc);
             tabRIDEN.Controls.Add(ridenBtnConnect);
             tabRIDEN.Controls.Add(ridenLblLocalIP);
             tabRIDEN.Controls.Add(ridenCmbPort);
@@ -1757,16 +1775,15 @@
             tabRIDEN.Controls.Add(ridenLblStatus);
             tabRIDEN.Controls.Add(ridenTbLog);
             tabRIDEN.Controls.Add(ridenBtnClearLog);
-            tabRIDEN.Controls.Add(ridenLblOvpDesc);
             tabRIDEN.Controls.Add(ridenLblOvpVal);
             tabRIDEN.Controls.Add(ridenTxtOVP);
             tabRIDEN.Controls.Add(ridenBtnSetOVP);
-            tabRIDEN.Controls.Add(ridenLblOcpDesc);
             tabRIDEN.Controls.Add(ridenLblOcpVal);
             tabRIDEN.Controls.Add(ridenTxtOCP);
             tabRIDEN.Controls.Add(ridenBtnSetOCP);
             tabRIDEN.Controls.Add(ridenLblAlarmDesc);
             tabRIDEN.Controls.Add(ridenLblAlarmVal);
+            tabRIDEN.Controls.Add(btnPcapAnalyzer);
             tabRIDEN.Location = new Point(4, 32);
             tabRIDEN.Name = "tabRIDEN";
             tabRIDEN.Padding = new Padding(3);
@@ -1774,23 +1791,57 @@
             tabRIDEN.TabIndex = 13;
             tabRIDEN.Text = "RIDEN";
             // 
+            // labeltemp
+            // 
+            labeltemp.AutoEllipsis = true;
+            labeltemp.Font = new Font("Consolas", 9F);
+            labeltemp.ForeColor = Color.Gray;
+            labeltemp.Location = new Point(416, 347);
+            labeltemp.Name = "labeltemp";
+            labeltemp.Size = new Size(120, 28);
+            labeltemp.TabIndex = 41;
+            labeltemp.Text = "TEMP: ---";
+            labeltemp.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // pictureBox2
             // 
-            pictureBox2.BackgroundImage = (Image)resources.GetObject("pictureBox2.BackgroundImage");
+            pictureBox2.BackgroundImage = Properties.Resources.rd6006_riden_zasilacz_2a;
             pictureBox2.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox2.Location = new Point(548, 70);
+            pictureBox2.Location = new Point(416, 179);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(180, 162);
-            pictureBox2.TabIndex = 23;
+            pictureBox2.Size = new Size(324, 166);
+            pictureBox2.TabIndex = 40;
             pictureBox2.TabStop = false;
+            // 
+            // ridenLblVinDesc
+            // 
+            ridenLblVinDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            ridenLblVinDesc.ForeColor = Color.LightGray;
+            ridenLblVinDesc.Location = new Point(657, 178);
+            ridenLblVinDesc.Name = "ridenLblVinDesc";
+            ridenLblVinDesc.Size = new Size(39, 28);
+            ridenLblVinDesc.TabIndex = 39;
+            ridenLblVinDesc.Text = "VIN";
+            ridenLblVinDesc.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // label7
+            // 
+            label7.AutoEllipsis = true;
+            label7.Font = new Font("Consolas", 9F);
+            label7.ForeColor = Color.Gray;
+            label7.Location = new Point(538, 354);
+            label7.Name = "label7";
+            label7.Size = new Size(108, 27);
+            label7.TabIndex = 38;
+            label7.Text = "VIN: ---";
             // 
             // ridenLblVsetDesc
             // 
             ridenLblVsetDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblVsetDesc.ForeColor = Color.LightGray;
-            ridenLblVsetDesc.Location = new Point(20, 116);
+            ridenLblVsetDesc.Location = new Point(12, 53);
             ridenLblVsetDesc.Name = "ridenLblVsetDesc";
-            ridenLblVsetDesc.Size = new Size(100, 28);
+            ridenLblVsetDesc.Size = new Size(76, 28);
             ridenLblVsetDesc.TabIndex = 0;
             ridenLblVsetDesc.Text = "V zadane:";
             ridenLblVsetDesc.TextAlign = ContentAlignment.MiddleLeft;
@@ -1799,20 +1850,20 @@
             // 
             ridenLblIsetDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblIsetDesc.ForeColor = Color.LightGray;
-            ridenLblIsetDesc.Location = new Point(20, 144);
+            ridenLblIsetDesc.Location = new Point(12, 217);
             ridenLblIsetDesc.Name = "ridenLblIsetDesc";
-            ridenLblIsetDesc.Size = new Size(100, 28);
+            ridenLblIsetDesc.Size = new Size(76, 28);
             ridenLblIsetDesc.TabIndex = 1;
-            ridenLblIsetDesc.Text = "I zadany:";
+            ridenLblIsetDesc.Text = "ZW! ";
             ridenLblIsetDesc.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // ridenLblVoutDesc
             // 
             ridenLblVoutDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblVoutDesc.ForeColor = Color.LightGray;
-            ridenLblVoutDesc.Location = new Point(20, 172);
+            ridenLblVoutDesc.Location = new Point(12, 136);
             ridenLblVoutDesc.Name = "ridenLblVoutDesc";
-            ridenLblVoutDesc.Size = new Size(100, 28);
+            ridenLblVoutDesc.Size = new Size(60, 28);
             ridenLblVoutDesc.TabIndex = 2;
             ridenLblVoutDesc.Text = "V out:";
             ridenLblVoutDesc.TextAlign = ContentAlignment.MiddleLeft;
@@ -1821,9 +1872,9 @@
             // 
             ridenLblIoutDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblIoutDesc.ForeColor = Color.LightGray;
-            ridenLblIoutDesc.Location = new Point(20, 200);
+            ridenLblIoutDesc.Location = new Point(12, 94);
             ridenLblIoutDesc.Name = "ridenLblIoutDesc";
-            ridenLblIoutDesc.Size = new Size(100, 28);
+            ridenLblIoutDesc.Size = new Size(49, 28);
             ridenLblIoutDesc.TabIndex = 3;
             ridenLblIoutDesc.Text = "I out:";
             ridenLblIoutDesc.TextAlign = ContentAlignment.MiddleLeft;
@@ -1832,23 +1883,12 @@
             // 
             ridenLblMocDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblMocDesc.ForeColor = Color.LightGray;
-            ridenLblMocDesc.Location = new Point(20, 229);
+            ridenLblMocDesc.Location = new Point(12, 178);
             ridenLblMocDesc.Name = "ridenLblMocDesc";
-            ridenLblMocDesc.Size = new Size(100, 28);
+            ridenLblMocDesc.Size = new Size(49, 28);
             ridenLblMocDesc.TabIndex = 4;
             ridenLblMocDesc.Text = "Moc:";
             ridenLblMocDesc.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // ridenLblWyjDesc
-            // 
-            ridenLblWyjDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblWyjDesc.ForeColor = Color.LightGray;
-            ridenLblWyjDesc.Location = new Point(20, 257);
-            ridenLblWyjDesc.Name = "ridenLblWyjDesc";
-            ridenLblWyjDesc.Size = new Size(100, 28);
-            ridenLblWyjDesc.TabIndex = 5;
-            ridenLblWyjDesc.Text = "Wyjscie:";
-            ridenLblWyjDesc.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // ridenBtnConnect
             // 
@@ -1867,9 +1907,9 @@
             ridenLblLocalIP.AutoEllipsis = true;
             ridenLblLocalIP.Font = new Font("Consolas", 9F);
             ridenLblLocalIP.ForeColor = Color.Gray;
-            ridenLblLocalIP.Location = new Point(152, 354);
+            ridenLblLocalIP.Location = new Point(132, 354);
             ridenLblLocalIP.Name = "ridenLblLocalIP";
-            ridenLblLocalIP.Size = new Size(100, 25);
+            ridenLblLocalIP.Size = new Size(128, 25);
             ridenLblLocalIP.TabIndex = 7;
             ridenLblLocalIP.Text = "IP: ---";
             // 
@@ -1877,17 +1917,17 @@
             // 
             ridenCmbPort.DropDownStyle = ComboBoxStyle.DropDownList;
             ridenCmbPort.Font = new Font("Consolas", 9F);
-            ridenCmbPort.Location = new Point(12, 48);
+            ridenCmbPort.Location = new Point(324, 15);
             ridenCmbPort.Name = "ridenCmbPort";
-            ridenCmbPort.Size = new Size(100, 22);
+            ridenCmbPort.Size = new Size(116, 22);
             ridenCmbPort.TabIndex = 23;
             // 
             // ridenBtnRefreshPorts
             // 
             ridenBtnRefreshPorts.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            ridenBtnRefreshPorts.Location = new Point(118, 47);
+            ridenBtnRefreshPorts.Location = new Point(446, 14);
             ridenBtnRefreshPorts.Name = "ridenBtnRefreshPorts";
-            ridenBtnRefreshPorts.Size = new Size(28, 26);
+            ridenBtnRefreshPorts.Size = new Size(28, 22);
             ridenBtnRefreshPorts.TabIndex = 24;
             ridenBtnRefreshPorts.Text = "↻";
             ridenBtnRefreshPorts.UseVisualStyleBackColor = true;
@@ -1898,9 +1938,9 @@
             ridenBtnConnectUSB.FlatStyle = FlatStyle.Flat;
             ridenBtnConnectUSB.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             ridenBtnConnectUSB.ForeColor = Color.White;
-            ridenBtnConnectUSB.Location = new Point(152, 47);
+            ridenBtnConnectUSB.Location = new Point(168, 11);
             ridenBtnConnectUSB.Name = "ridenBtnConnectUSB";
-            ridenBtnConnectUSB.Size = new Size(100, 26);
+            ridenBtnConnectUSB.Size = new Size(150, 30);
             ridenBtnConnectUSB.TabIndex = 25;
             ridenBtnConnectUSB.Text = "POLACZ USB";
             ridenBtnConnectUSB.UseVisualStyleBackColor = false;
@@ -1917,11 +1957,12 @@
             // 
             // ridenLblVsetVal
             // 
+            ridenLblVsetVal.BackColor = Color.Transparent;
             ridenLblVsetVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblVsetVal.ForeColor = Color.Cyan;
-            ridenLblVsetVal.Location = new Point(119, 117);
+            ridenLblVsetVal.Location = new Point(94, 57);
             ridenLblVsetVal.Name = "ridenLblVsetVal";
-            ridenLblVsetVal.Size = new Size(75, 32);
+            ridenLblVsetVal.Size = new Size(75, 27);
             ridenLblVsetVal.TabIndex = 8;
             ridenLblVsetVal.Text = "---";
             // 
@@ -1930,9 +1971,9 @@
             ridenTxtVset.BackColor = Color.Navy;
             ridenTxtVset.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtVset.ForeColor = Color.Gold;
-            ridenTxtVset.Location = new Point(208, 116);
+            ridenTxtVset.Location = new Point(168, 56);
             ridenTxtVset.Name = "ridenTxtVset";
-            ridenTxtVset.Size = new Size(60, 25);
+            ridenTxtVset.Size = new Size(70, 25);
             ridenTxtVset.TabIndex = 9;
             ridenTxtVset.Text = "5.00";
             // 
@@ -1941,20 +1982,21 @@
             ridenBtnSetV.BackColor = Color.DarkBlue;
             ridenBtnSetV.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetV.ForeColor = Color.White;
-            ridenBtnSetV.Location = new Point(281, 113);
+            ridenBtnSetV.Location = new Point(244, 56);
             ridenBtnSetV.Name = "ridenBtnSetV";
-            ridenBtnSetV.Size = new Size(50, 28);
+            ridenBtnSetV.Size = new Size(74, 28);
             ridenBtnSetV.TabIndex = 10;
             ridenBtnSetV.Text = "SET V";
             ridenBtnSetV.UseVisualStyleBackColor = false;
             // 
             // ridenLblIsetVal
             // 
+            ridenLblIsetVal.BackColor = Color.Transparent;
             ridenLblIsetVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblIsetVal.ForeColor = Color.Cyan;
-            ridenLblIsetVal.Location = new Point(118, 145);
+            ridenLblIsetVal.Location = new Point(93, 98);
             ridenLblIsetVal.Name = "ridenLblIsetVal";
-            ridenLblIsetVal.Size = new Size(75, 32);
+            ridenLblIsetVal.Size = new Size(61, 25);
             ridenLblIsetVal.TabIndex = 11;
             ridenLblIsetVal.Text = "---";
             // 
@@ -1963,9 +2005,9 @@
             ridenTxtIset.BackColor = Color.Navy;
             ridenTxtIset.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtIset.ForeColor = Color.Gold;
-            ridenTxtIset.Location = new Point(208, 152);
+            ridenTxtIset.Location = new Point(168, 100);
             ridenTxtIset.Name = "ridenTxtIset";
-            ridenTxtIset.Size = new Size(60, 25);
+            ridenTxtIset.Size = new Size(70, 25);
             ridenTxtIset.TabIndex = 12;
             ridenTxtIset.Text = "0.100";
             // 
@@ -1974,40 +2016,43 @@
             ridenBtnSetI.BackColor = Color.DarkBlue;
             ridenBtnSetI.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetI.ForeColor = Color.White;
-            ridenBtnSetI.Location = new Point(281, 149);
+            ridenBtnSetI.Location = new Point(244, 97);
             ridenBtnSetI.Name = "ridenBtnSetI";
-            ridenBtnSetI.Size = new Size(50, 28);
+            ridenBtnSetI.Size = new Size(74, 28);
             ridenBtnSetI.TabIndex = 13;
             ridenBtnSetI.Text = "SET I";
             ridenBtnSetI.UseVisualStyleBackColor = false;
             // 
             // ridenLblVoutVal
             // 
+            ridenLblVoutVal.BackColor = Color.Transparent;
             ridenLblVoutVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblVoutVal.ForeColor = Color.CornflowerBlue;
-            ridenLblVoutVal.Location = new Point(119, 173);
+            ridenLblVoutVal.Location = new Point(93, 141);
             ridenLblVoutVal.Name = "ridenLblVoutVal";
-            ridenLblVoutVal.Size = new Size(83, 32);
+            ridenLblVoutVal.Size = new Size(60, 27);
             ridenLblVoutVal.TabIndex = 14;
             ridenLblVoutVal.Text = "---";
             // 
             // ridenLblIoutVal
             // 
+            ridenLblIoutVal.BackColor = Color.Transparent;
             ridenLblIoutVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblIoutVal.ForeColor = Color.OrangeRed;
-            ridenLblIoutVal.Location = new Point(118, 200);
+            ridenLblIoutVal.Location = new Point(93, 218);
             ridenLblIoutVal.Name = "ridenLblIoutVal";
-            ridenLblIoutVal.Size = new Size(84, 32);
+            ridenLblIoutVal.Size = new Size(60, 34);
             ridenLblIoutVal.TabIndex = 15;
             ridenLblIoutVal.Text = "---";
             // 
             // ridenLblPowerVal
             // 
+            ridenLblPowerVal.BackColor = Color.Transparent;
             ridenLblPowerVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblPowerVal.ForeColor = Color.LimeGreen;
-            ridenLblPowerVal.Location = new Point(118, 230);
+            ridenLblPowerVal.Location = new Point(93, 181);
             ridenLblPowerVal.Name = "ridenLblPowerVal";
-            ridenLblPowerVal.Size = new Size(76, 32);
+            ridenLblPowerVal.Size = new Size(69, 30);
             ridenLblPowerVal.TabIndex = 16;
             ridenLblPowerVal.Text = "---";
             // 
@@ -2015,9 +2060,9 @@
             // 
             ridenLblOutputVal.Font = new Font("Consolas", 20F, FontStyle.Bold);
             ridenLblOutputVal.ForeColor = Color.Gray;
-            ridenLblOutputVal.Location = new Point(118, 257);
+            ridenLblOutputVal.Location = new Point(468, 227);
             ridenLblOutputVal.Name = "ridenLblOutputVal";
-            ridenLblOutputVal.Size = new Size(84, 35);
+            ridenLblOutputVal.Size = new Size(84, 49);
             ridenLblOutputVal.TabIndex = 17;
             ridenLblOutputVal.Text = "---";
             // 
@@ -2052,9 +2097,9 @@
             ridenLblStatus.AutoEllipsis = true;
             ridenLblStatus.Font = new Font("Consolas", 9F);
             ridenLblStatus.ForeColor = Color.Gray;
-            ridenLblStatus.Location = new Point(318, 353);
+            ridenLblStatus.Location = new Point(266, 354);
             ridenLblStatus.Name = "ridenLblStatus";
-            ridenLblStatus.Size = new Size(370, 28);
+            ridenLblStatus.Size = new Size(174, 28);
             ridenLblStatus.TabIndex = 20;
             ridenLblStatus.Text = "USB: ";
             // 
@@ -2063,13 +2108,14 @@
             ridenTbLog.BackColor = Color.FromArgb(13, 13, 13);
             ridenTbLog.Font = new Font("Consolas", 8F);
             ridenTbLog.ForeColor = Color.FromArgb(0, 200, 0);
-            ridenTbLog.Location = new Point(580, 265);
+            ridenTbLog.Location = new Point(594, 258);
             ridenTbLog.Multiline = true;
             ridenTbLog.Name = "ridenTbLog";
             ridenTbLog.ReadOnly = true;
             ridenTbLog.ScrollBars = ScrollBars.Vertical;
             ridenTbLog.Size = new Size(160, 82);
             ridenTbLog.TabIndex = 21;
+            ridenTbLog.Visible = false;
             ridenTbLog.WordWrap = false;
             // 
             // ridenBtnClearLog
@@ -2077,31 +2123,22 @@
             ridenBtnClearLog.BackColor = Color.FromArgb(64, 0, 0);
             ridenBtnClearLog.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             ridenBtnClearLog.ForeColor = Color.LightCoral;
-            ridenBtnClearLog.Location = new Point(605, 337);
+            ridenBtnClearLog.Location = new Point(594, 273);
             ridenBtnClearLog.Name = "ridenBtnClearLog";
             ridenBtnClearLog.Size = new Size(140, 32);
             ridenBtnClearLog.TabIndex = 22;
             ridenBtnClearLog.Text = "WYCZYSC LOG";
             ridenBtnClearLog.UseVisualStyleBackColor = false;
-            // 
-            // ridenLblOvpDesc
-            // 
-            ridenLblOvpDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblOvpDesc.ForeColor = Color.LightGray;
-            ridenLblOvpDesc.Location = new Point(208, 180);
-            ridenLblOvpDesc.Name = "ridenLblOvpDesc";
-            ridenLblOvpDesc.Size = new Size(60, 28);
-            ridenLblOvpDesc.TabIndex = 27;
-            ridenLblOvpDesc.Text = "OVP:";
-            ridenLblOvpDesc.TextAlign = ContentAlignment.MiddleLeft;
+            ridenBtnClearLog.Visible = false;
             // 
             // ridenLblOvpVal
             // 
+            ridenLblOvpVal.BackColor = Color.Transparent;
             ridenLblOvpVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblOvpVal.ForeColor = Color.Orange;
-            ridenLblOvpVal.Location = new Point(281, 180);
+            ridenLblOvpVal.Location = new Point(324, 142);
             ridenLblOvpVal.Name = "ridenLblOvpVal";
-            ridenLblOvpVal.Size = new Size(80, 25);
+            ridenLblOvpVal.Size = new Size(86, 27);
             ridenLblOvpVal.TabIndex = 28;
             ridenLblOvpVal.Text = "---";
             // 
@@ -2110,9 +2147,9 @@
             ridenTxtOVP.BackColor = Color.Navy;
             ridenTxtOVP.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtOVP.ForeColor = Color.Gold;
-            ridenTxtOVP.Location = new Point(208, 206);
+            ridenTxtOVP.Location = new Point(168, 142);
             ridenTxtOVP.Name = "ridenTxtOVP";
-            ridenTxtOVP.Size = new Size(60, 25);
+            ridenTxtOVP.Size = new Size(70, 25);
             ridenTxtOVP.TabIndex = 29;
             ridenTxtOVP.Text = "30";
             // 
@@ -2122,32 +2159,22 @@
             ridenBtnSetOVP.Enabled = false;
             ridenBtnSetOVP.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetOVP.ForeColor = Color.White;
-            ridenBtnSetOVP.Location = new Point(281, 204);
+            ridenBtnSetOVP.Location = new Point(244, 140);
             ridenBtnSetOVP.Name = "ridenBtnSetOVP";
-            ridenBtnSetOVP.Size = new Size(60, 28);
+            ridenBtnSetOVP.Size = new Size(74, 28);
             ridenBtnSetOVP.TabIndex = 30;
             ridenBtnSetOVP.Text = "SET OVP";
             ridenBtnSetOVP.UseVisualStyleBackColor = false;
             ridenBtnSetOVP.Click += ridenBtnSetOVP_Click;
             // 
-            // ridenLblOcpDesc
-            // 
-            ridenLblOcpDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblOcpDesc.ForeColor = Color.LightGray;
-            ridenLblOcpDesc.Location = new Point(208, 234);
-            ridenLblOcpDesc.Name = "ridenLblOcpDesc";
-            ridenLblOcpDesc.Size = new Size(60, 28);
-            ridenLblOcpDesc.TabIndex = 31;
-            ridenLblOcpDesc.Text = "OCP:";
-            ridenLblOcpDesc.TextAlign = ContentAlignment.MiddleLeft;
-            // 
             // ridenLblOcpVal
             // 
+            ridenLblOcpVal.BackColor = Color.Transparent;
             ridenLblOcpVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
-            ridenLblOcpVal.ForeColor = Color.Orange;
-            ridenLblOcpVal.Location = new Point(274, 232);
+            ridenLblOcpVal.ForeColor = Color.DodgerBlue;
+            ridenLblOcpVal.Location = new Point(324, 181);
             ridenLblOcpVal.Name = "ridenLblOcpVal";
-            ridenLblOcpVal.Size = new Size(80, 32);
+            ridenLblOcpVal.Size = new Size(80, 28);
             ridenLblOcpVal.TabIndex = 32;
             ridenLblOcpVal.Text = "---";
             // 
@@ -2156,9 +2183,9 @@
             ridenTxtOCP.BackColor = Color.Navy;
             ridenTxtOCP.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtOCP.ForeColor = Color.Gold;
-            ridenTxtOCP.Location = new Point(208, 263);
+            ridenTxtOCP.Location = new Point(168, 181);
             ridenTxtOCP.Name = "ridenTxtOCP";
-            ridenTxtOCP.Size = new Size(60, 25);
+            ridenTxtOCP.Size = new Size(70, 25);
             ridenTxtOCP.TabIndex = 33;
             ridenTxtOCP.Text = "5.00";
             // 
@@ -2168,9 +2195,9 @@
             ridenBtnSetOCP.Enabled = false;
             ridenBtnSetOCP.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetOCP.ForeColor = Color.White;
-            ridenBtnSetOCP.Location = new Point(281, 263);
+            ridenBtnSetOCP.Location = new Point(244, 179);
             ridenBtnSetOCP.Name = "ridenBtnSetOCP";
-            ridenBtnSetOCP.Size = new Size(60, 28);
+            ridenBtnSetOCP.Size = new Size(74, 28);
             ridenBtnSetOCP.TabIndex = 34;
             ridenBtnSetOCP.Text = "SET OCP";
             ridenBtnSetOCP.UseVisualStyleBackColor = false;
@@ -2179,7 +2206,7 @@
             // 
             ridenLblAlarmDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblAlarmDesc.ForeColor = Color.LightGray;
-            ridenLblAlarmDesc.Location = new Point(224, 310);
+            ridenLblAlarmDesc.Location = new Point(12, 258);
             ridenLblAlarmDesc.Name = "ridenLblAlarmDesc";
             ridenLblAlarmDesc.Size = new Size(60, 28);
             ridenLblAlarmDesc.TabIndex = 35;
@@ -2190,7 +2217,7 @@
             // 
             ridenLblAlarmVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblAlarmVal.ForeColor = Color.LimeGreen;
-            ridenLblAlarmVal.Location = new Point(290, 310);
+            ridenLblAlarmVal.Location = new Point(90, 259);
             ridenLblAlarmVal.Name = "ridenLblAlarmVal";
             ridenLblAlarmVal.Size = new Size(100, 32);
             ridenLblAlarmVal.TabIndex = 36;
@@ -2277,6 +2304,7 @@
         private TabPage tabTools;
         private Button btnToolsRefresh;
         private Button btnToolsEdit;
+        private Button btnPcapAnalyzer;
         private Panel panelTools;
         private TabPage tabPage2;
         private GroupBox groupBox3;
@@ -2383,7 +2411,7 @@
         private Label ridenLblVoutDesc;
         private Label ridenLblIoutDesc;
         private Label ridenLblMocDesc;
-        private Label ridenLblWyjDesc;
+        private Label ridenLblVinDesc;
         private Label ridenLblVsetVal;
         private Label ridenLblIsetVal;
         private Label ridenLblVoutVal;
@@ -2404,9 +2432,7 @@
         private Button ridenBtnConnectUSB;
         private Button ridenBtnRefreshPorts;
         private Label ridenLblPortStatus;
-        private Label ridenLblOvpDesc;
         private Label ridenLblOvpVal;
-        private Label ridenLblOcpDesc;
         private Label ridenLblOcpVal;
         private Label ridenLblAlarmDesc;
         private Label ridenLblAlarmVal;
@@ -2414,6 +2440,8 @@
         private TextBox ridenTxtOCP;
         private Button ridenBtnSetOVP;
         private Button ridenBtnSetOCP;
+        private Label label7;
         private PictureBox pictureBox2;
+        private Label labeltemp;
     }
 }
