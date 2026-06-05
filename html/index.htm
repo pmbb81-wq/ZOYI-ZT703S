@@ -54,9 +54,7 @@
             max-width: 600px;
             padding: 20px;
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: block;
             position: relative;
         }
 
@@ -66,6 +64,9 @@
             border-radius: 12px;
             overflow: hidden;
             resize: both;
+            position: absolute;
+            left: 0;
+            width: 100%;
             display: flex;
             flex-direction: column;
             transform-origin: 0 0;
@@ -242,6 +243,10 @@
             </div>
         </div>
 
+        <div class="card mode-card" style="min-height:60px;">
+            <div class="card-head">Tryb pomiaru</div>
+            <div class="card-body" style="padding:8px 16px;text-align:left;"><span class="info-val" id="mode2">--</span></div>
+        </div>
         <div class="card" id="gaugeCard">
             <div class="card-head">Angular Gauge</div>
             <div class="card-body" style="overflow:hidden;">
@@ -260,10 +265,6 @@
         <div class="card info-card">
             <div class="card-head">MAX</div>
             <div class="card-body"><span class="info-val" id="max">--</span></div>
-        </div>
-        <div class="card info-card">
-            <div class="card-head">Status</div>
-            <div class="card-body"><span class="info-val" id="mode2">--</span></div>
         </div>
         <div class="card info-card">
             <div class="card-head">Frequency</div>
@@ -525,8 +526,8 @@
                 html += '<line x1="' + tm.x + '" y1="' + tm.y + '" x2="' + tp.x + '" y2="' + tp.y + '" stroke="' + st.ticks + '" stroke-width="' + (isMain ? '2' : '1') + '"/>';
                 var lp = polar(td, tickLabelR);
                 var lv = tickVals[t];
-                var label = lv < 1 ? lv.toFixed(3) : (lv < 10 ? lv.toFixed(2) : (lv < 100 ? lv.toFixed(1) : Math.round(lv).toString()));
-                html += '<text x="' + lp.x + '" y="' + (lp.y + 3) + '" text-anchor="middle" fill="' + st.text + '" font-size="8.5" font-family="Segoe UI" font-weight="' + (isMain ? '600' : '400') + '" opacity="0.9">' + label + '</text>';
+                var label = lv.toFixed(1);
+                html += '<text x="' + lp.x + '" y="' + (lp.y + 3) + '" text-anchor="middle" fill="' + st.text + '" font-size="18" font-family="Segoe UI" font-weight="600" opacity="0.9">' + label + '</text>';
             }
 
             var nRad = vAngle * Math.PI / 180;
@@ -681,6 +682,8 @@
             }
         });
 
+        var topZIndex = 100;
+
         function makeDraggable(el) {
             if (!el) return;
             var key = 'card_pos_' + (el.id || Math.random().toString(36).slice(2));
@@ -692,7 +695,6 @@
                     try {
                         var p = JSON.parse(saved);
                         if (p.l || p.t) {
-                            el.style.position = 'relative';
                             el.style.left = p.l + 'px';
                             el.style.top = p.t + 'px';
                         }
@@ -705,14 +707,13 @@
             if (!handle) return;
 
             handle.addEventListener('mousedown', function(e) {
+                el.style.zIndex = ++topZIndex;
                 if (e.button !== 0) return;
                 e.preventDefault();
                 var rect = el.getBoundingClientRect();
 
-                // temporarily remove relative offset to get natural flow position for clone start
                 var oldLeft = parseFloat(el.style.left) || 0;
                 var oldTop = parseFloat(el.style.top) || 0;
-                var oldPos = el.style.position;
 
                 el.style.visibility = 'hidden';
 
@@ -746,17 +747,13 @@
                     var dy = ev.clientY - startY;
 
                     if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
-                        el.style.position = oldPos;
-                        el.style.left = oldLeft ? oldLeft + 'px' : '';
+                        el.style.left = oldLeft ? oldLeft + 'px' : '0px';
                         el.style.top = oldTop ? oldTop + 'px' : '';
                         localStorage.removeItem(key);
                     } else {
-                        var newL = oldLeft + dx;
-                        var newT = oldTop + dy;
-                        el.style.position = 'relative';
-                        el.style.left = newL + 'px';
-                        el.style.top = newT + 'px';
-                        localStorage.setItem(key, JSON.stringify({l: newL, t: newT}));
+                        el.style.left = (oldLeft + dx) + 'px';
+                        el.style.top = (oldTop + dy) + 'px';
+                        localStorage.setItem(key, JSON.stringify({l: oldLeft + dx, t: oldTop + dy}));
                     }
                 }
                 document.addEventListener('mousemove', onMove);
@@ -764,7 +761,27 @@
             });
         }
 
+        function layoutCards() {
+            var cards = document.querySelectorAll('.card');
+            var y = 0;
+            cards.forEach(function(c) {
+                var key = c.dataset.dragKey;
+                var saved = localStorage.getItem(key);
+                if (saved) {
+                    try {
+                        var p = JSON.parse(saved);
+                        y = Math.max(y, p.t + c.offsetHeight + 16);
+                    } catch(e) {}
+                } else {
+                    c.style.left = '0px';
+                    c.style.top = y + 'px';
+                    y += c.offsetHeight + 16;
+                }
+            });
+        }
+
         document.querySelectorAll('.card').forEach(makeDraggable);
+        layoutCards();
 
         var valEl = document.getElementById('value');
         var overlay = document.getElementById('fontDialogOverlay');
@@ -787,6 +804,27 @@
         valEl.style.fontStyle = st;
         valEl.style.fontSize = (parseInt(savedSize) / 16) + 'rem';
         valEl.style.color = savedColor;
+
+        function applySavedFont(el, keyPrefix) {
+            var ff = localStorage.getItem(keyPrefix + 'FontFamily');
+            var fs = localStorage.getItem(keyPrefix + 'FontStyle');
+            var fz = localStorage.getItem(keyPrefix + 'FontSize');
+            var fc = localStorage.getItem(keyPrefix + 'Color');
+            if (ff) { el.style.fontFamily = ff; }
+            if (fz) { el.style.fontSize = (parseInt(fz) / 16) + 'rem'; }
+            if (fc) { el.style.color = fc; }
+            if (fs) {
+                var w = fs.indexOf('bold') >= 0 ? 'bold' : 'normal';
+                var st = fs.indexOf('italic') >= 0 && fs.indexOf('bold') < 0 ? 'italic' : fs === 'italic' ? 'italic' : 'normal';
+                if (fs === 'bold italic') { w = 'bold'; st = 'italic'; }
+                el.style.fontWeight = w;
+                el.style.fontStyle = st;
+            }
+        }
+        applySavedFont(document.getElementById('label'), 'label');
+        applySavedFont(document.getElementById('unit'), 'unit');
+        applySavedFont(document.getElementById('mode2'), 'mode2');
+        applySavedFont(document.getElementById('freq'), 'freq');
 
         var pendingFont, pendingStyle, pendingSize, pendingColor;
 
@@ -862,22 +900,44 @@
         colorPicker.value = savedColor;
         updatePreview();
 
-        // open font dialog on right-click
-        function openFontDialog(e) {
+        // generic font dialog: open with a target element and localStorage key
+        var pendingTarget = null;
+        var pendingKey = null;
+
+        function openFontDialog(e, target, keyPrefix) {
             e.preventDefault();
+            e.stopPropagation();
             loadSystemFonts();
-            pendingFont = fontSelect.value;
-            pendingStyle = styleSelect.value;
-            pendingSize = sizeSelect.value;
-            pendingColor = colorPicker.value;
+            pendingTarget = target;
+            pendingKey = keyPrefix;
+            pendingFont = localStorage.getItem(keyPrefix + 'FontFamily') || savedFont;
+            pendingStyle = localStorage.getItem(keyPrefix + 'FontStyle') || savedStyle;
+            pendingSize = localStorage.getItem(keyPrefix + 'FontSize') || savedSize;
+            pendingColor = localStorage.getItem(keyPrefix + 'Color') || savedColor;
+            fontSelect.value = pendingFont;
+            styleSelect.value = pendingStyle;
+            sizeSelect.value = parseInt(pendingSize);
+            colorPicker.value = pendingColor;
             overlay.classList.add('open');
         }
-        valEl.addEventListener('contextmenu', openFontDialog);
+
+        function setupFontContext(el, keyPrefix) {
+            el.addEventListener('contextmenu', function(e) { openFontDialog(e, el, keyPrefix); });
+        }
+
+        setupFontContext(valEl, 'value');
         var valRow = valEl.closest('.value-row');
-        if (valRow) valRow.addEventListener('contextmenu', function(e) {
-            if (e.target === valEl) return; // already handled by valEl
-            openFontDialog(e);
-        });
+        if (valRow) {
+            valRow.addEventListener('contextmenu', function(e) {
+                e.stopPropagation();
+                if (e.target === valEl) return;
+                openFontDialog(e, valEl, 'value');
+            });
+        }
+        setupFontContext(document.getElementById('label'), 'label');
+        setupFontContext(document.getElementById('unit'), 'unit');
+        setupFontContext(document.getElementById('mode2'), 'mode2');
+        setupFontContext(document.getElementById('freq'), 'freq');
 
         // live preview on change
         fontSelect.addEventListener('change', function() { pendingFont = this.value; updatePreview(); });
@@ -887,24 +947,26 @@
 
         // OK
         document.getElementById('fontDlgOk').addEventListener('click', function() {
+            if (!pendingTarget || !pendingKey) { overlay.classList.remove('open'); return; }
             savedFont = pendingFont || fontSelect.value;
             savedStyle = pendingStyle || styleSelect.value;
             savedSize = pendingSize || sizeSelect.value;
             savedColor = pendingColor || colorPicker.value;
 
             var weight = savedStyle.indexOf('bold') >= 0 ? 'bold' : 'normal';
-            var style = savedStyle === 'italic' ? 'italic' : (savedStyle === 'bold italic' ? 'italic' : 'normal');
+            var style = savedStyle.indexOf('italic') >= 0 && savedStyle.indexOf('bold') < 0 ? 'italic' : savedStyle === 'italic' ? 'italic' : 'normal';
+            if (savedStyle === 'bold italic') { weight = 'bold'; style = 'italic'; }
 
-            valEl.style.fontFamily = savedFont;
-            valEl.style.fontWeight = weight;
-            valEl.style.fontStyle = style;
-            valEl.style.fontSize = (parseInt(savedSize) / 16) + 'rem';
-            valEl.style.color = savedColor;
+            pendingTarget.style.fontFamily = savedFont;
+            pendingTarget.style.fontWeight = weight;
+            pendingTarget.style.fontStyle = style;
+            pendingTarget.style.fontSize = (parseInt(savedSize) / 16) + 'rem';
+            pendingTarget.style.color = savedColor;
 
-            localStorage.setItem('valueFontFamily', savedFont);
-            localStorage.setItem('valueFontStyle', savedStyle);
-            localStorage.setItem('valueFontSize', savedSize);
-            localStorage.setItem('valueColor', savedColor);
+            localStorage.setItem(pendingKey + 'FontFamily', savedFont);
+            localStorage.setItem(pendingKey + 'FontStyle', savedStyle);
+            localStorage.setItem(pendingKey + 'FontSize', savedSize);
+            localStorage.setItem(pendingKey + 'Color', savedColor);
 
             overlay.classList.remove('open');
         });

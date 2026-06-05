@@ -159,7 +159,7 @@ namespace ZOYI
             toolTip1.SetToolTip(checkBox2, "Blokuje i odblokowuje przesuwanie wszytkimi elementami na formatcce.");
 
             toolTip1.SetToolTip(button3, "Zmienia czestotliwosc pomiaru w hercach.");
-            toolTip1.SetToolTip(btnDQ02Connect, "Laczy lub rozlacza z wybranym portem COM."); 
+            toolTip1.SetToolTip(btnDQ02Connect, "Laczy lub rozlacza z wybranym portem COM.");
             toolTip1.SetToolTip(btnDQ02Refresh, "Odswierza porty COM ktore sa dostepne w komputerze.");
             toolTip1.SetToolTip(button7, "Zmienia tryby poboczne  miernika. X/D/Q/0/ESR.");
             toolTip1.SetToolTip(button5, "Zmienia level napiecia 100mv/300mv/600mv");
@@ -176,6 +176,9 @@ namespace ZOYI
             //toolTip1.SetToolTip(button3, "Zmienia czestotliwosc pomiaru w hercach.");
 
             LoadESRImage();
+
+            // Inicjalizacja zakladki RIDEN
+            InitializeRidenTab();
         }
 
         private void SetWindowLocation()
@@ -243,7 +246,12 @@ namespace ZOYI
         {
             webServer.Stop();
             comx.disconnect();
+            _riden.Rozlacz();
             standardDisplayPanel.Close();
+
+            Properties.Settings.Default.riden_vset = ridenTxtVset.Text;
+            Properties.Settings.Default.riden_iset = ridenTxtIset.Text;
+            Properties.Settings.Default.riden_ovp = ridenTxtOVP.Text;
 
             SaveControlPositions();
             Properties.Settings.Default.main_form_pos_x = this.Location.X;
@@ -2264,5 +2272,15 @@ namespace ZOYI
         {
 
         }
+
+        private void ridenBtnSetOVP_Click(object sender, EventArgs e)
+        {
+            if (!_riden.Polaczony) { Log("Nie polaczony z zasilaczem."); return; }
+            float f = ParseValue(ridenTxtOVP.Text, 0, 60, "V");
+            if (float.IsNaN(f)) { Log("Blad parsowania: " + ridenTxtOVP.Text); return; }
+            _riden.UstawOVP(f);
+            Log($"OVP ustawione na {f:F2} V");
+        }
+
     }
 }

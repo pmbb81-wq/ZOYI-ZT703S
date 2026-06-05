@@ -681,5 +681,41 @@ namespace ZOYI.Properties {
                 this["show_startup_warning"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5V")]
+        public string riden_vset {
+            get {
+                return ((string)(this["riden_vset"]));
+            }
+            set {
+                this["riden_vset"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1V")]
+        public string riden_iset {
+            get {
+                return ((string)(this["riden_iset"]));
+            }
+            set {
+                this["riden_iset"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public string riden_ovp {
+            get {
+                return ((string)(this["riden_ovp"]));
+            }
+            set {
+                this["riden_ovp"] = value;
+            }
+        }
     }
 }
