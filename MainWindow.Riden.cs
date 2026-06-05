@@ -8,6 +8,8 @@ public partial class MainWindow
     private const int MaxLogLines = 200;
     private System.Windows.Forms.Timer? _blinkUsb;
     private bool _blinkState;
+    private System.Windows.Forms.Timer? _blinkOutput;
+    private bool _blinkOutputState;
 
     private void InitializeRidenTab()
     {
@@ -31,6 +33,13 @@ public partial class MainWindow
         {
             _blinkState = !_blinkState;
             ridenBtnConnectUSB.BackColor = _blinkState ? Color.DarkGreen : Color.FromArgb(0, 60, 0);
+        };
+
+        _blinkOutput = new System.Windows.Forms.Timer { Interval = 500 };
+        _blinkOutput.Tick += (_, _) =>
+        {
+            _blinkOutputState = !_blinkOutputState;
+            ridenLblOutputVal.ForeColor = _blinkOutputState ? Color.LimeGreen : Color.FromArgb(34, 34, 34);
         };
 
         ridenTxtVset.Text = Properties.Settings.Default.riden_vset;
@@ -67,7 +76,20 @@ public partial class MainWindow
         ridenLblIoutVal.Text   = _riden.Iout.ToString("F2") + " A";
         ridenLblPowerVal.Text  = _riden.Power.ToString("F2") + " W";
         ridenLblOutputVal.Text = _riden.OutputOn ? "ON" : "OFF";
-        ridenLblOutputVal.ForeColor = _riden.OutputOn ? Color.LimeGreen : Color.Gray;
+        if (_riden.OutputOn)
+        {
+            if (!_blinkOutput!.Enabled)
+            {
+                _blinkOutputState = true;
+                ridenLblOutputVal.ForeColor = Color.LimeGreen;
+                _blinkOutput.Start();
+            }
+        }
+        else
+        {
+            _blinkOutput!.Stop();
+            ridenLblOutputVal.ForeColor = Color.Gray;
+        }
 
         if (_riden.OVP > 0)
             ridenLblOvpVal.Text = _riden.OVP.ToString("F2") + " V";
