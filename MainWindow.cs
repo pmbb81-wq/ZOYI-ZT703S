@@ -608,7 +608,11 @@ namespace ZOYI
         private void RestoreControlPositions()
         {
             string data = Properties.Settings.Default.saved_control_positions;
-            if (string.IsNullOrWhiteSpace(data)) return;
+            if (string.IsNullOrWhiteSpace(data))
+            {
+                checkBox2.Checked = true;
+                return;
+            }
 
             var draggableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
