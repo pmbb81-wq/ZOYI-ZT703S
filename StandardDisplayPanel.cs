@@ -135,6 +135,7 @@ namespace ZOYI
             this.Shown += (s, ev) => { scrollX = pnlScroll.Width; };
 
             SetupLabel1ContextMenu();
+            SetupLabel2ContextMenu();
         }
 
         private void SetupLabel1ContextMenu()
@@ -244,6 +245,58 @@ namespace ZOYI
          * Colors section
          * 
          */
+        public void SetRidenData(string vout, string iout)
+        {
+            if (label2 != null)
+                label2.Text = $"V: {vout}\nI: {iout}";
+        }
+
+        private void SetupLabel2ContextMenu()
+        {
+            if (label2 == null) return;
+
+            if (Properties.Settings.Default.panel_std_riden_label_font != null)
+                label2.Font = Properties.Settings.Default.panel_std_riden_label_font;
+            try { label2.ForeColor = ColorTranslator.FromHtml(Properties.Settings.Default.panel_std_riden_label_color); } catch { }
+
+            var ctx = new ContextMenuStrip();
+            ctx.Items.Add("Change Font...", null, (s, e) =>
+            {
+                using (var fd = new FontDialog())
+                {
+                    fd.Font = label2.Font;
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        label2.Font = fd.Font;
+                        Properties.Settings.Default.panel_std_riden_label_font = fd.Font;
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Change Color...", null, (s, e) =>
+            {
+                using (var cd = new ColorDialog())
+                {
+                    cd.Color = label2.ForeColor;
+                    if (cd.ShowDialog() == DialogResult.OK)
+                    {
+                        label2.ForeColor = cd.Color;
+                        Properties.Settings.Default.panel_std_riden_label_color = ColorTranslator.ToHtml(cd.Color);
+                        Properties.Settings.Default.Save();
+                    }
+                }
+            });
+            ctx.Items.Add("Reset", null, (s, e) =>
+            {
+                label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+                label2.ForeColor = Color.White;
+                Properties.Settings.Default.panel_std_riden_label_font = null;
+                Properties.Settings.Default.panel_std_riden_label_color = "White";
+                Properties.Settings.Default.Save();
+            });
+            label2.ContextMenuStrip = ctx;
+        }
+
         public void setBackgroundColor(Color color)
         {
             this.BackColor = color;

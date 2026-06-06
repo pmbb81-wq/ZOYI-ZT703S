@@ -717,5 +717,28 @@ namespace ZOYI.Properties {
                 this["riden_ovp"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Drawing.Font panel_std_riden_label_font {
+            get {
+                return ((global::System.Drawing.Font)(this["panel_std_riden_label_font"]));
+            }
+            set {
+                this["panel_std_riden_label_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public string panel_std_riden_label_color {
+            get {
+                return ((string)(this["panel_std_riden_label_color"]));
+            }
+            set {
+                this["panel_std_riden_label_color"] = value;
+            }
+        }
     }
 }

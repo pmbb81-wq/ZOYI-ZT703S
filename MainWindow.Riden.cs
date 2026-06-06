@@ -84,6 +84,8 @@ public partial class MainWindow
         label7.Text            = $"VIN: {_riden.Vin.ToString("F2")} V   ({_riden.RawVin} / 0x{_riden.RawVin:X4})";
         ridenLblIoutVal.Text   = _riden.Iout.ToString("F2") + " A";
         ridenLblPowerVal.Text  = _riden.Power.ToString("F2") + " W";
+        if (standardDisplayPanel != null && !standardDisplayPanel.IsDisposed)
+            standardDisplayPanel.SetRidenData(ridenLblVoutVal.Text, ridenLblIoutVal.Text);
         ridenLblOutputVal.Text = _riden.OutputOn ? "ON" : "OFF";
         if (_riden.OutputOn)
         {
