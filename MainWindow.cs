@@ -413,6 +413,10 @@ namespace ZOYI
             MakeDraggable(tbDQ02UserTolerance, () => checkBox2.Checked);
             MakeDraggable(textBoxvoltage, () => checkBox2.Checked);
             MakeDraggable(textBoxtemperature, () => checkBox2.Checked);
+            MakeDraggable(lbDQ02Ports, () => checkBox2.Checked);
+            MakeDraggable(btnDQ02Refresh, () => checkBox2.Checked);
+            MakeDraggable(tbDQ02Baud, () => checkBox2.Checked);
+            MakeDraggable(btnDQ02Connect, () => checkBox2.Checked);
 
             SetupDQ02ValueContextMenu();
         }
