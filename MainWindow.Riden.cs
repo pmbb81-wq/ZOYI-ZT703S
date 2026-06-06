@@ -36,12 +36,13 @@ public partial class MainWindow
             BackColor = Color.FromArgb(0, 100, 0),
             Font = new Font("Segoe UI", 9F, FontStyle.Bold),
             ForeColor = Color.White,
-            Location = new Point(594, 310),
-            Size = new Size(140, 32),
+            Location = new Point(224, 302),
+            Size = new Size(140, 40),
             Text = "ZAPISZ CSV",
             UseVisualStyleBackColor = false
         };
         tabRIDEN.Controls.Add(ridenBtnZapiszCSV);
+        ridenBtnZapiszCSV.BringToFront();
         ridenBtnZapiszCSV.Click += RidenBtnZapiszCSV_Click;
 
         ridenBtnConnectUSB.Click += RidenBtnConnectUSB_Click;
