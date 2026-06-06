@@ -328,26 +328,29 @@ public partial class MainWindow
 
     private void ZatrzymajLogowanieRiden()
     {
-        _isRidenLogging = false;
-        _blinkRidenLog?.Stop();
-        _blinkRidenLog?.Dispose();
-        _blinkRidenLog = null;
-
-        _ridenLogWriter?.Flush();
-        _ridenLogWriter?.Close();
-        _ridenLogWriter?.Dispose();
-        _ridenLogWriter = null;
-
-        using var sfd = new SaveFileDialog
+        if (_ridenLogWriter != null)
         {
-            Filter = "CSV (*.csv)|*.csv",
-            FileName = Path.GetFileName(_ridenLogPath),
-            InitialDirectory = Path.GetDirectoryName(Path.GetFullPath(_ridenLogPath))
-        };
-        if (sfd.ShowDialog() == DialogResult.OK)
-        {
-            File.Copy(_ridenLogPath, sfd.FileName, true);
-            MessageBox.Show($"Zapisano: {sfd.FileName}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _isRidenLogging = false;
+            _blinkRidenLog?.Stop();
+            _blinkRidenLog?.Dispose();
+            _blinkRidenLog = null;
+
+            _ridenLogWriter.Flush();
+            _ridenLogWriter.Close();
+            _ridenLogWriter.Dispose();
+            _ridenLogWriter = null;
+
+            using var sfd = new SaveFileDialog
+            {
+                Filter = "CSV (*.csv)|*.csv",
+                FileName = Path.GetFileName(_ridenLogPath),
+                InitialDirectory = Path.GetDirectoryName(Path.GetFullPath(_ridenLogPath))
+            };
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                File.Copy(_ridenLogPath, sfd.FileName, true);
+                MessageBox.Show($"Zapisano: {sfd.FileName}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
         ridenBtnZapiszCSV.Text = "ZAPISZ CSV";
     }
