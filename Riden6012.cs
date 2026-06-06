@@ -19,6 +19,7 @@ public class Riden6012 : IDisposable
     private readonly ConcurrentQueue<(byte adres, ushort wartosc)> _pendingWrites = new();
 
     public bool Polaczony => _client?.Connected ?? _serialPort?.IsOpen ?? false;
+    public bool SerwerActive => _listener is not null;
     public string OstatniBlad { get; private set; } = "";
     public bool TrybUSB => _serialPort?.IsOpen ?? false;
 

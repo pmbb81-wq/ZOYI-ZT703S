@@ -139,7 +139,7 @@ public partial class MainWindow
     {
         try
         {
-            if (_riden.Polaczony)
+            if (_riden.SerwerActive)
             {
                 _riden.Rozlacz();
                 _blinkUsb?.Stop();
