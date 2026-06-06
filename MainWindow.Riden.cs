@@ -11,7 +11,6 @@ public partial class MainWindow
     private bool _blinkState;
     private System.Windows.Forms.Timer? _blinkOutput;
     private bool _blinkOutputState;
-    private Button? ridenBtnZapiszCSV;
     private bool _isRidenLogging;
     private StreamWriter? _ridenLogWriter;
     private string _ridenLogPath = "";
@@ -31,17 +30,6 @@ public partial class MainWindow
         ridenBtnSetOCP.Click += ridenBtnSetOCP_Click;
         ridenBtnClearLog.Click += (_, _) => ridenTbLog.Clear();
 
-        ridenBtnZapiszCSV = new Button
-        {
-            BackColor = Color.FromArgb(0, 100, 0),
-            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-            ForeColor = Color.White,
-            Location = new Point(224, 302),
-            Size = new Size(140, 40),
-            Text = "ZAPISZ CSV",
-            UseVisualStyleBackColor = false
-        };
-        tabRIDEN.Controls.Add(ridenBtnZapiszCSV);
         ridenBtnZapiszCSV.BringToFront();
         ridenBtnZapiszCSV.Click += RidenBtnZapiszCSV_Click;
 
@@ -325,10 +313,10 @@ public partial class MainWindow
             _blinkRidenLog.Tick += (_, _) =>
             {
                 blinkState = !blinkState;
-                ridenBtnZapiszCSV!.Text = blinkState ? "" : "ZAPISUJE...";
+                ridenBtnZapiszCSV.Text = blinkState ? "" : "ZAPISUJE...";
             };
             _blinkRidenLog.Start();
-            ridenBtnZapiszCSV!.Text = "ZAPISUJE...";
+            ridenBtnZapiszCSV.Text = "ZAPISUJE...";
         }
         else
         {
@@ -359,7 +347,7 @@ public partial class MainWindow
             File.Copy(_ridenLogPath, sfd.FileName, true);
             MessageBox.Show($"Zapisano: {sfd.FileName}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        ridenBtnZapiszCSV!.Text = "ZAPISZ CSV";
+        ridenBtnZapiszCSV.Text = "ZAPISZ CSV";
     }
 
     private void AktualizujLocalIP()

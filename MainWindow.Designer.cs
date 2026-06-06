@@ -143,7 +143,6 @@
             lblDQ02PassFail = new Label();
             tabRIDEN = new TabPage();
             labeltemp = new Label();
-            pictureBox2 = new PictureBox();
             ridenLblVinDesc = new Label();
             label7 = new Label();
             ridenLblVsetDesc = new Label();
@@ -178,8 +177,10 @@
             ridenLblOcpVal = new Label();
             ridenTxtOCP = new TextBox();
             ridenBtnSetOCP = new Button();
+            ridenBtnZapiszCSV = new Button();
             ridenLblAlarmDesc = new Label();
             ridenLblAlarmVal = new Label();
+            pictureBox2 = new PictureBox();
             notifyIcon1 = new NotifyIcon(components);
             toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -468,7 +469,7 @@
             btnPcapAnalyzer.BackColor = Color.FromArgb(64, 0, 0);
             btnPcapAnalyzer.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnPcapAnalyzer.ForeColor = Color.LightCoral;
-            btnPcapAnalyzer.Location = new Point(590, 324);
+            btnPcapAnalyzer.Location = new Point(594, 313);
             btnPcapAnalyzer.Name = "btnPcapAnalyzer";
             btnPcapAnalyzer.Size = new Size(150, 32);
             btnPcapAnalyzer.TabIndex = 37;
@@ -1746,7 +1747,6 @@
             tabRIDEN.BackColor = Color.FromArgb(34, 34, 34);
             tabRIDEN.BackgroundImageLayout = ImageLayout.Stretch;
             tabRIDEN.Controls.Add(labeltemp);
-            tabRIDEN.Controls.Add(pictureBox2);
             tabRIDEN.Controls.Add(ridenLblVinDesc);
             tabRIDEN.Controls.Add(label7);
             tabRIDEN.Controls.Add(ridenLblVsetDesc);
@@ -1781,9 +1781,11 @@
             tabRIDEN.Controls.Add(ridenLblOcpVal);
             tabRIDEN.Controls.Add(ridenTxtOCP);
             tabRIDEN.Controls.Add(ridenBtnSetOCP);
+            tabRIDEN.Controls.Add(ridenBtnZapiszCSV);
             tabRIDEN.Controls.Add(ridenLblAlarmDesc);
             tabRIDEN.Controls.Add(ridenLblAlarmVal);
             tabRIDEN.Controls.Add(btnPcapAnalyzer);
+            tabRIDEN.Controls.Add(pictureBox2);
             tabRIDEN.Location = new Point(4, 32);
             tabRIDEN.Name = "tabRIDEN";
             tabRIDEN.Padding = new Padding(3);
@@ -1803,21 +1805,11 @@
             labeltemp.Text = "TEMP: ---";
             labeltemp.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // pictureBox2
-            // 
-            pictureBox2.BackgroundImage = Properties.Resources.rd6006_riden_zasilacz_2a;
-            pictureBox2.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox2.Location = new Point(416, 179);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(324, 166);
-            pictureBox2.TabIndex = 40;
-            pictureBox2.TabStop = false;
-            // 
             // ridenLblVinDesc
             // 
             ridenLblVinDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblVinDesc.ForeColor = Color.LightGray;
-            ridenLblVinDesc.Location = new Point(657, 178);
+            ridenLblVinDesc.Location = new Point(685, 302);
             ridenLblVinDesc.Name = "ridenLblVinDesc";
             ridenLblVinDesc.Size = new Size(39, 28);
             ridenLblVinDesc.TabIndex = 39;
@@ -2060,7 +2052,7 @@
             // 
             ridenLblOutputVal.Font = new Font("Consolas", 20F, FontStyle.Bold);
             ridenLblOutputVal.ForeColor = Color.Gray;
-            ridenLblOutputVal.Location = new Point(468, 227);
+            ridenLblOutputVal.Location = new Point(224, 310);
             ridenLblOutputVal.Name = "ridenLblOutputVal";
             ridenLblOutputVal.Size = new Size(84, 49);
             ridenLblOutputVal.TabIndex = 17;
@@ -2097,9 +2089,9 @@
             ridenLblStatus.AutoEllipsis = true;
             ridenLblStatus.Font = new Font("Consolas", 9F);
             ridenLblStatus.ForeColor = Color.Gray;
-            ridenLblStatus.Location = new Point(266, 354);
+            ridenLblStatus.Location = new Point(480, 11);
             ridenLblStatus.Name = "ridenLblStatus";
-            ridenLblStatus.Size = new Size(174, 28);
+            ridenLblStatus.Size = new Size(265, 70);
             ridenLblStatus.TabIndex = 20;
             ridenLblStatus.Text = "USB: ";
             // 
@@ -2108,7 +2100,7 @@
             ridenTbLog.BackColor = Color.FromArgb(13, 13, 13);
             ridenTbLog.Font = new Font("Consolas", 8F);
             ridenTbLog.ForeColor = Color.FromArgb(0, 200, 0);
-            ridenTbLog.Location = new Point(594, 258);
+            ridenTbLog.Location = new Point(584, 265);
             ridenTbLog.Multiline = true;
             ridenTbLog.Name = "ridenTbLog";
             ridenTbLog.ReadOnly = true;
@@ -2123,13 +2115,26 @@
             ridenBtnClearLog.BackColor = Color.FromArgb(64, 0, 0);
             ridenBtnClearLog.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             ridenBtnClearLog.ForeColor = Color.LightCoral;
-            ridenBtnClearLog.Location = new Point(594, 273);
+            ridenBtnClearLog.Location = new Point(604, 275);
             ridenBtnClearLog.Name = "ridenBtnClearLog";
             ridenBtnClearLog.Size = new Size(140, 32);
             ridenBtnClearLog.TabIndex = 22;
             ridenBtnClearLog.Text = "WYCZYSC LOG";
             ridenBtnClearLog.UseVisualStyleBackColor = false;
             ridenBtnClearLog.Visible = false;
+            // 
+            // ridenBtnZapiszCSV
+            // 
+            ridenBtnZapiszCSV = new Button();
+            ridenBtnZapiszCSV.BackColor = Color.FromArgb(0, 100, 0);
+            ridenBtnZapiszCSV.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            ridenBtnZapiszCSV.ForeColor = Color.White;
+            ridenBtnZapiszCSV.Location = new Point(224, 302);
+            ridenBtnZapiszCSV.Name = "ridenBtnZapiszCSV";
+            ridenBtnZapiszCSV.Size = new Size(140, 40);
+            ridenBtnZapiszCSV.TabIndex = 41;
+            ridenBtnZapiszCSV.Text = "ZAPISZ CSV";
+            ridenBtnZapiszCSV.UseVisualStyleBackColor = false;
             // 
             // ridenLblOvpVal
             // 
@@ -2222,6 +2227,16 @@
             ridenLblAlarmVal.Size = new Size(100, 32);
             ridenLblAlarmVal.TabIndex = 36;
             ridenLblAlarmVal.Text = "---";
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.BackgroundImage = Properties.Resources.rd6006_riden_zasilacz_2a;
+            pictureBox2.BackgroundImageLayout = ImageLayout.Stretch;
+            pictureBox2.Location = new Point(424, 185);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(324, 166);
+            pictureBox2.TabIndex = 40;
+            pictureBox2.TabStop = false;
             // 
             // notifyIcon1
             // 
@@ -2440,6 +2455,7 @@
         private TextBox ridenTxtOCP;
         private Button ridenBtnSetOVP;
         private Button ridenBtnSetOCP;
+        private Button ridenBtnZapiszCSV;
         private Label label7;
         private PictureBox pictureBox2;
         private Label labeltemp;
