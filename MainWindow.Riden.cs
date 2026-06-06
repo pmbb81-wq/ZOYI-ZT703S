@@ -1,4 +1,5 @@
 using System.IO.Ports;
+using System.Text;
 
 namespace ZOYI;
 
@@ -10,6 +11,12 @@ public partial class MainWindow
     private bool _blinkState;
     private System.Windows.Forms.Timer? _blinkOutput;
     private bool _blinkOutputState;
+    private Button? ridenBtnZapiszCSV;
+    private bool _isRidenLogging;
+    private StreamWriter? _ridenLogWriter;
+    private string _ridenLogPath = "";
+    private DateTime _lastRidenLogWrite = DateTime.MinValue;
+    private System.Windows.Forms.Timer? _blinkRidenLog;
 
     private void InitializeRidenTab()
     {
@@ -23,6 +30,19 @@ public partial class MainWindow
         ridenBtnSetI.Click += (_, _) => RidenSetI();
         ridenBtnSetOCP.Click += ridenBtnSetOCP_Click;
         ridenBtnClearLog.Click += (_, _) => ridenTbLog.Clear();
+
+        ridenBtnZapiszCSV = new Button
+        {
+            BackColor = Color.FromArgb(0, 100, 0),
+            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+            ForeColor = Color.White,
+            Location = new Point(594, 310),
+            Size = new Size(140, 32),
+            Text = "ZAPISZ CSV",
+            UseVisualStyleBackColor = false
+        };
+        tabRIDEN.Controls.Add(ridenBtnZapiszCSV);
+        ridenBtnZapiszCSV.Click += RidenBtnZapiszCSV_Click;
 
         ridenBtnConnectUSB.Click += RidenBtnConnectUSB_Click;
         ridenBtnRefreshPorts.Click += (_, _) => OdswiezPortyCOM();
@@ -115,6 +135,14 @@ public partial class MainWindow
             ridenLblPortStatus.Text = "USB: ---";
             ridenLblPortStatus.ForeColor = Color.Gray;
         }
+
+        if (_isRidenLogging && _ridenLogWriter != null && (DateTime.Now - _lastRidenLogWrite).TotalMilliseconds >= 500)
+        {
+            _lastRidenLogWrite = DateTime.Now;
+            string now = DateTime.Now.ToString("HH:mm:ss.fff");
+            _ridenLogWriter.WriteLine($"{now};{ridenLblVsetVal.Text};{ridenLblIsetVal.Text};{ridenLblVoutVal.Text};{ridenLblIoutVal.Text};{ridenLblPowerVal.Text};{ridenLblOvpVal.Text};{ridenLblOcpVal.Text}");
+            _ridenLogWriter.Flush();
+        }
     }
 
     private void RidenDebugData(string msg)
@@ -142,6 +170,7 @@ public partial class MainWindow
             if (_riden.SerwerActive)
             {
                 _riden.Rozlacz();
+                ZatrzymajLogowanieRiden();
                 _blinkUsb?.Stop();
                 Log("Serwer zatrzymany.");
                 ridenBtnConnect.Text = "START SERWER";
@@ -196,6 +225,7 @@ public partial class MainWindow
             if (_riden.Polaczony)
             {
                 _riden.Rozlacz();
+                ZatrzymajLogowanieRiden();
                 _blinkUsb?.Stop();
                 Log("USB rozlaczony.");
                 ridenBtnConnectUSB.Text = "POLACZ USB";
@@ -275,6 +305,60 @@ public partial class MainWindow
     private void Log(string msg)
     {
         RidenDebugData($"[{DateTime.Now:HH:mm:ss}] {msg}");
+    }
+
+    private void RidenBtnZapiszCSV_Click(object? sender, EventArgs e)
+    {
+        if (!_isRidenLogging)
+        {
+            Directory.CreateDirectory("logs");
+            _ridenLogPath = "logs\\RIDEN_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
+            _ridenLogWriter = new StreamWriter(_ridenLogPath, false, Encoding.UTF8);
+            _ridenLogWriter.WriteLine("Czas;Vset;Iset;Vout;Iout;Power;OVP;OCP");
+            _ridenLogWriter.Flush();
+            _isRidenLogging = true;
+            _lastRidenLogWrite = DateTime.MinValue;
+
+            _blinkRidenLog = new System.Windows.Forms.Timer { Interval = 500 };
+            bool blinkState = false;
+            _blinkRidenLog.Tick += (_, _) =>
+            {
+                blinkState = !blinkState;
+                ridenBtnZapiszCSV!.Text = blinkState ? "" : "ZAPISUJE...";
+            };
+            _blinkRidenLog.Start();
+            ridenBtnZapiszCSV!.Text = "ZAPISUJE...";
+        }
+        else
+        {
+            ZatrzymajLogowanieRiden();
+        }
+    }
+
+    private void ZatrzymajLogowanieRiden()
+    {
+        _isRidenLogging = false;
+        _blinkRidenLog?.Stop();
+        _blinkRidenLog?.Dispose();
+        _blinkRidenLog = null;
+
+        _ridenLogWriter?.Flush();
+        _ridenLogWriter?.Close();
+        _ridenLogWriter?.Dispose();
+        _ridenLogWriter = null;
+
+        using var sfd = new SaveFileDialog
+        {
+            Filter = "CSV (*.csv)|*.csv",
+            FileName = Path.GetFileName(_ridenLogPath),
+            InitialDirectory = Path.GetDirectoryName(Path.GetFullPath(_ridenLogPath))
+        };
+        if (sfd.ShowDialog() == DialogResult.OK)
+        {
+            File.Copy(_ridenLogPath, sfd.FileName, true);
+            MessageBox.Show($"Zapisano: {sfd.FileName}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        ridenBtnZapiszCSV!.Text = "ZAPISZ CSV";
     }
 
     private void AktualizujLocalIP()
