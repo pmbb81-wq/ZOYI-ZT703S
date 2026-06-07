@@ -179,6 +179,16 @@ namespace ZOYI
 
             // Inicjalizacja zakladki RIDEN
             InitializeRidenTab();
+
+            KeyPreview = true;
+            KeyDown += (_, e) =>
+            {
+                if (ActiveControl is TextBoxBase or ComboBox) return;
+                if (e.KeyCode == Keys.Left && tabControl1.SelectedIndex > 0)
+                    tabControl1.SelectedIndex--;
+                else if (e.KeyCode == Keys.Right && tabControl1.SelectedIndex < tabControl1.TabCount - 1)
+                    tabControl1.SelectedIndex++;
+            };
         }
 
         private void SetWindowLocation()
