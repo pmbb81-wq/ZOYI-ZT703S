@@ -181,19 +181,20 @@ namespace ZOYI
             InitializeRidenTab();
 
             KeyPreview = true;
+            var tabOrder = new[] { tabPage4, tabTools, tabPage2, tabPageCOM, tabPageWYKRES,
+                tabPage3, tabPage1, tabPage6, tabPage5, tabWebServer, tabDQ02, tabRIDEN };
             KeyDown += (_, e) =>
             {
-                if (e.KeyCode == Keys.Left)
+                if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
                 {
-                    if (tabControl1.SelectedIndex > 0)
-                        tabControl1.SelectedIndex--;
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
-                }
-                else if (e.KeyCode == Keys.Right)
-                {
-                    if (tabControl1.SelectedIndex < tabControl1.TabCount - 1)
-                        tabControl1.SelectedIndex++;
+                    int idx = Array.IndexOf(tabOrder, tabControl1.SelectedTab);
+                    if (idx >= 0)
+                    {
+                        if (e.KeyCode == Keys.Left) idx = Math.Max(0, idx - 1);
+                        else idx = Math.Min(tabOrder.Length - 1, idx + 1);
+                        if (tabOrder[idx] != tabControl1.SelectedTab)
+                            tabControl1.SelectedTab = tabOrder[idx];
+                    }
                     e.Handled = true;
                     e.SuppressKeyPress = true;
                 }
