@@ -183,11 +183,20 @@ namespace ZOYI
             KeyPreview = true;
             KeyDown += (_, e) =>
             {
-                if (ActiveControl is TextBoxBase or ComboBox) return;
-                if (e.KeyCode == Keys.Left && tabControl1.SelectedIndex > 0)
-                    tabControl1.SelectedIndex--;
-                else if (e.KeyCode == Keys.Right && tabControl1.SelectedIndex < tabControl1.TabCount - 1)
-                    tabControl1.SelectedIndex++;
+                if (e.KeyCode == Keys.Left)
+                {
+                    if (tabControl1.SelectedIndex > 0)
+                        tabControl1.SelectedIndex--;
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
+                else if (e.KeyCode == Keys.Right)
+                {
+                    if (tabControl1.SelectedIndex < tabControl1.TabCount - 1)
+                        tabControl1.SelectedIndex++;
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
             };
         }
 
