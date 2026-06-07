@@ -6,7 +6,7 @@ using System.Speech.Synthesis;
 
 namespace ZOYI
 {
-    public partial class MainWindow : Form
+    public partial class MainWindow : Form, IMessageFilter
     {
         public enum PARSE_MODE
         {
@@ -23,6 +23,8 @@ namespace ZOYI
         COMx dq02Comx;
         StandardDisplayPanel standardDisplayPanel;
         AdancedDisplayPanel advancedDisplayPanel;
+
+        readonly TabPage[] tabOrder;
 
         private readonly string[] measurementModes = new string[]
         {
@@ -180,25 +182,9 @@ namespace ZOYI
             // Inicjalizacja zakladki RIDEN
             InitializeRidenTab();
 
-            KeyPreview = true;
-            var tabOrder = new[] { tabPage4, tabTools, tabPage2, tabPageCOM, tabPageWYKRES,
+            tabOrder = new[] { tabPage4, tabTools, tabPage2, tabPageCOM, tabPageWYKRES,
                 tabPage3, tabPage1, tabPage6, tabPage5, tabWebServer, tabDQ02, tabRIDEN };
-            KeyDown += (_, e) =>
-            {
-                if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
-                {
-                    int idx = Array.IndexOf(tabOrder, tabControl1.SelectedTab);
-                    if (idx >= 0)
-                    {
-                        if (e.KeyCode == Keys.Left) idx = Math.Max(0, idx - 1);
-                        else idx = Math.Min(tabOrder.Length - 1, idx + 1);
-                        if (tabOrder[idx] != tabControl1.SelectedTab)
-                            tabControl1.SelectedTab = tabOrder[idx];
-                    }
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
-                }
-            };
+            Application.AddMessageFilter(this);
         }
 
         private void SetWindowLocation()
@@ -2314,6 +2300,27 @@ namespace ZOYI
             if (float.IsNaN(f)) { Log("Blad parsowania: " + ridenTxtOVP.Text); return; }
             _riden.UstawOVP(f);
             Log($"OVP ustawione na {f:F2} V");
+        }
+
+        public bool PreFilterMessage(ref Message m)
+        {
+            if (m.Msg == 0x100) // WM_KEYDOWN
+            {
+                Keys key = (Keys)(m.WParam.ToInt32() & 0xFFFF);
+                if ((key == Keys.Left || key == Keys.Right) && tabOrder != null)
+                {
+                    int idx = Array.IndexOf(tabOrder, tabControl1.SelectedTab);
+                    if (idx >= 0)
+                    {
+                        if (key == Keys.Left) idx = Math.Max(0, idx - 1);
+                        else idx = Math.Min(tabOrder.Length - 1, idx + 1);
+                        if (tabOrder[idx] != tabControl1.SelectedTab)
+                            tabControl1.SelectedTab = tabOrder[idx];
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
 
     }
