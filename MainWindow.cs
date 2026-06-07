@@ -24,8 +24,6 @@ namespace ZOYI
         StandardDisplayPanel standardDisplayPanel;
         AdancedDisplayPanel advancedDisplayPanel;
 
-        readonly TabPage[] tabOrder;
-
         private readonly string[] measurementModes = new string[]
         {
             "FUNC:AUTO",
@@ -182,8 +180,6 @@ namespace ZOYI
             // Inicjalizacja zakladki RIDEN
             InitializeRidenTab();
 
-            tabOrder = new[] { tabPage4, tabTools, tabPage2, tabPageCOM, tabPageWYKRES,
-                tabPage3, tabPage1, tabPage6, tabPage5, tabWebServer, tabDQ02, tabRIDEN };
             Application.AddMessageFilter(this);
         }
 
@@ -2304,19 +2300,19 @@ namespace ZOYI
 
         public bool PreFilterMessage(ref Message m)
         {
-            if (m.Msg == 0x100) // WM_KEYDOWN
+            if (m.Msg == 0x100)
             {
                 Keys key = (Keys)(m.WParam.ToInt32() & 0xFFFF);
-                if ((key == Keys.Left || key == Keys.Right) && tabOrder != null)
+                if (key == Keys.Left)
                 {
-                    int idx = Array.IndexOf(tabOrder, tabControl1.SelectedTab);
-                    if (idx >= 0)
-                    {
-                        if (key == Keys.Left) idx = Math.Max(0, idx - 1);
-                        else idx = Math.Min(tabOrder.Length - 1, idx + 1);
-                        if (tabOrder[idx] != tabControl1.SelectedTab)
-                            tabControl1.SelectedTab = tabOrder[idx];
-                    }
+                    if (tabControl1.SelectedIndex > 0)
+                        tabControl1.SelectedIndex--;
+                    return true;
+                }
+                if (key == Keys.Right)
+                {
+                    if (tabControl1.SelectedIndex < tabControl1.TabCount - 1)
+                        tabControl1.SelectedIndex++;
                     return true;
                 }
             }
