@@ -25,6 +25,7 @@ namespace ZOYI
         private float _iMin = 99f, _iMax;
         private float _pMin = 99f, _pMax;
         private readonly ChartCanvas _canvas;
+        private bool _showV = true, _showI = true, _showP = true;
 
         public RidenChartForm(Riden6012 riden)
         {
@@ -34,9 +35,22 @@ namespace ZOYI
             FormBorderStyle = FormBorderStyle.Sizable;
             MinimizeBox = false;
             ShowInTaskbar = true;
-            Size = new Size(700, 400);
+            Size = new Size(700, 430);
             BackColor = Color.FromArgb(30, 30, 30);
             ResizeRedraw = true;
+
+            var topBar = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 28,
+                BackColor = Color.FromArgb(40, 40, 40)
+            };
+            Controls.Add(topBar);
+
+            int x = 8;
+            topBar.Controls.Add(MakeToggle("V", Color.FromArgb(0, 255, 85), ref x, v => { _showV = v; _canvas.Invalidate(); }));
+            topBar.Controls.Add(MakeToggle("A", Color.FromArgb(255, 204, 0), ref x, i => { _showI = i; _canvas.Invalidate(); }));
+            topBar.Controls.Add(MakeToggle("W", Color.FromArgb(255, 136, 0), ref x, p => { _showP = p; _canvas.Invalidate(); }));
 
             _canvas = new ChartCanvas
             {
@@ -51,6 +65,26 @@ namespace ZOYI
 
             _refreshTimer.Tick += (_, _) => _canvas.Invalidate();
             _refreshTimer.Start();
+        }
+
+        private CheckBox MakeToggle(string label, Color color, ref int x, Action<bool> onToggle)
+        {
+            var cb = new CheckBox
+            {
+                Text = label,
+                FlatStyle = FlatStyle.Flat,
+                FlatAppearance = { BorderSize = 0 },
+                BackColor = Color.Transparent,
+                Font = new Font("Consolas", 10, FontStyle.Bold),
+                ForeColor = color,
+                Checked = true,
+                Size = new Size(32, 24),
+                Location = new Point(x, 2),
+                Cursor = Cursors.Hand
+            };
+            x += 38;
+            cb.CheckedChanged += (_, _) => onToggle(cb.Checked);
+            return cb;
         }
 
         private void Sample()
@@ -152,6 +186,7 @@ namespace ZOYI
             }
 
             // Vout (green)
+            if (_showV)
             {
                 var pts = new List<(double, float)>();
                 foreach (var d in visible) pts.Add((d.t, d.v));
@@ -162,6 +197,7 @@ namespace ZOYI
             }
 
             // Iset (yellow)
+            if (_showI)
             {
                 var pts = new List<(double, float)>();
                 foreach (var d in visible) pts.Add((d.t, d.i));
@@ -172,6 +208,7 @@ namespace ZOYI
             }
 
             // Power (orange)
+            if (_showP)
             {
                 var pts = new List<(double, float)>();
                 foreach (var d in visible) pts.Add((d.t, d.p));
