@@ -31,6 +31,7 @@ namespace ZOYI
             BackColor = Color.FromArgb(30, 30, 30);
             ForeColor = Color.FromArgb(200, 200, 200);
             DoubleBuffered = true;
+            ResizeRedraw = true;
 
             _sampleTimer.Tick += (_, _) => Sample();
             _sampleTimer.Start();
