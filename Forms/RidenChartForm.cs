@@ -18,7 +18,7 @@ namespace ZOYI
         private readonly System.Windows.Forms.Timer _sampleTimer = new System.Windows.Forms.Timer { Interval = 50 };
         private readonly System.Windows.Forms.Timer _refreshTimer = new System.Windows.Forms.Timer { Interval = 50 };
         private readonly LinkedList<(double t, float v, float i, float p)> _data = new();
-        private const int MaxSamples = 600;
+        private const int MaxSamples = 2000;
         private const double WindowSeconds = 60;
         private int _samples;
         private float _vMin = 99f, _vMax;
