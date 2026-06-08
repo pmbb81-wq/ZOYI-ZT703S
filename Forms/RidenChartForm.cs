@@ -9,6 +9,7 @@ namespace ZOYI
     class ChartCanvas : Panel
     {
         public ChartCanvas() { DoubleBuffered = true; }
+        protected override void OnResize(EventArgs e) { base.OnResize(e); Refresh(); }
     }
 
     public class RidenChartForm : Form
@@ -35,13 +36,13 @@ namespace ZOYI
             ShowInTaskbar = true;
             Size = new Size(700, 400);
             BackColor = Color.FromArgb(30, 30, 30);
+            ResizeRedraw = true;
 
             _canvas = new ChartCanvas
             {
                 Dock = DockStyle.Fill,
                 BackColor = Color.FromArgb(30, 30, 30)
             };
-            _canvas.Resize += (_, _) => _canvas.Invalidate();
             _canvas.Paint += Canvas_Paint;
             Controls.Add(_canvas);
 
