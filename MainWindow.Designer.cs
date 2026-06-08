@@ -183,6 +183,7 @@
             pictureBox2 = new PictureBox();
             notifyIcon1 = new NotifyIcon(components);
             toolTip1 = new ToolTip(components);
+            button9 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1746,6 +1747,7 @@
             // 
             tabRIDEN.BackColor = Color.FromArgb(34, 34, 34);
             tabRIDEN.BackgroundImageLayout = ImageLayout.Stretch;
+            tabRIDEN.Controls.Add(button9);
             tabRIDEN.Controls.Add(labeltemp);
             tabRIDEN.Controls.Add(ridenLblVinDesc);
             tabRIDEN.Controls.Add(label7);
@@ -1815,6 +1817,7 @@
             ridenLblVinDesc.TabIndex = 39;
             ridenLblVinDesc.Text = "VIN";
             ridenLblVinDesc.TextAlign = ContentAlignment.MiddleLeft;
+            ridenLblVinDesc.Visible = false;
             // 
             // label7
             // 
@@ -2050,9 +2053,10 @@
             // 
             // ridenLblOutputVal
             // 
+            ridenLblOutputVal.BackColor = Color.Black;
             ridenLblOutputVal.Font = new Font("Consolas", 20F, FontStyle.Bold);
             ridenLblOutputVal.ForeColor = Color.Gray;
-            ridenLblOutputVal.Location = new Point(224, 310);
+            ridenLblOutputVal.Location = new Point(468, 228);
             ridenLblOutputVal.Name = "ridenLblOutputVal";
             ridenLblOutputVal.Size = new Size(84, 49);
             ridenLblOutputVal.TabIndex = 17;
@@ -2122,19 +2126,6 @@
             ridenBtnClearLog.Text = "WYCZYSC LOG";
             ridenBtnClearLog.UseVisualStyleBackColor = false;
             ridenBtnClearLog.Visible = false;
-            // 
-            // ridenBtnZapiszCSV
-            // 
-            ridenBtnZapiszCSV = new Button();
-            ridenBtnZapiszCSV.BackColor = Color.FromArgb(0, 100, 0);
-            ridenBtnZapiszCSV.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            ridenBtnZapiszCSV.ForeColor = Color.White;
-            ridenBtnZapiszCSV.Location = new Point(224, 302);
-            ridenBtnZapiszCSV.Name = "ridenBtnZapiszCSV";
-            ridenBtnZapiszCSV.Size = new Size(140, 40);
-            ridenBtnZapiszCSV.TabIndex = 41;
-            ridenBtnZapiszCSV.Text = "ZAPISZ CSV";
-            ridenBtnZapiszCSV.UseVisualStyleBackColor = false;
             // 
             // ridenLblOvpVal
             // 
@@ -2207,6 +2198,18 @@
             ridenBtnSetOCP.Text = "SET OCP";
             ridenBtnSetOCP.UseVisualStyleBackColor = false;
             // 
+            // ridenBtnZapiszCSV
+            // 
+            ridenBtnZapiszCSV.BackColor = Color.FromArgb(0, 100, 0);
+            ridenBtnZapiszCSV.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            ridenBtnZapiszCSV.ForeColor = Color.White;
+            ridenBtnZapiszCSV.Location = new Point(224, 302);
+            ridenBtnZapiszCSV.Name = "ridenBtnZapiszCSV";
+            ridenBtnZapiszCSV.Size = new Size(140, 40);
+            ridenBtnZapiszCSV.TabIndex = 41;
+            ridenBtnZapiszCSV.Text = "ZAPISZ CSV";
+            ridenBtnZapiszCSV.UseVisualStyleBackColor = false;
+            // 
             // ridenLblAlarmDesc
             // 
             ridenLblAlarmDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -2246,6 +2249,19 @@
             // toolTip1
             // 
             toolTip1.IsBalloon = true;
+            // 
+            // button9
+            // 
+            button9.BackColor = Color.FromArgb(0, 64, 64);
+            button9.Cursor = Cursors.Hand;
+            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button9.ForeColor = Color.Cyan;
+            button9.Location = new Point(565, 91);
+            button9.Name = "button9";
+            button9.Size = new Size(171, 28);
+            button9.TabIndex = 42;
+            button9.Text = "button9";
+            button9.UseVisualStyleBackColor = false;
             // 
             // MainWindow
             // 
@@ -2459,5 +2475,6 @@
         private Label label7;
         private PictureBox pictureBox2;
         private Label labeltemp;
+        private Button button9;
     }
 }
