@@ -20,10 +20,6 @@ namespace ZOYI
         private readonly LinkedList<(double t, float v, float i, float p)> _data = new();
         private const int MaxSamples = 2000;
         private const double WindowSeconds = 60;
-        private int _samples;
-        private float _vMin = 99f, _vMax;
-        private float _iMin = 99f, _iMax;
-        private float _pMin = 99f, _pMax;
         private readonly ChartCanvas _canvas;
         private bool _showV = true, _showI = true, _showP = true;
 
@@ -58,6 +54,7 @@ namespace ZOYI
                 BackColor = Color.FromArgb(30, 30, 30)
             };
             _canvas.Paint += Canvas_Paint;
+            _canvas.ContextMenuStrip = MakeContextMenu();
             Controls.Add(_canvas);
 
             _sampleTimer.Tick += (_, _) => Sample();
@@ -65,6 +62,22 @@ namespace ZOYI
 
             _refreshTimer.Tick += (_, _) => _canvas.Invalidate();
             _refreshTimer.Start();
+        }
+
+        private ContextMenuStrip MakeContextMenu()
+        {
+            var m = new ContextMenuStrip();
+            m.Items.Add("Zapisz jako PNG", null, (_, _) => ZapiszJakoPNG());
+            return m;
+        }
+
+        private void ZapiszJakoPNG()
+        {
+            using var bmp = new Bitmap(_canvas.Width, _canvas.Height);
+            _canvas.DrawToBitmap(bmp, new Rectangle(0, 0, _canvas.Width, _canvas.Height));
+            var dlg = new SaveFileDialog { Filter = "PNG (*.png)|*.png", FileName = "wykres_riden.png" };
+            if (dlg.ShowDialog() == DialogResult.OK)
+                bmp.Save(dlg.FileName, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         private CheckBox MakeToggle(string label, Color color, ref int x, Action<bool> onToggle)
@@ -97,14 +110,6 @@ namespace ZOYI
             _data.AddLast((now, v, i, p));
             while (_data.Count > MaxSamples)
                 _data.RemoveFirst();
-
-            _samples++;
-            if (v < _vMin) _vMin = v;
-            if (v > _vMax) _vMax = v;
-            if (i < _iMin) _iMin = i;
-            if (i > _iMax) _iMax = i;
-            if (p < _pMin) _pMin = p;
-            if (p > _pMax) _pMax = p;
         }
 
         private void Canvas_Paint(object? sender, PaintEventArgs e)
@@ -165,12 +170,11 @@ namespace ZOYI
                 g.DrawLines(pen, points);
             }
 
-            void DrawYScale(Color color, float lo, float hi, string fmt)
+            void DrawYScale(Color color, float lo, float hi, string fmt, int nTicks)
             {
                 using var tickPen = new Pen(color);
                 using var labelBrush = new SolidBrush(color);
                 using var font = new Font("Consolas", 8);
-                int nTicks = 5;
                 for (int i = 0; i < nTicks; i++)
                 {
                     float frac = i / (float)(nTicks - 1);
@@ -188,34 +192,43 @@ namespace ZOYI
             // Vout (green)
             if (_showV)
             {
-                var pts = new List<(double, float)>();
-                foreach (var d in visible) pts.Add((d.t, d.v));
-                float lo = _vMin, hi = _vMax;
-                if (hi - lo < 0.001f) { lo -= 0.1f; hi += 0.1f; }
-                DrawYScale(Color.FromArgb(0, 255, 85), lo, hi, "F2");
-                DrawTrace(pts, Color.FromArgb(0, 255, 85), lo, hi);
+                var vs = new List<float>();
+                foreach (var d in visible) vs.Add(d.v);
+                float vLo = float.MaxValue, vHi = float.MinValue;
+                foreach (var val in vs) { if (val < vLo) vLo = val; if (val > vHi) vHi = val; }
+                if (vHi - vLo < 0.001f) { vLo -= 0.1f; vHi += 0.1f; }
+                var vPts = new List<(double, float)>();
+                foreach (var d in visible) vPts.Add((d.t, d.v));
+                DrawYScale(Color.FromArgb(0, 255, 85), vLo, vHi, "F2", 5);
+                DrawTrace(vPts, Color.FromArgb(0, 255, 85), vLo, vHi);
             }
 
             // Iset (yellow)
             if (_showI)
             {
-                var pts = new List<(double, float)>();
-                foreach (var d in visible) pts.Add((d.t, d.i));
-                float lo = _iMin, hi = _iMax;
-                if (hi - lo < 0.001f) { lo -= 0.01f; hi += 0.01f; }
-                DrawYScale(Color.FromArgb(255, 204, 0), lo, hi, "F3");
-                DrawTrace(pts, Color.FromArgb(255, 204, 0), lo, hi);
+                var iVals = new List<float>();
+                foreach (var d in visible) iVals.Add(d.i);
+                float iLo = float.MaxValue, iHi = float.MinValue;
+                foreach (var val in iVals) { if (val < iLo) iLo = val; if (val > iHi) iHi = val; }
+                if (iHi - iLo < 0.001f) { iLo -= 0.01f; iHi += 0.01f; }
+                var iPts = new List<(double, float)>();
+                foreach (var d in visible) iPts.Add((d.t, d.i));
+                DrawYScale(Color.FromArgb(255, 204, 0), iLo, iHi, "F3", 5);
+                DrawTrace(iPts, Color.FromArgb(255, 204, 0), iLo, iHi);
             }
 
             // Power (orange)
             if (_showP)
             {
-                var pts = new List<(double, float)>();
-                foreach (var d in visible) pts.Add((d.t, d.p));
-                float lo = _pMin, hi = _pMax;
-                if (hi - lo < 0.001f) { lo -= 0.01f; hi += 0.01f; }
-                DrawYScale(Color.FromArgb(255, 136, 0), lo, hi, "F3");
-                DrawTrace(pts, Color.FromArgb(255, 136, 0), lo, hi);
+                var pVals = new List<float>();
+                foreach (var d in visible) pVals.Add(d.p);
+                float pLo = float.MaxValue, pHi = float.MinValue;
+                foreach (var val in pVals) { if (val < pLo) pLo = val; if (val > pHi) pHi = val; }
+                if (pHi - pLo < 0.001f) { pLo -= 0.01f; pHi += 0.01f; }
+                var pPts = new List<(double, float)>();
+                foreach (var d in visible) pPts.Add((d.t, d.p));
+                DrawYScale(Color.FromArgb(255, 136, 0), pLo, pHi, "F3", 5);
+                DrawTrace(pPts, Color.FromArgb(255, 136, 0), pLo, pHi);
             }
         }
 
