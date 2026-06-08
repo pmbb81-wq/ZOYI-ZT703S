@@ -56,6 +56,8 @@ public partial class MainWindow
         ridenTxtOVP.Text = Properties.Settings.Default.riden_ovp;
         if (float.TryParse(Properties.Settings.Default.riden_ovp, out float ovpStart))
             ridenLblOvpVal.Text = ovpStart.ToString("F2") + " V";
+
+        button9.Click += Button9_Click;
     }
 
     private void OdswiezPortyCOM()
@@ -362,5 +364,11 @@ public partial class MainWindow
             .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
             .Select(ip => ip.ToString());
         ridenLblLocalIP.Text = "IP: " + string.Join(", ", ips);
+    }
+
+    private void Button9_Click(object? sender, EventArgs e)
+    {
+        var chart = new RidenChartForm(_riden);
+        chart.Show(this);
     }
 }
