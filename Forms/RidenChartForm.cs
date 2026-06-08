@@ -170,7 +170,7 @@ namespace ZOYI
                 using var tickPen = new Pen(color);
                 using var labelBrush = new SolidBrush(color);
                 using var font = new Font("Consolas", 8);
-                int nTicks = 4;
+                int nTicks = 5;
                 for (int i = 0; i < nTicks; i++)
                 {
                     float frac = i / (float)(nTicks - 1);
