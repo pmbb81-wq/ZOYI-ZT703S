@@ -143,8 +143,9 @@ public class Riden6012 : IDisposable
             byte[] crc = CalculateCRC(req, 0, 6);
             req[6] = crc[0];
             req[7] = crc[1];
-            if (_stream is null) return;
-            lock (_lock) { _stream.Write(req, 0, req.Length); }
+            var s = _stream;
+            if (s is null) return;
+            lock (_lock) { s.Write(req, 0, req.Length); }
             OnDebugData?.Invoke(">> " + BitConverter.ToString(req) + " (sync)");
 
             byte[] buf = new byte[512];
@@ -152,7 +153,7 @@ public class Riden6012 : IDisposable
             int attempts = 0;
             while (attempts < 20)
             {
-                int read = _stream.Read(buf, pos, buf.Length - pos);
+                int read = s.Read(buf, pos, buf.Length - pos);
                 if (read == 0) return;
                 pos += read;
                 OnDebugData?.Invoke("<< " + BitConverter.ToString(buf, 0, pos) + " (sync)");
@@ -182,17 +183,19 @@ public class Riden6012 : IDisposable
         {
             try
             {
-                if (_stream is null) { Thread.Sleep(100); continue; }
+                var stream = _stream;
+                if (stream is null) { Thread.Sleep(100); continue; }
                 OproczKolejkeZapisow();
                 byte[] req = MakeReadRequest();
-                lock (_lock) { _stream.Write(req, 0, req.Length); }
+                lock (_lock) { stream.Write(req, 0, req.Length); }
                 try { OnDebugData?.Invoke(">> " + BitConverter.ToString(req)); } catch { }
 
                 for (;;)
                 {
+                    if (!connected() || ct.IsCancellationRequested) return;
                     if (pos == 0)
                     {
-                        int read = _stream.Read(buffer, 0, buffer.Length);
+                        int read = stream.Read(buffer, 0, buffer.Length);
                         if (read == 0) return;
                         pos = read;
                         try { OnDebugData?.Invoke("<< " + BitConverter.ToString(buffer, 0, read)); } catch { }
@@ -201,7 +204,8 @@ public class Riden6012 : IDisposable
                     int consumed = ParseFrame(buffer, 0, pos);
                     if (consumed == 0)
                     {
-                        int read = _stream.Read(buffer, pos, buffer.Length - pos);
+                        if (!connected() || ct.IsCancellationRequested) return;
+                        int read = stream.Read(buffer, pos, buffer.Length - pos);
                         if (read == 0) return;
                         pos += read;
                         try { OnDebugData?.Invoke("<< " + BitConverter.ToString(buffer, pos - read, read)); } catch { }
@@ -347,7 +351,8 @@ public class Riden6012 : IDisposable
 
     private void OproczKolejkeZapisow()
     {
-        if (_stream is null) return;
+        var s = _stream;
+        if (s is null) return;
         while (_pendingWrites.TryDequeue(out var w))
         {
             byte[] req = new byte[11];
@@ -363,7 +368,7 @@ public class Riden6012 : IDisposable
             byte[] crc = CalculateCRC(req, 0, 9);
             req[9] = crc[0];
             req[10] = crc[1];
-            lock (_lock) { _stream.Write(req, 0, 11); }
+            lock (_lock) { s.Write(req, 0, 11); }
             OnDebugData?.Invoke(">> " + BitConverter.ToString(req));
             // Czytaj echo odpowiedzi (FC=0x10)
             try
@@ -372,7 +377,7 @@ public class Riden6012 : IDisposable
                 int pos = 0;
                 while (pos < 8)
                 {
-                    int n = _stream.Read(resp, pos, 8 - pos);
+                    int n = s.Read(resp, pos, 8 - pos);
                     if (n == 0) break;
                     pos += n;
                 }
