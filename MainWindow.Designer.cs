@@ -142,6 +142,7 @@
             lblDQ02Deviation = new Label();
             lblDQ02PassFail = new Label();
             tabRIDEN = new TabPage();
+            button9 = new Button();
             labeltemp = new Label();
             ridenLblVinDesc = new Label();
             label7 = new Label();
@@ -183,7 +184,6 @@
             pictureBox2 = new PictureBox();
             notifyIcon1 = new NotifyIcon(components);
             toolTip1 = new ToolTip(components);
-            button9 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbESR).BeginInit();
             tabTools.SuspendLayout();
@@ -1795,6 +1795,19 @@
             tabRIDEN.TabIndex = 13;
             tabRIDEN.Text = "RIDEN";
             // 
+            // button9
+            // 
+            button9.BackColor = Color.FromArgb(0, 64, 64);
+            button9.Cursor = Cursors.Hand;
+            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button9.ForeColor = Color.Cyan;
+            button9.Location = new Point(463, 261);
+            button9.Name = "button9";
+            button9.Size = new Size(97, 28);
+            button9.TabIndex = 42;
+            button9.Text = "Chart";
+            button9.UseVisualStyleBackColor = false;
+            // 
             // labeltemp
             // 
             labeltemp.AutoEllipsis = true;
@@ -2056,7 +2069,7 @@
             ridenLblOutputVal.BackColor = Color.Black;
             ridenLblOutputVal.Font = new Font("Consolas", 20F, FontStyle.Bold);
             ridenLblOutputVal.ForeColor = Color.Gray;
-            ridenLblOutputVal.Location = new Point(468, 228);
+            ridenLblOutputVal.Location = new Point(478, 220);
             ridenLblOutputVal.Name = "ridenLblOutputVal";
             ridenLblOutputVal.Size = new Size(84, 49);
             ridenLblOutputVal.TabIndex = 17;
@@ -2249,19 +2262,6 @@
             // toolTip1
             // 
             toolTip1.IsBalloon = true;
-            // 
-            // button9
-            // 
-            button9.BackColor = Color.FromArgb(0, 64, 64);
-            button9.Cursor = Cursors.Hand;
-            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            button9.ForeColor = Color.Cyan;
-            button9.Location = new Point(565, 91);
-            button9.Name = "button9";
-            button9.Size = new Size(171, 28);
-            button9.TabIndex = 42;
-            button9.Text = "button9";
-            button9.UseVisualStyleBackColor = false;
             // 
             // MainWindow
             // 

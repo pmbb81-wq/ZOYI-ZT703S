@@ -403,6 +403,7 @@ namespace ZOYI
 
         private async void btnDQ02Connect_Click(object sender, EventArgs e)
         {
+            if (!checkBox2.Checked) return;
             if (!dq02Comx.isConnected())
             {
                 try
