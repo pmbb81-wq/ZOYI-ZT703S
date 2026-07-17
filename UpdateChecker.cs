@@ -10,7 +10,7 @@ namespace ZOYI
     public static class UpdateChecker
     {
         private const string GITHUB_API = "https://api.github.com/repos/pmbb81-wq/ZOYI-ZT703S/releases/latest";
-        private const string CURRENT_VERSION = "1.1";
+        private const string CURRENT_VERSION = "1.8";
 
         public class ReleaseInfo
         {

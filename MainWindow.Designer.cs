@@ -49,7 +49,6 @@
             btnToolsRefresh = new Button();
             btnToolsEdit = new Button();
             panelTools = new Panel();
-            btnPcapAnalyzer = new Button();
             tabPage2 = new TabPage();
             groupBox3 = new GroupBox();
             lblThicksCount = new Label();
@@ -66,6 +65,7 @@
             btnPanelColorValue = new Button();
             tabPageCOM = new TabPage();
             chbAdvancedPanel = new CheckBox();
+            chbGaugePanel = new CheckBox();
             groupBox2 = new GroupBox();
             rbCOMparseExt = new RadioButton();
             button2 = new Button();
@@ -90,10 +90,6 @@
             btnTime30s = new Button();
             btnTime60s = new Button();
             btnTime5min = new Button();
-            tabPage3 = new TabPage();
-            tabPage1 = new TabPage();
-            tabPage6 = new TabPage();
-            tabPage5 = new TabPage();
             tabWebServer = new TabPage();
             btnWebServerStop = new Button();
             label2 = new Label();
@@ -181,7 +177,20 @@
             ridenBtnZapiszCSV = new Button();
             ridenLblAlarmDesc = new Label();
             ridenLblAlarmVal = new Label();
-            pictureBox2 = new PictureBox();
+            btnPcapAnalyzer = new Button();
+            tabPage3 = new TabPage();
+            tabPage1 = new TabPage();
+            tabPage6 = new TabPage();
+            tabPage5 = new TabPage();
+            tabPage7 = new TabPage();
+            splitContainer1 = new SplitContainer();
+            tabPage8 = new TabPage();
+            splitContainer4 = new SplitContainer();
+            tabPage9 = new TabPage();
+            tabPage11 = new TabPage();
+            splitContainer2 = new SplitContainer();
+            tabPage10 = new TabPage();
+            splitContainer3 = new SplitContainer();
             notifyIcon1 = new NotifyIcon(components);
             toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -197,11 +206,22 @@
             groupBox2.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPageWYKRES.SuspendLayout();
-            tabPage3.SuspendLayout();
             tabWebServer.SuspendLayout();
             tabDQ02.SuspendLayout();
             tabRIDEN.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            tabPage3.SuspendLayout();
+            tabPage7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.SuspendLayout();
+            tabPage8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer4).BeginInit();
+            splitContainer4.SuspendLayout();
+            tabPage11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.SuspendLayout();
+            tabPage10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
+            splitContainer3.SuspendLayout();
             SuspendLayout();
             // 
             // button1
@@ -221,14 +241,14 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            label1.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label1.ForeColor = Color.Gold;
-            label1.Location = new Point(230, 9);
+            label1.Location = new Point(220, 9);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(418, 25);
+            label1.Size = new Size(424, 21);
             label1.TabIndex = 12;
-            label1.Text = "ZOYI® ZT-703S OSCILLOSCOPE MULTIMETER";
+            label1.Text = "ZOYI® ZT-706S / ZT-703S OSCILLOSCOPE MULTIMETER";
             label1.Click += label1_Click;
             label1.MouseDown += MainWindow_MouseDown;
             label1.MouseMove += MainWindow_MouseMove;
@@ -269,12 +289,12 @@
             label4.BorderStyle = BorderStyle.FixedSingle;
             label4.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label4.ForeColor = Color.Yellow;
-            label4.Location = new Point(530, 453);
+            label4.Location = new Point(513, 518);
             label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(238, 22);
+            label4.Size = new Size(236, 22);
             label4.TabIndex = 15;
-            label4.Text = "Wersja 2.36          |  KRIS® version";
+            label4.Text = "Wersja 1.8           |  KRIS® version";
             label4.TextAlign = ContentAlignment.MiddleCenter;
             label4.Click += label4_Click;
             // 
@@ -292,11 +312,13 @@
             // pbESR
             // 
             pbESR.BackColor = Color.FromArgb(24, 24, 24);
+            pbESR.BackgroundImage = (Image)resources.GetObject("pbESR.BackgroundImage");
+            pbESR.BackgroundImageLayout = ImageLayout.Stretch;
             pbESR.Cursor = Cursors.Hand;
             pbESR.Dock = DockStyle.Fill;
             pbESR.Location = new Point(0, 0);
             pbESR.Name = "pbESR";
-            pbESR.Size = new Size(747, 371);
+            pbESR.Size = new Size(747, 392);
             pbESR.SizeMode = PictureBoxSizeMode.Zoom;
             pbESR.TabIndex = 0;
             pbESR.TabStop = false;
@@ -306,7 +328,7 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
-            label8.Location = new Point(18, 453);
+            label8.Location = new Point(29, 518);
             label8.Margin = new Padding(2, 0, 2, 0);
             label8.Name = "label8";
             label8.Size = new Size(47, 20);
@@ -318,7 +340,7 @@
             lblComConnStatus.AutoSize = true;
             lblComConnStatus.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
             lblComConnStatus.ForeColor = Color.LightGreen;
-            lblComConnStatus.Location = new Point(69, 453);
+            lblComConnStatus.Location = new Point(97, 518);
             lblComConnStatus.Margin = new Padding(2, 0, 2, 0);
             lblComConnStatus.Name = "lblComConnStatus";
             lblComConnStatus.Size = new Size(105, 20);
@@ -333,10 +355,10 @@
             chbTTSSwitch.FlatStyle = FlatStyle.Flat;
             chbTTSSwitch.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             chbTTSSwitch.ForeColor = Color.LightCoral;
-            chbTTSSwitch.Location = new Point(348, 335);
+            chbTTSSwitch.Location = new Point(452, 336);
             chbTTSSwitch.Margin = new Padding(2);
             chbTTSSwitch.Name = "chbTTSSwitch";
-            chbTTSSwitch.Size = new Size(90, 30);
+            chbTTSSwitch.Size = new Size(90, 33);
             chbTTSSwitch.TabIndex = 19;
             chbTTSSwitch.Text = "OFF";
             chbTTSSwitch.TextAlign = ContentAlignment.MiddleCenter;
@@ -348,22 +370,23 @@
             cbTTSVoice.BackColor = Color.FromArgb(34, 34, 34);
             cbTTSVoice.DropDownStyle = ComboBoxStyle.DropDownList;
             cbTTSVoice.FlatStyle = FlatStyle.Flat;
-            cbTTSVoice.Font = new Font("Segoe UI", 10F);
+            cbTTSVoice.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 238);
             cbTTSVoice.ForeColor = Color.LightGreen;
             cbTTSVoice.FormattingEnabled = true;
-            cbTTSVoice.Location = new Point(164, 338);
+            cbTTSVoice.Location = new Point(180, 348);
             cbTTSVoice.Margin = new Padding(2);
             cbTTSVoice.Name = "cbTTSVoice";
-            cbTTSVoice.Size = new Size(180, 25);
+            cbTTSVoice.Size = new Size(259, 28);
             cbTTSVoice.TabIndex = 20;
             cbTTSVoice.SelectedIndexChanged += cbTTSVoice_SelectedIndexChanged;
             // 
             // lblTTSStatus
             // 
+            lblTTSStatus.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             lblTTSStatus.AutoSize = true;
             lblTTSStatus.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             lblTTSStatus.ForeColor = Color.LightCoral;
-            lblTTSStatus.Location = new Point(442, 346);
+            lblTTSStatus.Location = new Point(466, 372);
             lblTTSStatus.Margin = new Padding(2, 0, 2, 0);
             lblTTSStatus.Name = "lblTTSStatus";
             lblTTSStatus.Size = new Size(62, 19);
@@ -375,7 +398,7 @@
             labelTTS.AutoSize = true;
             labelTTS.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             labelTTS.ForeColor = Color.FromArgb(200, 200, 200);
-            labelTTS.Location = new Point(4, 342);
+            labelTTS.Location = new Point(14, 353);
             labelTTS.Margin = new Padding(2, 0, 2, 0);
             labelTTS.Name = "labelTTS";
             labelTTS.Size = new Size(154, 20);
@@ -386,12 +409,12 @@
             // 
             tabPage4.BackColor = Color.FromArgb(44, 44, 44);
             tabPage4.BackgroundImage = (Image)resources.GetObject("tabPage4.BackgroundImage");
-            tabPage4.BackgroundImageLayout = ImageLayout.Zoom;
-            tabPage4.Location = new Point(4, 32);
+            tabPage4.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage4.Location = new Point(4, 76);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(751, 375);
+            tabPage4.Size = new Size(751, 396);
             tabPage4.TabIndex = 5;
-            tabPage4.Text = "ZOYI-INFO";
+            tabPage4.Text = "703S-INFO";
             // 
             // tabTools
             // 
@@ -401,17 +424,18 @@
             tabTools.Controls.Add(btnToolsRefresh);
             tabTools.Controls.Add(btnToolsEdit);
             tabTools.Controls.Add(panelTools);
-            tabTools.Location = new Point(4, 32);
+            tabTools.Location = new Point(4, 76);
             tabTools.Margin = new Padding(2);
             tabTools.Name = "tabTools";
             tabTools.Padding = new Padding(2);
-            tabTools.Size = new Size(751, 375);
+            tabTools.Size = new Size(751, 396);
             tabTools.TabIndex = 3;
             tabTools.Text = "PRZYBORNIK";
             // 
             // textBox1
             // 
-            textBox1.BackColor = SystemColors.HotTrack;
+            textBox1.BackColor = Color.Navy;
+            textBox1.Cursor = Cursors.IBeam;
             textBox1.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             textBox1.ForeColor = Color.Yellow;
             textBox1.Location = new Point(636, 202);
@@ -462,22 +486,8 @@
             panelTools.Location = new Point(4, 4);
             panelTools.Margin = new Padding(2);
             panelTools.Name = "panelTools";
-            panelTools.Size = new Size(626, 367);
+            panelTools.Size = new Size(626, 388);
             panelTools.TabIndex = 0;
-            // 
-            // btnPcapAnalyzer
-            // 
-            btnPcapAnalyzer.BackColor = Color.FromArgb(64, 0, 0);
-            btnPcapAnalyzer.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnPcapAnalyzer.ForeColor = Color.LightCoral;
-            btnPcapAnalyzer.Location = new Point(594, 313);
-            btnPcapAnalyzer.Name = "btnPcapAnalyzer";
-            btnPcapAnalyzer.Size = new Size(150, 32);
-            btnPcapAnalyzer.TabIndex = 37;
-            btnPcapAnalyzer.Text = "ANALIZATOR PCAP";
-            btnPcapAnalyzer.UseVisualStyleBackColor = false;
-            btnPcapAnalyzer.Visible = false;
-            btnPcapAnalyzer.Click += btnPcapAnalyzer_Click;
             // 
             // tabPage2
             // 
@@ -491,11 +501,11 @@
             tabPage2.Controls.Add(cbTTSVoice);
             tabPage2.Controls.Add(lblTTSStatus);
             tabPage2.ForeColor = SystemColors.HighlightText;
-            tabPage2.Location = new Point(4, 32);
+            tabPage2.Location = new Point(4, 76);
             tabPage2.Margin = new Padding(2);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(2);
-            tabPage2.Size = new Size(751, 375);
+            tabPage2.Size = new Size(751, 396);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "USTAWIENIA";
             // 
@@ -692,6 +702,7 @@
             // 
             tabPageCOM.BackColor = Color.FromArgb(34, 34, 34);
             tabPageCOM.Controls.Add(chbAdvancedPanel);
+            tabPageCOM.Controls.Add(chbGaugePanel);
             tabPageCOM.Controls.Add(groupBox2);
             tabPageCOM.Controls.Add(tbComOutput);
             tabPageCOM.Controls.Add(tbCOMBaudrate);
@@ -702,11 +713,11 @@
             tabPageCOM.Controls.Add(lbListCOMs);
             tabPageCOM.Controls.Add(btnComConnect);
             tabPageCOM.Controls.Add(lblBaudRate);
-            tabPageCOM.Location = new Point(4, 32);
+            tabPageCOM.Location = new Point(4, 76);
             tabPageCOM.Margin = new Padding(2);
             tabPageCOM.Name = "tabPageCOM";
             tabPageCOM.Padding = new Padding(2);
-            tabPageCOM.Size = new Size(751, 375);
+            tabPageCOM.Size = new Size(751, 396);
             tabPageCOM.TabIndex = 0;
             tabPageCOM.Text = "START";
             // 
@@ -715,7 +726,7 @@
             chbAdvancedPanel.AutoSize = true;
             chbAdvancedPanel.Cursor = Cursors.Hand;
             chbAdvancedPanel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            chbAdvancedPanel.Location = new Point(532, 333);
+            chbAdvancedPanel.Location = new Point(518, 321);
             chbAdvancedPanel.Margin = new Padding(2);
             chbAdvancedPanel.Name = "chbAdvancedPanel";
             chbAdvancedPanel.Size = new Size(188, 25);
@@ -723,6 +734,20 @@
             chbAdvancedPanel.Text = "PANEL ROZSZEŻONY";
             chbAdvancedPanel.UseVisualStyleBackColor = true;
             chbAdvancedPanel.CheckedChanged += chbAdvancedPanel_CheckedChanged;
+            // 
+            // chbGaugePanel
+            // 
+            chbGaugePanel.AutoSize = true;
+            chbGaugePanel.Cursor = Cursors.Hand;
+            chbGaugePanel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            chbGaugePanel.Location = new Point(518, 358);
+            chbGaugePanel.Margin = new Padding(2);
+            chbGaugePanel.Name = "chbGaugePanel";
+            chbGaugePanel.Size = new Size(167, 25);
+            chbGaugePanel.TabIndex = 14;
+            chbGaugePanel.Text = "PANEL WSKAZNIK";
+            chbGaugePanel.UseVisualStyleBackColor = true;
+            chbGaugePanel.CheckedChanged += chbGaugePanel_CheckedChanged;
             // 
             // groupBox2
             // 
@@ -732,7 +757,7 @@
             groupBox2.Controls.Add(rbCOMparseLua);
             groupBox2.Controls.Add(rbCOMparseStd);
             groupBox2.ForeColor = SystemColors.HighlightText;
-            groupBox2.Location = new Point(516, 121);
+            groupBox2.Location = new Point(516, 105);
             groupBox2.Margin = new Padding(2);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new Padding(2);
@@ -764,7 +789,7 @@
             button2.FlatStyle = FlatStyle.Flat;
             button2.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 238);
             button2.ForeColor = Color.Gold;
-            button2.Location = new Point(122, 87);
+            button2.Location = new Point(122, 89);
             button2.Margin = new Padding(2);
             button2.Name = "button2";
             button2.Size = new Size(88, 34);
@@ -824,7 +849,7 @@
             tbComOutput.Multiline = true;
             tbComOutput.Name = "tbComOutput";
             tbComOutput.ScrollBars = ScrollBars.Vertical;
-            tbComOutput.Size = new Size(276, 357);
+            tbComOutput.Size = new Size(276, 384);
             tbComOutput.TabIndex = 5;
             tbComOutput.TextAlign = HorizontalAlignment.Center;
             tbComOutput.TextChanged += tbComOutput_TextChanged;
@@ -835,7 +860,7 @@
             tbCOMBaudrate.Cursor = Cursors.IBeam;
             tbCOMBaudrate.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             tbCOMBaudrate.ForeColor = Color.Gold;
-            tbCOMBaudrate.Location = new Point(101, 228);
+            tbCOMBaudrate.Location = new Point(101, 245);
             tbCOMBaudrate.Margin = new Padding(2);
             tbCOMBaudrate.Name = "tbCOMBaudrate";
             tbCOMBaudrate.Size = new Size(99, 27);
@@ -880,7 +905,7 @@
             chbStandardPanel.CheckState = CheckState.Checked;
             chbStandardPanel.Cursor = Cursors.Hand;
             chbStandardPanel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            chbStandardPanel.Location = new Point(532, 304);
+            chbStandardPanel.Location = new Point(518, 286);
             chbStandardPanel.Margin = new Padding(2);
             chbStandardPanel.Name = "chbStandardPanel";
             chbStandardPanel.Size = new Size(203, 25);
@@ -923,7 +948,7 @@
             btnComConnect.Cursor = Cursors.Hand;
             btnComConnect.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             btnComConnect.ForeColor = SystemColors.Desktop;
-            btnComConnect.Location = new Point(15, 269);
+            btnComConnect.Location = new Point(15, 294);
             btnComConnect.Margin = new Padding(2);
             btnComConnect.Name = "btnComConnect";
             btnComConnect.Size = new Size(185, 96);
@@ -937,7 +962,7 @@
             lblBaudRate.AutoSize = true;
             lblBaudRate.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             lblBaudRate.ForeColor = Color.Yellow;
-            lblBaudRate.Location = new Point(15, 231);
+            lblBaudRate.Location = new Point(15, 249);
             lblBaudRate.Margin = new Padding(2, 0, 2, 0);
             lblBaudRate.Name = "lblBaudRate";
             lblBaudRate.Size = new Size(82, 20);
@@ -951,21 +976,28 @@
             tabControl1.Controls.Add(tabPageCOM);
             tabControl1.Controls.Add(tabPageWYKRES);
             tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabWebServer);
+            tabControl1.Controls.Add(tabDQ02);
+            tabControl1.Controls.Add(tabRIDEN);
             tabControl1.Controls.Add(tabTools);
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage6);
             tabControl1.Controls.Add(tabPage5);
+            tabControl1.Controls.Add(tabPage7);
             tabControl1.Controls.Add(tabPage4);
-            tabControl1.Controls.Add(tabWebServer);
-            tabControl1.Controls.Add(tabDQ02);
-            tabControl1.Controls.Add(tabRIDEN);
-            tabControl1.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            tabControl1.Controls.Add(tabPage8);
+            tabControl1.Controls.Add(tabPage9);
+            tabControl1.Controls.Add(tabPage11);
+            tabControl1.Controls.Add(tabPage10);
+            tabControl1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            tabControl1.ItemSize = new Size(83, 22);
             tabControl1.Location = new Point(10, 40);
             tabControl1.Margin = new Padding(2);
+            tabControl1.Multiline = true;
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(759, 411);
+            tabControl1.Size = new Size(759, 476);
             tabControl1.SizeMode = TabSizeMode.FillToRight;
             tabControl1.TabIndex = 14;
             // 
@@ -979,11 +1011,11 @@
             tabPageWYKRES.Controls.Add(btnTime30s);
             tabPageWYKRES.Controls.Add(btnTime60s);
             tabPageWYKRES.Controls.Add(btnTime5min);
-            tabPageWYKRES.Location = new Point(4, 32);
+            tabPageWYKRES.Location = new Point(4, 76);
             tabPageWYKRES.Margin = new Padding(2);
             tabPageWYKRES.Name = "tabPageWYKRES";
             tabPageWYKRES.Padding = new Padding(2);
-            tabPageWYKRES.Size = new Size(751, 375);
+            tabPageWYKRES.Size = new Size(751, 396);
             tabPageWYKRES.TabIndex = 10;
             tabPageWYKRES.Text = "WYKRES";
             // 
@@ -991,7 +1023,7 @@
             // 
             chartPanel.Location = new Point(0, 40);
             chartPanel.Name = "chartPanel";
-            chartPanel.Size = new Size(751, 335);
+            chartPanel.Size = new Size(751, 351);
             chartPanel.TabIndex = 0;
             // 
             // btnChartPause
@@ -1084,83 +1116,35 @@
             btnTime5min.UseVisualStyleBackColor = false;
             btnTime5min.Click += btnTimeWindow_Click;
             // 
-            // tabPage3
-            // 
-            tabPage3.BackColor = Color.FromArgb(24, 24, 24);
-            tabPage3.BorderStyle = BorderStyle.Fixed3D;
-            tabPage3.Controls.Add(pbESR);
-            tabPage3.ForeColor = SystemColors.GrayText;
-            tabPage3.Location = new Point(4, 32);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(751, 375);
-            tabPage3.TabIndex = 9;
-            tabPage3.Text = "ESR TABELA";
-            // 
-            // tabPage1
-            // 
-            tabPage1.BackColor = Color.FromArgb(24, 24, 24);
-            tabPage1.BackgroundImage = (Image)resources.GetObject("tabPage1.BackgroundImage");
-            tabPage1.BackgroundImageLayout = ImageLayout.Zoom;
-            tabPage1.BorderStyle = BorderStyle.Fixed3D;
-            tabPage1.ForeColor = Color.Blue;
-            tabPage1.Location = new Point(4, 32);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(751, 375);
-            tabPage1.TabIndex = 6;
-            tabPage1.Text = "KOD REZYSTORÓW";
-            // 
-            // tabPage6
-            // 
-            tabPage6.BackColor = Color.FromArgb(24, 24, 24);
-            tabPage6.BackgroundImage = (Image)resources.GetObject("tabPage6.BackgroundImage");
-            tabPage6.BackgroundImageLayout = ImageLayout.Stretch;
-            tabPage6.Location = new Point(4, 32);
-            tabPage6.Name = "tabPage6";
-            tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(751, 375);
-            tabPage6.TabIndex = 8;
-            tabPage6.Text = "PODŁĄCZ._STANDARD";
-            // 
-            // tabPage5
-            // 
-            tabPage5.BackColor = Color.FromArgb(24, 24, 24);
-            tabPage5.BackgroundImage = (Image)resources.GetObject("tabPage5.BackgroundImage");
-            tabPage5.BackgroundImageLayout = ImageLayout.Stretch;
-            tabPage5.Location = new Point(4, 32);
-            tabPage5.Name = "tabPage5";
-            tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(751, 375);
-            tabPage5.TabIndex = 7;
-            tabPage5.Text = "PODŁĄCZ._EXTENDED";
-            // 
             // tabWebServer
             // 
             tabWebServer.BackColor = Color.FromArgb(34, 34, 34);
+            tabWebServer.BackgroundImage = (Image)resources.GetObject("tabWebServer.BackgroundImage");
+            tabWebServer.BackgroundImageLayout = ImageLayout.Stretch;
             tabWebServer.Controls.Add(btnWebServerStop);
             tabWebServer.Controls.Add(label2);
             tabWebServer.Controls.Add(tbWebServerPort);
             tabWebServer.Controls.Add(label3);
             tabWebServer.Controls.Add(llWebAddress);
             tabWebServer.Controls.Add(btnWebServerStart);
-            tabWebServer.Location = new Point(4, 32);
+            tabWebServer.Location = new Point(4, 76);
             tabWebServer.Name = "tabWebServer";
             tabWebServer.Padding = new Padding(3);
-            tabWebServer.Size = new Size(751, 375);
+            tabWebServer.Size = new Size(751, 396);
             tabWebServer.TabIndex = 11;
             tabWebServer.Text = "WEB SERWER";
             // 
             // btnWebServerStop
             // 
-            btnWebServerStop.BackColor = Color.FromArgb(64, 0, 0);
+            btnWebServerStop.BackColor = Color.Blue;
             btnWebServerStop.Cursor = Cursors.Hand;
             btnWebServerStop.Enabled = false;
             btnWebServerStop.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             btnWebServerStop.ForeColor = Color.LightCoral;
-            btnWebServerStop.Location = new Point(180, 16);
+            btnWebServerStop.Location = new Point(241, 129);
             btnWebServerStop.Margin = new Padding(2);
             btnWebServerStop.Name = "btnWebServerStop";
-            btnWebServerStop.Size = new Size(160, 44);
+            btnWebServerStop.Size = new Size(230, 44);
             btnWebServerStop.TabIndex = 1;
             btnWebServerStop.Text = "ZATRZYMAJ";
             btnWebServerStop.UseVisualStyleBackColor = false;
@@ -1169,24 +1153,25 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
+            label2.BackColor = Color.Teal;
+            label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label2.ForeColor = Color.Yellow;
-            label2.Location = new Point(19, 83);
+            label2.Location = new Point(241, 211);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(41, 20);
+            label2.Size = new Size(66, 25);
             label2.TabIndex = 2;
-            label2.Text = "Port:";
+            label2.Text = "PORT:";
             // 
             // tbWebServerPort
             // 
-            tbWebServerPort.BackColor = Color.FromArgb(24, 24, 24);
-            tbWebServerPort.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold);
-            tbWebServerPort.ForeColor = Color.Gold;
-            tbWebServerPort.Location = new Point(68, 77);
+            tbWebServerPort.BackColor = SystemColors.ControlText;
+            tbWebServerPort.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            tbWebServerPort.ForeColor = Color.OrangeRed;
+            tbWebServerPort.Location = new Point(530, 22);
             tbWebServerPort.Margin = new Padding(2);
             tbWebServerPort.Name = "tbWebServerPort";
-            tbWebServerPort.Size = new Size(80, 27);
+            tbWebServerPort.Size = new Size(221, 33);
             tbWebServerPort.TabIndex = 3;
             tbWebServerPort.Text = "8080";
             tbWebServerPort.TextAlign = HorizontalAlignment.Center;
@@ -1194,27 +1179,30 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold);
-            label3.ForeColor = Color.LightGreen;
-            label3.Location = new Point(19, 123);
+            label3.BackColor = Color.Gray;
+            label3.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            label3.ForeColor = Color.Yellow;
+            label3.Location = new Point(241, 284);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(52, 20);
+            label3.Size = new Size(77, 25);
             label3.TabIndex = 4;
-            label3.Text = "Adres:";
+            label3.Text = "ADRES:";
             // 
             // llWebAddress
             // 
-            llWebAddress.AutoSize = true;
+            llWebAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            llWebAddress.BorderStyle = BorderStyle.FixedSingle;
             llWebAddress.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold);
             llWebAddress.LinkColor = Color.Cyan;
-            llWebAddress.Location = new Point(79, 123);
+            llWebAddress.Location = new Point(527, 56);
             llWebAddress.Margin = new Padding(2, 0, 2, 0);
             llWebAddress.Name = "llWebAddress";
-            llWebAddress.Size = new Size(112, 20);
+            llWebAddress.Size = new Size(219, 40);
             llWebAddress.TabIndex = 5;
             llWebAddress.TabStop = true;
             llWebAddress.Text = "http://IP:port/";
+            llWebAddress.TextAlign = ContentAlignment.MiddleCenter;
             llWebAddress.LinkClicked += llWebAddress_LinkClicked;
             // 
             // btnWebServerStart
@@ -1223,10 +1211,10 @@
             btnWebServerStart.Cursor = Cursors.Hand;
             btnWebServerStart.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             btnWebServerStart.ForeColor = Color.LightGreen;
-            btnWebServerStart.Location = new Point(16, 16);
+            btnWebServerStart.Location = new Point(241, 52);
             btnWebServerStart.Margin = new Padding(2);
             btnWebServerStart.Name = "btnWebServerStart";
-            btnWebServerStart.Size = new Size(160, 44);
+            btnWebServerStart.Size = new Size(230, 44);
             btnWebServerStart.TabIndex = 0;
             btnWebServerStart.Text = "URUCHOM";
             btnWebServerStart.UseVisualStyleBackColor = false;
@@ -1235,6 +1223,8 @@
             // tabDQ02
             // 
             tabDQ02.BackColor = Color.FromArgb(34, 34, 34);
+            tabDQ02.BackgroundImage = (Image)resources.GetObject("tabDQ02.BackgroundImage");
+            tabDQ02.BackgroundImageLayout = ImageLayout.Stretch;
             tabDQ02.Controls.Add(button8);
             tabDQ02.Controls.Add(button4);
             tabDQ02.Controls.Add(label6);
@@ -1274,12 +1264,12 @@
             tabDQ02.Controls.Add(tbDQ02UserTolerance);
             tabDQ02.Controls.Add(lblDQ02Deviation);
             tabDQ02.Controls.Add(lblDQ02PassFail);
-            tabDQ02.Location = new Point(4, 32);
+            tabDQ02.Location = new Point(4, 76);
             tabDQ02.Name = "tabDQ02";
             tabDQ02.Padding = new Padding(3);
-            tabDQ02.Size = new Size(751, 375);
+            tabDQ02.Size = new Size(751, 396);
             tabDQ02.TabIndex = 12;
-            tabDQ02.Text = "ZOYI DQ02";
+            tabDQ02.Text = "ZOYI DQ02 / MD2";
             // 
             // button8
             // 
@@ -1312,67 +1302,71 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(200, 128);
+            label6.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            label6.Location = new Point(270, 276);
             label6.Name = "label6";
-            label6.Size = new Size(50, 20);
+            label6.Size = new Size(43, 17);
             label6.TabIndex = 41;
             label6.Text = "label6";
             label6.Click += label6_Click;
             // 
             // checkBox2
             // 
+            checkBox2.AllowDrop = true;
             checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(371, 344);
+            checkBox2.Location = new Point(421, 365);
             checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(58, 24);
+            checkBox2.Size = new Size(124, 21);
             checkBox2.TabIndex = 40;
-            checkBox2.Text = "blok";
+            checkBox2.Text = "BLOKADA IKON";
             checkBox2.UseVisualStyleBackColor = true;
             // 
             // textBoxtemperature
             // 
             textBoxtemperature.BackColor = SystemColors.MenuText;
             textBoxtemperature.ForeColor = SystemColors.Info;
-            textBoxtemperature.Location = new Point(269, 340);
+            textBoxtemperature.Location = new Point(295, 363);
             textBoxtemperature.Name = "textBoxtemperature";
-            textBoxtemperature.Size = new Size(80, 27);
+            textBoxtemperature.Size = new Size(80, 25);
             textBoxtemperature.TabIndex = 39;
             textBoxtemperature.Text = "TEMP";
+            textBoxtemperature.TextAlign = HorizontalAlignment.Center;
             // 
             // textBoxvoltage
             // 
             textBoxvoltage.BackColor = SystemColors.MenuText;
             textBoxvoltage.ForeColor = SystemColors.InactiveBorder;
-            textBoxvoltage.Location = new Point(182, 340);
+            textBoxvoltage.Location = new Point(200, 363);
             textBoxvoltage.Name = "textBoxvoltage";
-            textBoxvoltage.Size = new Size(81, 27);
+            textBoxvoltage.Size = new Size(81, 25);
             textBoxvoltage.TabIndex = 38;
-            textBoxvoltage.Text = "Vol";
+            textBoxvoltage.Text = "VOLT";
+            textBoxvoltage.TextAlign = HorizontalAlignment.Center;
             // 
             // lblStatus
             // 
             lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(11, 206);
+            lblStatus.Location = new Point(311, 167);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(68, 20);
+            lblStatus.Size = new Size(62, 17);
             lblStatus.TabIndex = 37;
             lblStatus.Text = "STATUS: ";
             // 
             // lblTargetESR
             // 
             lblTargetESR.AutoSize = true;
-            lblTargetESR.Location = new Point(11, 177);
+            lblTargetESR.Location = new Point(311, 132);
             lblTargetESR.Name = "lblTargetESR";
-            lblTargetESR.Size = new Size(42, 20);
+            lblTargetESR.Size = new Size(38, 17);
             lblTargetESR.TabIndex = 36;
             lblTargetESR.Text = "ESR: ";
             // 
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(443, 344);
+            checkBox1.Location = new Point(474, 331);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(92, 24);
+            checkBox1.Size = new Size(84, 21);
             checkBox1.TabIndex = 35;
             checkBox1.Text = "Ukryj log";
             checkBox1.UseVisualStyleBackColor = true;
@@ -1432,7 +1426,7 @@
             tbDQ02Log.Name = "tbDQ02Log";
             tbDQ02Log.ReadOnly = true;
             tbDQ02Log.ScrollBars = ScrollBars.Vertical;
-            tbDQ02Log.Size = new Size(171, 32);
+            tbDQ02Log.Size = new Size(48, 377);
             tbDQ02Log.TabIndex = 6;
             tbDQ02Log.Visible = false;
             tbDQ02Log.WordWrap = false;
@@ -1537,7 +1531,7 @@
             lblDQ02Functions.AutoSize = true;
             lblDQ02Functions.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Functions.ForeColor = Color.FromArgb(180, 220, 255);
-            lblDQ02Functions.Location = new Point(10, 3);
+            lblDQ02Functions.Location = new Point(117, 107);
             lblDQ02Functions.Name = "lblDQ02Functions";
             lblDQ02Functions.Size = new Size(78, 15);
             lblDQ02Functions.TabIndex = 13;
@@ -1548,7 +1542,7 @@
             lblDQ02Speed.AutoSize = true;
             lblDQ02Speed.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Speed.ForeColor = Color.FromArgb(180, 220, 255);
-            lblDQ02Speed.Location = new Point(200, 6);
+            lblDQ02Speed.Location = new Point(270, 242);
             lblDQ02Speed.Name = "lblDQ02Speed";
             lblDQ02Speed.Size = new Size(60, 15);
             lblDQ02Speed.TabIndex = 14;
@@ -1559,7 +1553,7 @@
             lblDQ02Model.AutoSize = true;
             lblDQ02Model.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Model.ForeColor = Color.FromArgb(180, 220, 255);
-            lblDQ02Model.Location = new Point(380, 6);
+            lblDQ02Model.Location = new Point(270, 261);
             lblDQ02Model.Name = "lblDQ02Model";
             lblDQ02Model.Size = new Size(60, 15);
             lblDQ02Model.TabIndex = 15;
@@ -1570,7 +1564,7 @@
             lblDQ02Freq.AutoSize = true;
             lblDQ02Freq.Font = new Font("Segoe UI", 9F);
             lblDQ02Freq.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Freq.Location = new Point(10, 34);
+            lblDQ02Freq.Location = new Point(117, 257);
             lblDQ02Freq.Name = "lblDQ02Freq";
             lblDQ02Freq.Size = new Size(80, 15);
             lblDQ02Freq.TabIndex = 16;
@@ -1581,7 +1575,7 @@
             lblDQ02Level.AutoSize = true;
             lblDQ02Level.Font = new Font("Segoe UI", 9F);
             lblDQ02Level.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Level.Location = new Point(200, 34);
+            lblDQ02Level.Location = new Point(270, 293);
             lblDQ02Level.Name = "lblDQ02Level";
             lblDQ02Level.Size = new Size(52, 15);
             lblDQ02Level.TabIndex = 17;
@@ -1592,7 +1586,7 @@
             lblDQ02Nominal.AutoSize = true;
             lblDQ02Nominal.Font = new Font("Segoe UI", 9F);
             lblDQ02Nominal.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Nominal.Location = new Point(380, 35);
+            lblDQ02Nominal.Location = new Point(119, 304);
             lblDQ02Nominal.Name = "lblDQ02Nominal";
             lblDQ02Nominal.Size = new Size(71, 15);
             lblDQ02Nominal.TabIndex = 18;
@@ -1603,7 +1597,7 @@
             lblDQ02LossParam.AutoSize = true;
             lblDQ02LossParam.Font = new Font("Segoe UI", 9F);
             lblDQ02LossParam.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02LossParam.Location = new Point(11, 65);
+            lblDQ02LossParam.Location = new Point(117, 287);
             lblDQ02LossParam.Name = "lblDQ02LossParam";
             lblDQ02LossParam.Size = new Size(113, 15);
             lblDQ02LossParam.TabIndex = 19;
@@ -1614,7 +1608,7 @@
             lblDQ02Range.AutoSize = true;
             lblDQ02Range.Font = new Font("Segoe UI", 9F);
             lblDQ02Range.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Range.Location = new Point(200, 65);
+            lblDQ02Range.Location = new Point(363, 257);
             lblDQ02Range.Name = "lblDQ02Range";
             lblDQ02Range.Size = new Size(58, 15);
             lblDQ02Range.TabIndex = 20;
@@ -1625,7 +1619,7 @@
             lblDQ02Output.AutoSize = true;
             lblDQ02Output.Font = new Font("Segoe UI", 9F);
             lblDQ02Output.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Output.Location = new Point(380, 65);
+            lblDQ02Output.Location = new Point(363, 242);
             lblDQ02Output.Name = "lblDQ02Output";
             lblDQ02Output.Size = new Size(63, 15);
             lblDQ02Output.TabIndex = 21;
@@ -1636,7 +1630,7 @@
             lblDQ02Comparison.AutoSize = true;
             lblDQ02Comparison.Font = new Font("Segoe UI", 9F);
             lblDQ02Comparison.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Comparison.Location = new Point(11, 95);
+            lblDQ02Comparison.Location = new Point(270, 308);
             lblDQ02Comparison.Name = "lblDQ02Comparison";
             lblDQ02Comparison.Size = new Size(90, 15);
             lblDQ02Comparison.TabIndex = 22;
@@ -1647,7 +1641,7 @@
             lblDQ02Bias.AutoSize = true;
             lblDQ02Bias.Font = new Font("Segoe UI", 9F);
             lblDQ02Bias.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Bias.Location = new Point(200, 95);
+            lblDQ02Bias.Location = new Point(363, 272);
             lblDQ02Bias.Name = "lblDQ02Bias";
             lblDQ02Bias.Size = new Size(46, 15);
             lblDQ02Bias.TabIndex = 23;
@@ -1658,7 +1652,7 @@
             lblDQ02Tolerance.AutoSize = true;
             lblDQ02Tolerance.Font = new Font("Segoe UI", 9F);
             lblDQ02Tolerance.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Tolerance.Location = new Point(380, 95);
+            lblDQ02Tolerance.Location = new Point(119, 242);
             lblDQ02Tolerance.Name = "lblDQ02Tolerance";
             lblDQ02Tolerance.Size = new Size(76, 15);
             lblDQ02Tolerance.TabIndex = 24;
@@ -1669,7 +1663,7 @@
             lblDQ02Prefix.AutoSize = true;
             lblDQ02Prefix.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Prefix.ForeColor = Color.Gold;
-            lblDQ02Prefix.Location = new Point(11, 234);
+            lblDQ02Prefix.Location = new Point(117, 132);
             lblDQ02Prefix.Name = "lblDQ02Prefix";
             lblDQ02Prefix.Size = new Size(60, 51);
             lblDQ02Prefix.TabIndex = 25;
@@ -1680,7 +1674,7 @@
             lblDQ02Value.AutoSize = true;
             lblDQ02Value.Font = new Font("Segoe UI", 28F, FontStyle.Bold);
             lblDQ02Value.ForeColor = Color.Gold;
-            lblDQ02Value.Location = new Point(77, 234);
+            lblDQ02Value.Location = new Point(183, 132);
             lblDQ02Value.Name = "lblDQ02Value";
             lblDQ02Value.Size = new Size(60, 51);
             lblDQ02Value.TabIndex = 26;
@@ -1689,22 +1683,22 @@
             // lblDQ02Secondary
             // 
             lblDQ02Secondary.AutoSize = true;
-            lblDQ02Secondary.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblDQ02Secondary.Font = new Font("Segoe UI", 27.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             lblDQ02Secondary.ForeColor = Color.Cyan;
-            lblDQ02Secondary.Location = new Point(10, 285);
+            lblDQ02Secondary.Location = new Point(119, 188);
             lblDQ02Secondary.Name = "lblDQ02Secondary";
-            lblDQ02Secondary.Size = new Size(77, 32);
+            lblDQ02Secondary.Size = new Size(116, 50);
             lblDQ02Secondary.TabIndex = 27;
             lblDQ02Secondary.Text = "0.000";
             // 
             // tbDQ02UserNominal
             // 
             tbDQ02UserNominal.BackColor = Color.FromArgb(24, 24, 24);
-            tbDQ02UserNominal.Font = new Font("Segoe UI", 9F);
+            tbDQ02UserNominal.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             tbDQ02UserNominal.ForeColor = Color.Gold;
-            tbDQ02UserNominal.Location = new Point(9, 344);
+            tbDQ02UserNominal.Location = new Point(11, 363);
             tbDQ02UserNominal.Name = "tbDQ02UserNominal";
-            tbDQ02UserNominal.Size = new Size(80, 23);
+            tbDQ02UserNominal.Size = new Size(81, 25);
             tbDQ02UserNominal.TabIndex = 28;
             tbDQ02UserNominal.Text = "uF";
             tbDQ02UserNominal.TextAlign = HorizontalAlignment.Center;
@@ -1712,11 +1706,11 @@
             // tbDQ02UserTolerance
             // 
             tbDQ02UserTolerance.BackColor = Color.FromArgb(24, 24, 24);
-            tbDQ02UserTolerance.Font = new Font("Segoe UI", 9F);
+            tbDQ02UserTolerance.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 238);
             tbDQ02UserTolerance.ForeColor = Color.Gold;
-            tbDQ02UserTolerance.Location = new Point(95, 344);
+            tbDQ02UserTolerance.Location = new Point(107, 363);
             tbDQ02UserTolerance.Name = "tbDQ02UserTolerance";
-            tbDQ02UserTolerance.Size = new Size(81, 23);
+            tbDQ02UserTolerance.Size = new Size(81, 25);
             tbDQ02UserTolerance.TabIndex = 29;
             tbDQ02UserTolerance.Text = "%";
             tbDQ02UserTolerance.TextAlign = HorizontalAlignment.Center;
@@ -1726,7 +1720,7 @@
             lblDQ02Deviation.AutoSize = true;
             lblDQ02Deviation.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02Deviation.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02Deviation.Location = new Point(11, 132);
+            lblDQ02Deviation.Location = new Point(119, 272);
             lblDQ02Deviation.Name = "lblDQ02Deviation";
             lblDQ02Deviation.Size = new Size(79, 15);
             lblDQ02Deviation.TabIndex = 30;
@@ -1737,7 +1731,7 @@
             lblDQ02PassFail.AutoSize = true;
             lblDQ02PassFail.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblDQ02PassFail.ForeColor = Color.FromArgb(200, 200, 200);
-            lblDQ02PassFail.Location = new Point(380, 141);
+            lblDQ02PassFail.Location = new Point(311, 276);
             lblDQ02PassFail.Name = "lblDQ02PassFail";
             lblDQ02PassFail.Size = new Size(19, 15);
             lblDQ02PassFail.TabIndex = 31;
@@ -1746,6 +1740,7 @@
             // tabRIDEN
             // 
             tabRIDEN.BackColor = Color.FromArgb(34, 34, 34);
+            tabRIDEN.BackgroundImage = (Image)resources.GetObject("tabRIDEN.BackgroundImage");
             tabRIDEN.BackgroundImageLayout = ImageLayout.Stretch;
             tabRIDEN.Controls.Add(button9);
             tabRIDEN.Controls.Add(labeltemp);
@@ -1787,11 +1782,10 @@
             tabRIDEN.Controls.Add(ridenLblAlarmDesc);
             tabRIDEN.Controls.Add(ridenLblAlarmVal);
             tabRIDEN.Controls.Add(btnPcapAnalyzer);
-            tabRIDEN.Controls.Add(pictureBox2);
-            tabRIDEN.Location = new Point(4, 32);
+            tabRIDEN.Location = new Point(4, 76);
             tabRIDEN.Name = "tabRIDEN";
             tabRIDEN.Padding = new Padding(3);
-            tabRIDEN.Size = new Size(751, 375);
+            tabRIDEN.Size = new Size(751, 396);
             tabRIDEN.TabIndex = 13;
             tabRIDEN.Text = "RIDEN";
             // 
@@ -1799,32 +1793,36 @@
             // 
             button9.BackColor = Color.FromArgb(0, 64, 64);
             button9.Cursor = Cursors.Hand;
-            button9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            button9.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             button9.ForeColor = Color.Cyan;
-            button9.Location = new Point(463, 261);
+            button9.Location = new Point(270, 295);
             button9.Name = "button9";
-            button9.Size = new Size(97, 28);
+            button9.Size = new Size(100, 66);
             button9.TabIndex = 42;
-            button9.Text = "Chart";
+            button9.Text = "CHART";
             button9.UseVisualStyleBackColor = false;
             // 
             // labeltemp
             // 
+            labeltemp.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             labeltemp.AutoEllipsis = true;
-            labeltemp.Font = new Font("Consolas", 9F);
-            labeltemp.ForeColor = Color.Gray;
-            labeltemp.Location = new Point(416, 347);
+            labeltemp.BackColor = Color.Transparent;
+            labeltemp.BorderStyle = BorderStyle.FixedSingle;
+            labeltemp.Font = new Font("Consolas", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            labeltemp.ForeColor = Color.Red;
+            labeltemp.ImageAlign = ContentAlignment.BottomRight;
+            labeltemp.Location = new Point(136, 214);
             labeltemp.Name = "labeltemp";
-            labeltemp.Size = new Size(120, 28);
+            labeltemp.Size = new Size(110, 34);
             labeltemp.TabIndex = 41;
             labeltemp.Text = "TEMP: ---";
-            labeltemp.TextAlign = ContentAlignment.MiddleLeft;
+            labeltemp.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // ridenLblVinDesc
             // 
             ridenLblVinDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenLblVinDesc.ForeColor = Color.LightGray;
-            ridenLblVinDesc.Location = new Point(685, 302);
+            ridenLblVinDesc.Location = new Point(564, 333);
             ridenLblVinDesc.Name = "ridenLblVinDesc";
             ridenLblVinDesc.Size = new Size(39, 28);
             ridenLblVinDesc.TabIndex = 39;
@@ -1834,20 +1832,26 @@
             // 
             // label7
             // 
+            label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label7.AutoEllipsis = true;
-            label7.Font = new Font("Consolas", 9F);
-            label7.ForeColor = Color.Gray;
-            label7.Location = new Point(538, 354);
+            label7.BackColor = Color.Transparent;
+            label7.BorderStyle = BorderStyle.FixedSingle;
+            label7.Font = new Font("Consolas", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            label7.ForeColor = Color.FromArgb(255, 255, 128);
+            label7.ImageAlign = ContentAlignment.BottomCenter;
+            label7.Location = new Point(252, 214);
             label7.Name = "label7";
-            label7.Size = new Size(108, 27);
+            label7.Size = new Size(128, 34);
             label7.TabIndex = 38;
             label7.Text = "VIN: ---";
+            label7.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // ridenLblVsetDesc
             // 
+            ridenLblVsetDesc.BackColor = Color.Silver;
             ridenLblVsetDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblVsetDesc.ForeColor = Color.LightGray;
-            ridenLblVsetDesc.Location = new Point(12, 53);
+            ridenLblVsetDesc.ForeColor = Color.FromArgb(64, 0, 0);
+            ridenLblVsetDesc.Location = new Point(55, 55);
             ridenLblVsetDesc.Name = "ridenLblVsetDesc";
             ridenLblVsetDesc.Size = new Size(76, 28);
             ridenLblVsetDesc.TabIndex = 0;
@@ -1856,20 +1860,22 @@
             // 
             // ridenLblIsetDesc
             // 
+            ridenLblIsetDesc.BackColor = Color.Silver;
             ridenLblIsetDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblIsetDesc.ForeColor = Color.LightGray;
-            ridenLblIsetDesc.Location = new Point(12, 217);
+            ridenLblIsetDesc.ForeColor = Color.FromArgb(0, 0, 64);
+            ridenLblIsetDesc.Location = new Point(55, 168);
             ridenLblIsetDesc.Name = "ridenLblIsetDesc";
-            ridenLblIsetDesc.Size = new Size(76, 28);
+            ridenLblIsetDesc.Size = new Size(49, 28);
             ridenLblIsetDesc.TabIndex = 1;
             ridenLblIsetDesc.Text = "ZW! ";
             ridenLblIsetDesc.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // ridenLblVoutDesc
             // 
+            ridenLblVoutDesc.BackColor = Color.Silver;
             ridenLblVoutDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblVoutDesc.ForeColor = Color.LightGray;
-            ridenLblVoutDesc.Location = new Point(12, 136);
+            ridenLblVoutDesc.ForeColor = Color.FromArgb(128, 64, 0);
+            ridenLblVoutDesc.Location = new Point(55, 113);
             ridenLblVoutDesc.Name = "ridenLblVoutDesc";
             ridenLblVoutDesc.Size = new Size(60, 28);
             ridenLblVoutDesc.TabIndex = 2;
@@ -1878,9 +1884,10 @@
             // 
             // ridenLblIoutDesc
             // 
+            ridenLblIoutDesc.BackColor = Color.Silver;
             ridenLblIoutDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblIoutDesc.ForeColor = Color.LightGray;
-            ridenLblIoutDesc.Location = new Point(12, 94);
+            ridenLblIoutDesc.ForeColor = Color.Maroon;
+            ridenLblIoutDesc.Location = new Point(55, 82);
             ridenLblIoutDesc.Name = "ridenLblIoutDesc";
             ridenLblIoutDesc.Size = new Size(49, 28);
             ridenLblIoutDesc.TabIndex = 3;
@@ -1889,9 +1896,10 @@
             // 
             // ridenLblMocDesc
             // 
+            ridenLblMocDesc.BackColor = Color.Silver;
             ridenLblMocDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblMocDesc.ForeColor = Color.LightGray;
-            ridenLblMocDesc.Location = new Point(12, 178);
+            ridenLblMocDesc.ForeColor = Color.FromArgb(0, 64, 0);
+            ridenLblMocDesc.Location = new Point(55, 138);
             ridenLblMocDesc.Name = "ridenLblMocDesc";
             ridenLblMocDesc.Size = new Size(49, 28);
             ridenLblMocDesc.TabIndex = 4;
@@ -1900,12 +1908,12 @@
             // 
             // ridenBtnConnect
             // 
-            ridenBtnConnect.BackColor = Color.LightGreen;
+            ridenBtnConnect.BackColor = Color.FromArgb(255, 255, 128);
             ridenBtnConnect.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             ridenBtnConnect.ForeColor = Color.Black;
-            ridenBtnConnect.Location = new Point(12, 10);
+            ridenBtnConnect.Location = new Point(564, 150);
             ridenBtnConnect.Name = "ridenBtnConnect";
-            ridenBtnConnect.Size = new Size(150, 32);
+            ridenBtnConnect.Size = new Size(167, 32);
             ridenBtnConnect.TabIndex = 6;
             ridenBtnConnect.Text = "START SERWER";
             ridenBtnConnect.UseVisualStyleBackColor = false;
@@ -1914,26 +1922,30 @@
             // 
             ridenLblLocalIP.AutoEllipsis = true;
             ridenLblLocalIP.Font = new Font("Consolas", 9F);
-            ridenLblLocalIP.ForeColor = Color.Gray;
-            ridenLblLocalIP.Location = new Point(132, 354);
+            ridenLblLocalIP.ForeColor = Color.Yellow;
+            ridenLblLocalIP.Location = new Point(404, 50);
             ridenLblLocalIP.Name = "ridenLblLocalIP";
-            ridenLblLocalIP.Size = new Size(128, 25);
+            ridenLblLocalIP.Size = new Size(152, 33);
             ridenLblLocalIP.TabIndex = 7;
             ridenLblLocalIP.Text = "IP: ---";
             // 
             // ridenCmbPort
             // 
+            ridenCmbPort.BackColor = SystemColors.WindowFrame;
             ridenCmbPort.DropDownStyle = ComboBoxStyle.DropDownList;
+            ridenCmbPort.FlatStyle = FlatStyle.Popup;
             ridenCmbPort.Font = new Font("Consolas", 9F);
-            ridenCmbPort.Location = new Point(324, 15);
+            ridenCmbPort.Location = new Point(564, 122);
             ridenCmbPort.Name = "ridenCmbPort";
-            ridenCmbPort.Size = new Size(116, 22);
+            ridenCmbPort.Size = new Size(130, 22);
             ridenCmbPort.TabIndex = 23;
             // 
             // ridenBtnRefreshPorts
             // 
-            ridenBtnRefreshPorts.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            ridenBtnRefreshPorts.Location = new Point(446, 14);
+            ridenBtnRefreshPorts.FlatStyle = FlatStyle.System;
+            ridenBtnRefreshPorts.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            ridenBtnRefreshPorts.ForeColor = SystemColors.Highlight;
+            ridenBtnRefreshPorts.Location = new Point(700, 122);
             ridenBtnRefreshPorts.Name = "ridenBtnRefreshPorts";
             ridenBtnRefreshPorts.Size = new Size(28, 22);
             ridenBtnRefreshPorts.TabIndex = 24;
@@ -1944,11 +1956,11 @@
             // 
             ridenBtnConnectUSB.BackColor = Color.FromArgb(0, 100, 0);
             ridenBtnConnectUSB.FlatStyle = FlatStyle.Flat;
-            ridenBtnConnectUSB.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            ridenBtnConnectUSB.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             ridenBtnConnectUSB.ForeColor = Color.White;
-            ridenBtnConnectUSB.Location = new Point(168, 11);
+            ridenBtnConnectUSB.Location = new Point(564, 86);
             ridenBtnConnectUSB.Name = "ridenBtnConnectUSB";
-            ridenBtnConnectUSB.Size = new Size(150, 30);
+            ridenBtnConnectUSB.Size = new Size(164, 30);
             ridenBtnConnectUSB.TabIndex = 25;
             ridenBtnConnectUSB.Text = "POLACZ USB";
             ridenBtnConnectUSB.UseVisualStyleBackColor = false;
@@ -1956,10 +1968,10 @@
             // ridenLblPortStatus
             // 
             ridenLblPortStatus.Font = new Font("Consolas", 8F);
-            ridenLblPortStatus.ForeColor = Color.Gray;
-            ridenLblPortStatus.Location = new Point(20, 355);
+            ridenLblPortStatus.ForeColor = Color.Lime;
+            ridenLblPortStatus.Location = new Point(564, 50);
             ridenLblPortStatus.Name = "ridenLblPortStatus";
-            ridenLblPortStatus.Size = new Size(140, 20);
+            ridenLblPortStatus.Size = new Size(164, 33);
             ridenLblPortStatus.TabIndex = 26;
             ridenLblPortStatus.Text = "USB: ---";
             // 
@@ -1968,7 +1980,7 @@
             ridenLblVsetVal.BackColor = Color.Transparent;
             ridenLblVsetVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblVsetVal.ForeColor = Color.Cyan;
-            ridenLblVsetVal.Location = new Point(94, 57);
+            ridenLblVsetVal.Location = new Point(145, 58);
             ridenLblVsetVal.Name = "ridenLblVsetVal";
             ridenLblVsetVal.Size = new Size(75, 27);
             ridenLblVsetVal.TabIndex = 8;
@@ -1979,7 +1991,7 @@
             ridenTxtVset.BackColor = Color.Navy;
             ridenTxtVset.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtVset.ForeColor = Color.Gold;
-            ridenTxtVset.Location = new Point(168, 56);
+            ridenTxtVset.Location = new Point(224, 57);
             ridenTxtVset.Name = "ridenTxtVset";
             ridenTxtVset.Size = new Size(70, 25);
             ridenTxtVset.TabIndex = 9;
@@ -1990,7 +2002,7 @@
             ridenBtnSetV.BackColor = Color.DarkBlue;
             ridenBtnSetV.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetV.ForeColor = Color.White;
-            ridenBtnSetV.Location = new Point(244, 56);
+            ridenBtnSetV.Location = new Point(306, 54);
             ridenBtnSetV.Name = "ridenBtnSetV";
             ridenBtnSetV.Size = new Size(74, 28);
             ridenBtnSetV.TabIndex = 10;
@@ -2002,7 +2014,7 @@
             ridenLblIsetVal.BackColor = Color.Transparent;
             ridenLblIsetVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblIsetVal.ForeColor = Color.Cyan;
-            ridenLblIsetVal.Location = new Point(93, 98);
+            ridenLblIsetVal.Location = new Point(145, 85);
             ridenLblIsetVal.Name = "ridenLblIsetVal";
             ridenLblIsetVal.Size = new Size(61, 25);
             ridenLblIsetVal.TabIndex = 11;
@@ -2013,9 +2025,9 @@
             ridenTxtIset.BackColor = Color.Navy;
             ridenTxtIset.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtIset.ForeColor = Color.Gold;
-            ridenTxtIset.Location = new Point(168, 100);
+            ridenTxtIset.Location = new Point(223, 85);
             ridenTxtIset.Name = "ridenTxtIset";
-            ridenTxtIset.Size = new Size(70, 25);
+            ridenTxtIset.Size = new Size(71, 25);
             ridenTxtIset.TabIndex = 12;
             ridenTxtIset.Text = "0.100";
             // 
@@ -2024,7 +2036,7 @@
             ridenBtnSetI.BackColor = Color.DarkBlue;
             ridenBtnSetI.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetI.ForeColor = Color.White;
-            ridenBtnSetI.Location = new Point(244, 97);
+            ridenBtnSetI.Location = new Point(306, 82);
             ridenBtnSetI.Name = "ridenBtnSetI";
             ridenBtnSetI.Size = new Size(74, 28);
             ridenBtnSetI.TabIndex = 13;
@@ -2036,7 +2048,7 @@
             ridenLblVoutVal.BackColor = Color.Transparent;
             ridenLblVoutVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblVoutVal.ForeColor = Color.CornflowerBlue;
-            ridenLblVoutVal.Location = new Point(93, 141);
+            ridenLblVoutVal.Location = new Point(146, 114);
             ridenLblVoutVal.Name = "ridenLblVoutVal";
             ridenLblVoutVal.Size = new Size(60, 27);
             ridenLblVoutVal.TabIndex = 14;
@@ -2047,9 +2059,9 @@
             ridenLblIoutVal.BackColor = Color.Transparent;
             ridenLblIoutVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblIoutVal.ForeColor = Color.OrangeRed;
-            ridenLblIoutVal.Location = new Point(93, 218);
+            ridenLblIoutVal.Location = new Point(145, 169);
             ridenLblIoutVal.Name = "ridenLblIoutVal";
-            ridenLblIoutVal.Size = new Size(60, 34);
+            ridenLblIoutVal.Size = new Size(60, 28);
             ridenLblIoutVal.TabIndex = 15;
             ridenLblIoutVal.Text = "---";
             // 
@@ -2058,7 +2070,7 @@
             ridenLblPowerVal.BackColor = Color.Transparent;
             ridenLblPowerVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblPowerVal.ForeColor = Color.LimeGreen;
-            ridenLblPowerVal.Location = new Point(93, 181);
+            ridenLblPowerVal.Location = new Point(145, 142);
             ridenLblPowerVal.Name = "ridenLblPowerVal";
             ridenLblPowerVal.Size = new Size(69, 30);
             ridenLblPowerVal.TabIndex = 16;
@@ -2066,24 +2078,26 @@
             // 
             // ridenLblOutputVal
             // 
-            ridenLblOutputVal.BackColor = Color.Black;
-            ridenLblOutputVal.Font = new Font("Consolas", 20F, FontStyle.Bold);
-            ridenLblOutputVal.ForeColor = Color.Gray;
-            ridenLblOutputVal.Location = new Point(478, 220);
+            ridenLblOutputVal.BackColor = Color.Transparent;
+            ridenLblOutputVal.BorderStyle = BorderStyle.FixedSingle;
+            ridenLblOutputVal.Font = new Font("Consolas", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            ridenLblOutputVal.ForeColor = Color.FromArgb(64, 0, 0);
+            ridenLblOutputVal.Location = new Point(146, 295);
             ridenLblOutputVal.Name = "ridenLblOutputVal";
-            ridenLblOutputVal.Size = new Size(84, 49);
+            ridenLblOutputVal.Size = new Size(100, 66);
             ridenLblOutputVal.TabIndex = 17;
             ridenLblOutputVal.Text = "---";
+            ridenLblOutputVal.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // ridenBtnOn
             // 
             ridenBtnOn.BackColor = Color.DarkGreen;
             ridenBtnOn.Enabled = false;
-            ridenBtnOn.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            ridenBtnOn.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             ridenBtnOn.ForeColor = Color.White;
-            ridenBtnOn.Location = new Point(12, 302);
+            ridenBtnOn.Location = new Point(15, 232);
             ridenBtnOn.Name = "ridenBtnOn";
-            ridenBtnOn.Size = new Size(100, 40);
+            ridenBtnOn.Size = new Size(100, 66);
             ridenBtnOn.TabIndex = 18;
             ridenBtnOn.Text = "ON";
             ridenBtnOn.UseVisualStyleBackColor = false;
@@ -2092,11 +2106,11 @@
             // 
             ridenBtnOff.BackColor = Color.DarkRed;
             ridenBtnOff.Enabled = false;
-            ridenBtnOff.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            ridenBtnOff.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             ridenBtnOff.ForeColor = Color.White;
-            ridenBtnOff.Location = new Point(118, 301);
+            ridenBtnOff.Location = new Point(15, 295);
             ridenBtnOff.Name = "ridenBtnOff";
-            ridenBtnOff.Size = new Size(100, 40);
+            ridenBtnOff.Size = new Size(100, 66);
             ridenBtnOff.TabIndex = 19;
             ridenBtnOff.Text = "OFF";
             ridenBtnOff.UseVisualStyleBackColor = false;
@@ -2104,11 +2118,12 @@
             // ridenLblStatus
             // 
             ridenLblStatus.AutoEllipsis = true;
+            ridenLblStatus.BackColor = Color.FromArgb(0, 0, 64);
             ridenLblStatus.Font = new Font("Consolas", 9F);
-            ridenLblStatus.ForeColor = Color.Gray;
-            ridenLblStatus.Location = new Point(480, 11);
+            ridenLblStatus.ForeColor = Color.Aquamarine;
+            ridenLblStatus.Location = new Point(404, 18);
             ridenLblStatus.Name = "ridenLblStatus";
-            ridenLblStatus.Size = new Size(265, 70);
+            ridenLblStatus.Size = new Size(324, 29);
             ridenLblStatus.TabIndex = 20;
             ridenLblStatus.Text = "USB: ";
             // 
@@ -2117,7 +2132,7 @@
             ridenTbLog.BackColor = Color.FromArgb(13, 13, 13);
             ridenTbLog.Font = new Font("Consolas", 8F);
             ridenTbLog.ForeColor = Color.FromArgb(0, 200, 0);
-            ridenTbLog.Location = new Point(584, 265);
+            ridenTbLog.Location = new Point(595, 302);
             ridenTbLog.Multiline = true;
             ridenTbLog.Name = "ridenTbLog";
             ridenTbLog.ReadOnly = true;
@@ -2132,7 +2147,7 @@
             ridenBtnClearLog.BackColor = Color.FromArgb(64, 0, 0);
             ridenBtnClearLog.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             ridenBtnClearLog.ForeColor = Color.LightCoral;
-            ridenBtnClearLog.Location = new Point(604, 275);
+            ridenBtnClearLog.Location = new Point(452, 358);
             ridenBtnClearLog.Name = "ridenBtnClearLog";
             ridenBtnClearLog.Size = new Size(140, 32);
             ridenBtnClearLog.TabIndex = 22;
@@ -2142,10 +2157,10 @@
             // 
             // ridenLblOvpVal
             // 
-            ridenLblOvpVal.BackColor = Color.Transparent;
+            ridenLblOvpVal.BackColor = Color.DimGray;
             ridenLblOvpVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblOvpVal.ForeColor = Color.Orange;
-            ridenLblOvpVal.Location = new Point(324, 142);
+            ridenLblOvpVal.Location = new Point(404, 111);
             ridenLblOvpVal.Name = "ridenLblOvpVal";
             ridenLblOvpVal.Size = new Size(86, 27);
             ridenLblOvpVal.TabIndex = 28;
@@ -2156,9 +2171,9 @@
             ridenTxtOVP.BackColor = Color.Navy;
             ridenTxtOVP.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtOVP.ForeColor = Color.Gold;
-            ridenTxtOVP.Location = new Point(168, 142);
+            ridenTxtOVP.Location = new Point(224, 113);
             ridenTxtOVP.Name = "ridenTxtOVP";
-            ridenTxtOVP.Size = new Size(70, 25);
+            ridenTxtOVP.Size = new Size(71, 25);
             ridenTxtOVP.TabIndex = 29;
             ridenTxtOVP.Text = "30";
             // 
@@ -2168,7 +2183,7 @@
             ridenBtnSetOVP.Enabled = false;
             ridenBtnSetOVP.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetOVP.ForeColor = Color.White;
-            ridenBtnSetOVP.Location = new Point(244, 140);
+            ridenBtnSetOVP.Location = new Point(306, 110);
             ridenBtnSetOVP.Name = "ridenBtnSetOVP";
             ridenBtnSetOVP.Size = new Size(74, 28);
             ridenBtnSetOVP.TabIndex = 30;
@@ -2178,12 +2193,12 @@
             // 
             // ridenLblOcpVal
             // 
-            ridenLblOcpVal.BackColor = Color.Transparent;
+            ridenLblOcpVal.BackColor = Color.DimGray;
             ridenLblOcpVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblOcpVal.ForeColor = Color.DodgerBlue;
-            ridenLblOcpVal.Location = new Point(324, 181);
+            ridenLblOcpVal.Location = new Point(404, 142);
             ridenLblOcpVal.Name = "ridenLblOcpVal";
-            ridenLblOcpVal.Size = new Size(80, 28);
+            ridenLblOcpVal.Size = new Size(86, 28);
             ridenLblOcpVal.TabIndex = 32;
             ridenLblOcpVal.Text = "---";
             // 
@@ -2192,9 +2207,9 @@
             ridenTxtOCP.BackColor = Color.Navy;
             ridenTxtOCP.Font = new Font("Consolas", 11F, FontStyle.Bold);
             ridenTxtOCP.ForeColor = Color.Gold;
-            ridenTxtOCP.Location = new Point(168, 181);
+            ridenTxtOCP.Location = new Point(223, 141);
             ridenTxtOCP.Name = "ridenTxtOCP";
-            ridenTxtOCP.Size = new Size(70, 25);
+            ridenTxtOCP.Size = new Size(72, 25);
             ridenTxtOCP.TabIndex = 33;
             ridenTxtOCP.Text = "5.00";
             // 
@@ -2204,7 +2219,7 @@
             ridenBtnSetOCP.Enabled = false;
             ridenBtnSetOCP.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             ridenBtnSetOCP.ForeColor = Color.White;
-            ridenBtnSetOCP.Location = new Point(244, 179);
+            ridenBtnSetOCP.Location = new Point(306, 138);
             ridenBtnSetOCP.Name = "ridenBtnSetOCP";
             ridenBtnSetOCP.Size = new Size(74, 28);
             ridenBtnSetOCP.TabIndex = 34;
@@ -2213,46 +2228,238 @@
             // 
             // ridenBtnZapiszCSV
             // 
-            ridenBtnZapiszCSV.BackColor = Color.FromArgb(0, 100, 0);
-            ridenBtnZapiszCSV.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            ridenBtnZapiszCSV.BackColor = Color.FromArgb(64, 0, 64);
+            ridenBtnZapiszCSV.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             ridenBtnZapiszCSV.ForeColor = Color.White;
-            ridenBtnZapiszCSV.Location = new Point(224, 302);
+            ridenBtnZapiszCSV.Location = new Point(564, 226);
             ridenBtnZapiszCSV.Name = "ridenBtnZapiszCSV";
-            ridenBtnZapiszCSV.Size = new Size(140, 40);
+            ridenBtnZapiszCSV.Size = new Size(167, 40);
             ridenBtnZapiszCSV.TabIndex = 41;
             ridenBtnZapiszCSV.Text = "ZAPISZ CSV";
             ridenBtnZapiszCSV.UseVisualStyleBackColor = false;
             // 
             // ridenLblAlarmDesc
             // 
+            ridenLblAlarmDesc.BackColor = Color.Silver;
             ridenLblAlarmDesc.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            ridenLblAlarmDesc.ForeColor = Color.LightGray;
-            ridenLblAlarmDesc.Location = new Point(12, 258);
+            ridenLblAlarmDesc.ForeColor = Color.Red;
+            ridenLblAlarmDesc.Location = new Point(413, 279);
             ridenLblAlarmDesc.Name = "ridenLblAlarmDesc";
             ridenLblAlarmDesc.Size = new Size(60, 28);
             ridenLblAlarmDesc.TabIndex = 35;
             ridenLblAlarmDesc.Text = "Alarm:";
             ridenLblAlarmDesc.TextAlign = ContentAlignment.MiddleLeft;
+            ridenLblAlarmDesc.Visible = false;
             // 
             // ridenLblAlarmVal
             // 
+            ridenLblAlarmVal.BackColor = Color.Black;
             ridenLblAlarmVal.Font = new Font("Consolas", 16F, FontStyle.Bold);
             ridenLblAlarmVal.ForeColor = Color.LimeGreen;
-            ridenLblAlarmVal.Location = new Point(90, 259);
+            ridenLblAlarmVal.Location = new Point(479, 275);
             ridenLblAlarmVal.Name = "ridenLblAlarmVal";
             ridenLblAlarmVal.Size = new Size(100, 32);
             ridenLblAlarmVal.TabIndex = 36;
             ridenLblAlarmVal.Text = "---";
+            ridenLblAlarmVal.Visible = false;
             // 
-            // pictureBox2
+            // btnPcapAnalyzer
             // 
-            pictureBox2.BackgroundImage = Properties.Resources.rd6006_riden_zasilacz_2a;
-            pictureBox2.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox2.Location = new Point(424, 185);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(324, 166);
-            pictureBox2.TabIndex = 40;
-            pictureBox2.TabStop = false;
+            btnPcapAnalyzer.BackColor = Color.FromArgb(64, 0, 0);
+            btnPcapAnalyzer.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnPcapAnalyzer.ForeColor = Color.LightCoral;
+            btnPcapAnalyzer.Location = new Point(585, 272);
+            btnPcapAnalyzer.Name = "btnPcapAnalyzer";
+            btnPcapAnalyzer.Size = new Size(150, 32);
+            btnPcapAnalyzer.TabIndex = 37;
+            btnPcapAnalyzer.Text = "ANALIZATOR PCAP";
+            btnPcapAnalyzer.UseVisualStyleBackColor = false;
+            btnPcapAnalyzer.Visible = false;
+            btnPcapAnalyzer.Click += btnPcapAnalyzer_Click;
+            // 
+            // tabPage3
+            // 
+            tabPage3.BackColor = Color.FromArgb(24, 24, 24);
+            tabPage3.BorderStyle = BorderStyle.Fixed3D;
+            tabPage3.Controls.Add(pbESR);
+            tabPage3.ForeColor = SystemColors.GrayText;
+            tabPage3.Location = new Point(4, 76);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Size = new Size(751, 396);
+            tabPage3.TabIndex = 9;
+            tabPage3.Text = "ESR TABELA";
+            // 
+            // tabPage1
+            // 
+            tabPage1.BackColor = Color.FromArgb(24, 24, 24);
+            tabPage1.BackgroundImage = (Image)resources.GetObject("tabPage1.BackgroundImage");
+            tabPage1.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage1.BorderStyle = BorderStyle.Fixed3D;
+            tabPage1.ForeColor = Color.Blue;
+            tabPage1.Location = new Point(4, 76);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(751, 396);
+            tabPage1.TabIndex = 6;
+            tabPage1.Text = "KOD REZYSTORÓW";
+            // 
+            // tabPage6
+            // 
+            tabPage6.BackColor = Color.FromArgb(24, 24, 24);
+            tabPage6.BackgroundImage = (Image)resources.GetObject("tabPage6.BackgroundImage");
+            tabPage6.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage6.Location = new Point(4, 76);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(751, 396);
+            tabPage6.TabIndex = 8;
+            tabPage6.Text = "PODŁĄCZ._STANDARD";
+            // 
+            // tabPage5
+            // 
+            tabPage5.BackColor = Color.FromArgb(24, 24, 24);
+            tabPage5.BackgroundImage = (Image)resources.GetObject("tabPage5.BackgroundImage");
+            tabPage5.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage5.Location = new Point(4, 76);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(751, 396);
+            tabPage5.TabIndex = 7;
+            tabPage5.Text = "PODŁĄCZ._EXTENDED";
+            // 
+            // tabPage7
+            // 
+            tabPage7.BackColor = Color.FromArgb(64, 64, 64);
+            tabPage7.Controls.Add(splitContainer1);
+            tabPage7.Location = new Point(4, 76);
+            tabPage7.Name = "tabPage7";
+            tabPage7.Size = new Size(751, 396);
+            tabPage7.TabIndex = 14;
+            tabPage7.Text = "ZT-706S  /  ZT-703S ";
+            // 
+            // splitContainer1
+            // 
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.BackColor = Color.FromArgb(24, 24, 24);
+            splitContainer1.Panel1.BackgroundImage = (Image)resources.GetObject("splitContainer1.Panel1.BackgroundImage");
+            splitContainer1.Panel1.BackgroundImageLayout = ImageLayout.Zoom;
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.BackColor = Color.FromArgb(24, 24, 24);
+            splitContainer1.Panel2.BackgroundImage = (Image)resources.GetObject("splitContainer1.Panel2.BackgroundImage");
+            splitContainer1.Panel2.BackgroundImageLayout = ImageLayout.Stretch;
+            splitContainer1.Panel2.Paint += splitContainer1_Panel2_Paint_1;
+            splitContainer1.Size = new Size(751, 396);
+            splitContainer1.SplitterDistance = 400;
+            splitContainer1.TabIndex = 0;
+            // 
+            // tabPage8
+            // 
+            tabPage8.BackColor = Color.Black;
+            tabPage8.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage8.Controls.Add(splitContainer4);
+            tabPage8.Location = new Point(4, 76);
+            tabPage8.Name = "tabPage8";
+            tabPage8.Size = new Size(751, 396);
+            tabPage8.TabIndex = 15;
+            tabPage8.Text = " DQ02_IFO";
+            // 
+            // splitContainer4
+            // 
+            splitContainer4.Dock = DockStyle.Fill;
+            splitContainer4.Location = new Point(0, 0);
+            splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            splitContainer4.Panel1.BackColor = Color.FromArgb(24, 24, 24);
+            splitContainer4.Panel1.BackgroundImage = (Image)resources.GetObject("splitContainer4.Panel1.BackgroundImage");
+            splitContainer4.Panel1.BackgroundImageLayout = ImageLayout.Stretch;
+            // 
+            // splitContainer4.Panel2
+            // 
+            splitContainer4.Panel2.BackColor = Color.FromArgb(24, 24, 24);
+            splitContainer4.Panel2.BackgroundImage = (Image)resources.GetObject("splitContainer4.Panel2.BackgroundImage");
+            splitContainer4.Panel2.BackgroundImageLayout = ImageLayout.Zoom;
+            splitContainer4.Size = new Size(751, 396);
+            splitContainer4.SplitterDistance = 354;
+            splitContainer4.TabIndex = 0;
+            // 
+            // tabPage9
+            // 
+            tabPage9.BackColor = Color.Black;
+            tabPage9.BackgroundImage = (Image)resources.GetObject("tabPage9.BackgroundImage");
+            tabPage9.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage9.Location = new Point(4, 76);
+            tabPage9.Name = "tabPage9";
+            tabPage9.Size = new Size(751, 396);
+            tabPage9.TabIndex = 16;
+            tabPage9.Text = "DQ02_PARAM.";
+            // 
+            // tabPage11
+            // 
+            tabPage11.BackColor = SystemColors.ControlDarkDark;
+            tabPage11.Controls.Add(splitContainer2);
+            tabPage11.Location = new Point(4, 76);
+            tabPage11.Name = "tabPage11";
+            tabPage11.Size = new Size(751, 396);
+            tabPage11.TabIndex = 18;
+            tabPage11.Text = "ZOYI DQ2 / MD2 INFO";
+            // 
+            // splitContainer2
+            // 
+            splitContainer2.Dock = DockStyle.Fill;
+            splitContainer2.Location = new Point(0, 0);
+            splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            splitContainer2.Panel1.BackgroundImage = (Image)resources.GetObject("splitContainer2.Panel1.BackgroundImage");
+            splitContainer2.Panel1.BackgroundImageLayout = ImageLayout.Stretch;
+            // 
+            // splitContainer2.Panel2
+            // 
+            splitContainer2.Panel2.BackgroundImage = (Image)resources.GetObject("splitContainer2.Panel2.BackgroundImage");
+            splitContainer2.Panel2.BackgroundImageLayout = ImageLayout.Stretch;
+            splitContainer2.Size = new Size(751, 396);
+            splitContainer2.SplitterDistance = 365;
+            splitContainer2.TabIndex = 0;
+            // 
+            // tabPage10
+            // 
+            tabPage10.BackColor = SystemColors.ActiveCaptionText;
+            tabPage10.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage10.Controls.Add(splitContainer3);
+            tabPage10.Location = new Point(4, 76);
+            tabPage10.Name = "tabPage10";
+            tabPage10.Size = new Size(751, 396);
+            tabPage10.TabIndex = 17;
+            tabPage10.Text = "MD-2_INFO";
+            // 
+            // splitContainer3
+            // 
+            splitContainer3.Dock = DockStyle.Fill;
+            splitContainer3.Location = new Point(0, 0);
+            splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            splitContainer3.Panel1.BackgroundImage = (Image)resources.GetObject("splitContainer3.Panel1.BackgroundImage");
+            splitContainer3.Panel1.BackgroundImageLayout = ImageLayout.Stretch;
+            // 
+            // splitContainer3.Panel2
+            // 
+            splitContainer3.Panel2.BackgroundImage = (Image)resources.GetObject("splitContainer3.Panel2.BackgroundImage");
+            splitContainer3.Panel2.BackgroundImageLayout = ImageLayout.Stretch;
+            splitContainer3.Size = new Size(751, 396);
+            splitContainer3.SplitterDistance = 365;
+            splitContainer3.TabIndex = 0;
             // 
             // notifyIcon1
             // 
@@ -2261,6 +2468,7 @@
             // 
             // toolTip1
             // 
+            toolTip1.BackColor = SystemColors.HotTrack;
             toolTip1.IsBalloon = true;
             // 
             // MainWindow
@@ -2268,7 +2476,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(13, 13, 13);
-            ClientSize = new Size(778, 479);
+            ClientSize = new Size(778, 544);
             Controls.Add(lblComConnStatus);
             Controls.Add(label8);
             Controls.Add(pictureBox1);
@@ -2309,14 +2517,25 @@
             groupBox2.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPageWYKRES.ResumeLayout(false);
-            tabPage3.ResumeLayout(false);
             tabWebServer.ResumeLayout(false);
             tabWebServer.PerformLayout();
             tabDQ02.ResumeLayout(false);
             tabDQ02.PerformLayout();
             tabRIDEN.ResumeLayout(false);
             tabRIDEN.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            tabPage3.ResumeLayout(false);
+            tabPage7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            tabPage8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer4).EndInit();
+            splitContainer4.ResumeLayout(false);
+            tabPage11.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
+            tabPage10.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
+            splitContainer3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -2335,7 +2554,6 @@
         private TabPage tabTools;
         private Button btnToolsRefresh;
         private Button btnToolsEdit;
-        private Button btnPcapAnalyzer;
         private Panel panelTools;
         private TabPage tabPage2;
         private GroupBox groupBox3;
@@ -2364,6 +2582,7 @@
         private Button btnClearLog;
         private Button btnSaveLog;
         private CheckBox chbStandardPanel;
+        private CheckBox chbGaugePanel;
         private Button btnListCOM;
         private ListBox lbListCOMs;
         private Button btnComConnect;
@@ -2449,7 +2668,6 @@
         private Label ridenLblIoutVal;
         private Label ridenLblPowerVal;
         private Label ridenLblOutputVal;
-        private Label ridenLblStatus;
         private Label ridenLblLocalIP;
         private TextBox ridenTxtVset;
         private Button ridenBtnSetV;
@@ -2473,8 +2691,18 @@
         private Button ridenBtnSetOCP;
         private Button ridenBtnZapiszCSV;
         private Label label7;
-        private PictureBox pictureBox2;
         private Label labeltemp;
         private Button button9;
+        private Label ridenLblStatus;
+        private Button btnPcapAnalyzer;
+        private TabPage tabPage7;
+        private SplitContainer splitContainer1;
+        private TabPage tabPage8;
+        private TabPage tabPage9;
+        private TabPage tabPage10;
+        private TabPage tabPage11;
+        private SplitContainer splitContainer2;
+        private SplitContainer splitContainer3;
+        private SplitContainer splitContainer4;
     }
 }

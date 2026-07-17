@@ -18,11 +18,13 @@ namespace ZOYI
 
         FrameDecoder frame_dec;
         WebServer webServer;
+        BuzzerManager buzzerManager;
 
         COMx comx;
         COMx dq02Comx;
         StandardDisplayPanel standardDisplayPanel;
         AdancedDisplayPanel advancedDisplayPanel;
+        GaugeOverlayPanel gaugeOverlayPanel;
 
         private readonly string[] measurementModes = new string[]
         {
@@ -78,6 +80,17 @@ namespace ZOYI
             comx = new COMx();
             dq02Comx = new COMx();
             webServer = new WebServer(frame_dec);
+
+            buzzerManager = new BuzzerManager();
+            buzzerManager.AlarmEnabled = Properties.Settings.Default.buzzer_alarm_enabled;
+            buzzerManager.AlarmBelow = Properties.Settings.Default.buzzer_alarm_below;
+            buzzerManager.AlarmAbove = Properties.Settings.Default.buzzer_alarm_above;
+            buzzerManager.AlarmFrequency = Properties.Settings.Default.buzzer_alarm_freq;
+            buzzerManager.DiodeBeepEnabled = Properties.Settings.Default.buzzer_diode_enabled;
+            buzzerManager.DiodeFrequency = Properties.Settings.Default.buzzer_diode_freq;
+            buzzerManager.DiodeInterval = Properties.Settings.Default.buzzer_diode_interval;
+            buzzerManager.ContinuityThreshold = Properties.Settings.Default.buzzer_continuity_threshold;
+            buzzerManager.DiodeShortThreshold = Properties.Settings.Default.buzzer_diode_short_threshold;
             refreshDQ02portlist();
 
             // 6. Narzędzia
@@ -120,6 +133,8 @@ namespace ZOYI
             // 13. Umożliw przeciąganie wszystkich etykiet DQ02
             EnableDQ02LabelDragging();
             RestoreControlPositions();
+
+            TranslationManager.ApplyToForm(this);
 
             tbDQ02UserTolerance.TextChanged += (s, e) =>
             {
@@ -215,6 +230,11 @@ namespace ZOYI
             var _ = advancedDisplayPanel.Handle;
             if (chbAdvancedPanel.Checked)
                 advancedDisplayPanel.Show();
+
+            gaugeOverlayPanel = new GaugeOverlayPanel(chbGaugePanel);
+            var __ = gaugeOverlayPanel.Handle;
+            if (chbGaugePanel.Checked)
+                gaugeOverlayPanel.Show();
         }
 
         private TrackBar GetTbarArcTicks()
@@ -244,12 +264,35 @@ namespace ZOYI
             return Math.Max(min, Math.Min(max, value));
         }
 
+        public void ApplyBuzzerSettings()
+        {
+            buzzerManager.AlarmEnabled = Properties.Settings.Default.buzzer_alarm_enabled;
+            buzzerManager.AlarmBelow = Properties.Settings.Default.buzzer_alarm_below;
+            buzzerManager.AlarmAbove = Properties.Settings.Default.buzzer_alarm_above;
+            buzzerManager.AlarmFrequency = Properties.Settings.Default.buzzer_alarm_freq;
+            buzzerManager.DiodeBeepEnabled = Properties.Settings.Default.buzzer_diode_enabled;
+            buzzerManager.DiodeFrequency = Properties.Settings.Default.buzzer_diode_freq;
+            buzzerManager.DiodeInterval = Properties.Settings.Default.buzzer_diode_interval;
+            buzzerManager.ContinuityThreshold = Properties.Settings.Default.buzzer_continuity_threshold;
+            buzzerManager.DiodeShortThreshold = Properties.Settings.Default.buzzer_diode_short_threshold;
+
+            if (!buzzerManager.AlarmEnabled && !buzzerManager.DiodeBeepEnabled)
+                buzzerManager.StopAll();
+            else if (!buzzerManager.AlarmEnabled)
+                buzzerManager.StopAlarmSound();
+            else if (!buzzerManager.DiodeBeepEnabled)
+                buzzerManager.StopAll();
+        }
+
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            buzzerManager?.StopAll();
+            buzzerManager?.Dispose();
             webServer.Stop();
             comx.disconnect();
             _riden.Rozlacz();
             standardDisplayPanel.Close();
+            gaugeOverlayPanel?.Close();
 
             Properties.Settings.Default.riden_vset = ridenTxtVset.Text;
             Properties.Settings.Default.riden_iset = ridenTxtIset.Text;
@@ -323,6 +366,15 @@ namespace ZOYI
                 advancedDisplayPanel.Hide();
         }
 
+        private void chbGaugePanel_CheckedChanged(object sender, EventArgs e)
+        {
+            if (gaugeOverlayPanel == null) return;
+            if (chbGaugePanel.Checked)
+                gaugeOverlayPanel.Show();
+            else
+                gaugeOverlayPanel.Hide();
+        }
+
         private void btnClearLog_Click(object sender, EventArgs e)
         {
             tbComOutput.Text = "";
@@ -361,6 +413,7 @@ namespace ZOYI
         {
             standardDisplayPanel.Close();
             advancedDisplayPanel.Close();
+            gaugeOverlayPanel.Close();
             System.Windows.Forms.Application.Exit();
         }
 
@@ -706,6 +759,9 @@ namespace ZOYI
             }
         }
 
+        /// <summary>
+        /// Wczytanie tabeli ESR
+        /// </summary>
         private void LoadESRImage()
         {
             string imgDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
@@ -1063,9 +1119,9 @@ namespace ZOYI
             hdrTitle.AutoSize = true;
             hdr.Controls.Add(hdrTitle);
             Label hdrSub = new Label();
-            hdrSub.Text = "Poradnik pomiaru multimetrem — ZT-703S";
+            hdrSub.Text = "Poradnik pomiaru multimetrem — ZT-703S / 706S";
             hdrSub.Font = new Font("Segoe UI", 10F);
-            hdrSub.ForeColor = Color.Gray;
+            hdrSub.ForeColor = Color.Yellow;
             hdrSub.Location = new Point(15, 35);
             hdrSub.AutoSize = true;
             hdr.Controls.Add(hdrSub);
@@ -1153,7 +1209,7 @@ namespace ZOYI
             Panel footer = CreateCard(gw, 35, Color.FromArgb(34, 34, 34));
             footer.Location = new Point(gx, gy);
             Label ftLbl = new Label();
-            ftLbl.Text = "KRIS® ZT-703S — Poradnik pomiaru tranzystorów SMD";
+            ftLbl.Text = "KRIS® ZT-703S / 706S — Poradnik pomiaru tranzystorów SMD";
             ftLbl.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             ftLbl.ForeColor = Color.Gray;
             ftLbl.Location = new Point(15, 8);
@@ -1540,11 +1596,67 @@ namespace ZOYI
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            if (keyData == (Keys.Control | Keys.T))
+            {
+                Control? target = FindControlAtPoint(this, Control.MousePosition);
+                if (target != null && !string.IsNullOrEmpty(target.Text))
+                {
+                    string originalText = target.Text;
+                    string? currentTranslation = TranslationManager.Get(originalText);
+                    using var dlg = new TranslationDialog(originalText, currentTranslation);
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        if (dlg.RemoveRequested)
+                        {
+                            TranslationManager.Remove(originalText);
+                            ApplyTranslationsRestore(originalText);
+                        }
+                        else
+                        {
+                            TranslationManager.Set(originalText, dlg.TranslationResult);
+                            ApplyTranslationsOverride(originalText, dlg.TranslationResult);
+                        }
+                    }
+                }
+                return true;
+            }
+
             if (shortcutManager != null && shortcutManager.ProcessKey(keyData))
             {
                 return true;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private Control? FindControlAtPoint(Control parent, Point screenPoint)
+        {
+            Point clientPoint = parent.PointToClient(screenPoint);
+            Control? child = parent.GetChildAtPoint(clientPoint, GetChildAtPointSkip.Invisible);
+            if (child == null) return parent;
+            return FindControlAtPoint(child, screenPoint) ?? child;
+        }
+
+        private void ApplyTranslationsOverride(string originalText, string translatedText)
+        {
+            ApplyTranslationToControl(this, originalText, translatedText);
+        }
+
+        private void ApplyTranslationsRestore(string originalText)
+        {
+            ApplyTranslationToControl(this, originalText, originalText);
+        }
+
+        private void ApplyTranslationToControl(Control control, string originalText, string newText)
+        {
+            if (control.Text == originalText)
+            {
+                control.Text = newText;
+            }
+
+            foreach (Control child in control.Controls)
+            {
+                ApplyTranslationToControl(child, originalText, newText);
+            }
         }
 
         private async Task CheckForUpdateAsync()
@@ -2319,5 +2431,14 @@ namespace ZOYI
             return false;
         }
 
+        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void splitContainer1_Panel2_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

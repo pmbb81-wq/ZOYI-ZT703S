@@ -14,8 +14,18 @@ namespace ZOYI
         int FRAME_SIZE = 18;
         byte BIT_4 = 0x10;
         byte[] OL = new byte[] { 0x10, 0x00, 0x61, 0xEB, 0x00 };
+        byte[][] OL_PATTERNS = new byte[][] {
+            new byte[] { 0x00, 0x00, 0x61, 0xEB, 0x00 },
+            new byte[] { 0x00, 0x00, 0x61, 0xDB, 0x00 },
+            new byte[] { 0x00, 0x00, 0x61, 0x8B, 0x00 },
+            new byte[] { 0x00, 0xEB, 0x61, 0x00, 0x00 },
+            new byte[] { 0xEB, 0x00, 0x61, 0x00, 0x00 },
+            new byte[] { 0x61, 0xEB, 0x00, 0x00, 0x00 },
+            new byte[] { 0x00, 0x61, 0xEB, 0x00, 0x00 },
+            new byte[] { 0x00, 0x00, 0x00, 0x61, 0xEB },
+        };
 
-        const float STABILIZATION_THRESHOLD = 0.0500f;
+        const float STABILIZATION_THRESHOLD = 0.00001f;
 
         // STD, EXT
         public string? Value { get; private set; }
@@ -33,6 +43,38 @@ namespace ZOYI
         public string? Freq { get; private set; }
         // EXT
         public string? Freq_unit { get; private set; }
+
+        public float? BaseValue { get; private set; }
+        public string? BaseUnit { get; private set; }
+
+        private bool _prevHold;
+        private string _heldValue;
+        private string _heldUnit;
+        private string _heldFreq;
+        private string _heldMode2;
+        public bool IsHeld { get; private set; }
+        public bool IsRel { get; private set; }
+        public bool IsContinuity { get; private set; }
+        public bool IsDiode { get; private set; }
+
+        private static readonly Dictionary<string, (string Base, float Factor)> _unitScale = new()
+        {
+            ["V"] = ("V", 1),
+            ["mV"] = ("V", 0.001f),
+            ["A"] = ("A", 1),
+            ["mA"] = ("A", 0.001f),
+            ["Ω"] = ("Ω", 1),
+            ["KΩ"] = ("Ω", 1000),
+            ["kΩ"] = ("Ω", 1000),
+            ["MΩ"] = ("Ω", 1000000),
+            ["nF"] = ("nF", 1),
+            ["uF"] = ("nF", 1000),
+            ["mF"] = ("nF", 1000000),
+            ["%"] = ("%", 1),
+            ["Hz"] = ("Hz", 1),
+            ["HZ"] = ("Hz", 1),
+            ["kHz"] = ("Hz", 1000),
+        };
 
         private MLua mLua;
 
@@ -112,8 +154,11 @@ namespace ZOYI
 
             Label = ret[0];
             Unit = ret[1];
+            IsContinuity = label_value[0] == "OMbeep";
+            IsDiode = label_value[0] == "VDiode";
 
             StabilizeValue();
+            NormalizeUnit();
         }
 
         /*
@@ -126,16 +171,55 @@ namespace ZOYI
             DecodeMode(frame);
             DecodeFreq(frame);
 
-            Label = Mode2;
+            if (Value != null && Value.Trim() != "OL" && !float.TryParse(Value.Trim(), System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out float _))
+            {
+                Value = "OL";
+            }
 
-            //Console.WriteLine($"{Value} {Unit2} {Mode2} {Freq} {Mode1}");
+            bool hold = (frame[11] & 0x80) > 0;
+
+            if (hold)
+            {
+                if (!_prevHold)
+                {
+                    _heldValue = Value;
+                    _heldUnit = Unit;
+                    _heldFreq = Freq;
+                    _heldMode2 = Mode2;
+                    _prevHold = true;
+                }
+                Value = _heldValue;
+                Unit = _heldUnit;
+                Freq = _heldFreq;
+                Mode2 = _heldMode2;
+                IsHeld = true;
+            }
+            else
+            {
+                _prevHold = false;
+                IsHeld = false;
+            }
+
+            Label = Mode2;
+            NormalizeUnit();
         }
 
         private void DecodeDigits(byte[] frame)
         {
             Value = " ";
+            bool decimalFound = false;
 
-            if (new ArraySegment<byte>(frame, 1, 5).SequenceEqual(OL))
+            bool ol = false;
+            foreach (var pat in OL_PATTERNS)
+            {
+                bool match = true;
+                for (int j = 0; j < 5; j++)
+                {
+                    if ((frame[j + 1] & ~BIT_4) != pat[j]) { match = false; break; }
+                }
+                if (match) { ol = true; break; }
+            }
+            if (ol)
             {
                 Value = "OL";
                 return;
@@ -152,6 +236,7 @@ namespace ZOYI
                     else
                     {
                         Value += ".";
+                        decimalFound = true;
                     }
                     frame[i] ^= BIT_4;
                 }
@@ -159,7 +244,12 @@ namespace ZOYI
                 Value += DecodeDigit(frame[i]);
             }
 
-            StabilizeValue();
+            if (!decimalFound && Value.Length > 2)
+            {
+                Value = Value.Insert(Value.Length - 1, ".");
+            }
+
+            StabilizeValue(decimalFound);
         }
 
         private void DecodeUnit(byte[] frame)
@@ -229,11 +319,15 @@ namespace ZOYI
             Mode1 = "";
             Mode2 = "";
             Freq_unit = "";
+            IsRel = false;
+            IsContinuity = false;
+            IsDiode = false;
 
             byte mode1 = frame[10];
             byte mode2 = frame[11];
 
             byte AUTO = 0x04;
+            byte VFC = 0x08;
             byte DC = 0x10;
             byte AC = 0x40;
             byte HOLD = 0x80;
@@ -243,7 +337,9 @@ namespace ZOYI
             else
                 Mode2 += " MANUAL";
 
-            if ((mode2 & DC) > 0)
+            if ((mode2 & VFC) > 0)
+                Mode2 += " AC V.F.C";
+            else if ((mode2 & DC) > 0)
                 Mode2 += " DC";
             else if ((mode2 & AC) > 0)
                 Mode2 += " AC";
@@ -263,11 +359,20 @@ namespace ZOYI
             else if ((mode1 & kHz) > 0)
                 Freq_unit = "kHz";
             else if ((mode1 & RELATIVE_M) > 0)
+            {
                 Mode1 = "RELATIVE";
+                IsRel = true;
+            }
             else if ((mode1 & CONTINUE) > 0)
+            {
                 Mode1 = "CONTINUE";
+                IsContinuity = true;
+            }
             else if ((mode1 & DIODE) > 0)
+            {
                 Mode1 = "DIODE";
+                IsDiode = true;
+            }
         }
 
         private void DecodeFreq(byte[] frame)
@@ -285,22 +390,61 @@ namespace ZOYI
             }
         }
 
-        private void StabilizeValue()
+        private void StabilizeValue(bool decimalFound = true)
         {
             if (string.IsNullOrEmpty(Value)) return;
             if (Value == "OL") return;
 
             float val;
-            if (!float.TryParse(Value, CultureInfo.InvariantCulture.NumberFormat, out val)) return;
+            if (!float.TryParse(Value, System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out val))
+                return;
 
-            if (Math.Abs(val) < STABILIZATION_THRESHOLD)
+            if (decimalFound)
             {
-                Value = " 0.000";
+                string trimmed = Value.Trim();
+                int dot = trimmed.IndexOf('.');
+                int intDigits = dot;
+                if (trimmed[0] == '-') intDigits--;
+                int dec = trimmed.Length - dot - 1;
+                string fmt = new string('0', intDigits) + "." + new string('0', dec);
+
+                if (Math.Abs(val) < STABILIZATION_THRESHOLD)
+                    Value = " " + 0f.ToString(fmt, CultureInfo.InvariantCulture);
+                else
+                    Value = " " + Math.Round(val, dec, MidpointRounding.AwayFromZero).ToString(fmt, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                Value = " " + Value.Trim();
+            }
+        }
+
+        private void NormalizeUnit()
+        {
+            if (string.IsNullOrEmpty(Value) || Value.Trim() == "OL" || string.IsNullOrEmpty(Unit))
+            {
+                BaseValue = null;
+                BaseUnit = Unit;
                 return;
             }
 
-            float rounded = (float)Math.Round(val, 2);
-            Value = " " + rounded.ToString("F3", CultureInfo.InvariantCulture);
+            if (!float.TryParse(Value, System.Globalization.NumberStyles.Float, CultureInfo.InvariantCulture, out float val))
+            {
+                BaseValue = null;
+                BaseUnit = Unit;
+                return;
+            }
+
+            if (_unitScale.TryGetValue(Unit, out var scale))
+            {
+                BaseValue = val * scale.Factor;
+                BaseUnit = scale.Base;
+            }
+            else
+            {
+                BaseValue = val;
+                BaseUnit = Unit;
+            }
         }
 
         private char DecodeDigit(byte hex)
@@ -354,6 +498,7 @@ namespace ZOYI
             Unit = ret[2];
 
             StabilizeValue();
+            NormalizeUnit();
         }
 
         public void LuaReload(String path)

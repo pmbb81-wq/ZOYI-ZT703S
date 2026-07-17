@@ -13,6 +13,20 @@ namespace ZOYI
         private int _imgIndex = 0;
         private List<Image> _images = new List<Image>();
 
+        private void InitializeComponent()
+        {
+            SuspendLayout();
+            // 
+            // WarningForm
+            // 
+            BackColor = SystemColors.ControlDarkDark;
+            ClientSize = new Size(284, 261);
+            Name = "WarningForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            ResumeLayout(false);
+
+        }
+
         public WarningForm()
         {
             this.Text = "UWAGA!";
@@ -47,7 +61,7 @@ namespace ZOYI
 
             if (_images.Count > 1)
             {
-                _imgTimer = new System.Windows.Forms.Timer { Interval = 1000 };
+                _imgTimer = new System.Windows.Forms.Timer { Interval = 1250 };
                 _imgTimer.Tick += (_, _) =>
                 {
                     _imgIndex = (_imgIndex + 1) % _images.Count;
@@ -61,7 +75,7 @@ namespace ZOYI
                 Text = "OSTRZEŻENIE!",
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                Font = new Font("Segoe UI", 22, FontStyle.Bold),
                 ForeColor = Color.FromArgb(255, 60, 60),
                 BackColor = Color.FromArgb(30, 30, 30),
                 Location = new Point(10, pb.Bottom + 10),
@@ -79,7 +93,7 @@ namespace ZOYI
                 AutoSize = false,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                ForeColor = Color.White,
+                ForeColor = Color.GreenYellow,
                 BackColor = Color.FromArgb(30, 30, 30),
                 Location = new Point(10, lblTitle.Bottom + 5),
                 Width = 600,
@@ -89,7 +103,7 @@ namespace ZOYI
             var cb = new CheckBox
             {
                 Text = "Nie pokazuj ponownie",
-                Location = new Point(10, lbl.Bottom + 10),
+                Location = new Point(40, lbl.Bottom + 10),
                 Width = 300,
                 ForeColor = Color.FromArgb(220, 220, 220),
                 BackColor = Color.FromArgb(30, 30, 30)
@@ -98,13 +112,13 @@ namespace ZOYI
             var btn = new Button
             {
                 Text = "OK",
-                Location = new Point(520, lbl.Bottom + 5),
+                Location = new Point(500, lbl.Bottom + 5),
                 Width = 90,
                 Height = 30,
                 DialogResult = DialogResult.OK,
                 BackColor = Color.FromArgb(60, 60, 60),
                 ForeColor = Color.FromArgb(220, 220, 220),
-                FlatStyle = FlatStyle.Flat,
+                FlatStyle = FlatStyle.Standard,
                 FlatAppearance = { BorderColor = Color.FromArgb(80, 80, 80) }
             };
 

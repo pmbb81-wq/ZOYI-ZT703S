@@ -56,9 +56,21 @@
             label6 = new Label();
             label8 = new Label();
             dateTimePicker1 = new DateTimePicker();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            toolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
+            toolStripMenuItem3 = new ToolStripMenuItem();
+            toolStripMenuItem4 = new ToolStripMenuItem();
+            toolStripSeparator5 = new ToolStripSeparator();
+            toolStripMenuItem5 = new ToolStripMenuItem();
+            toolStripMenuItem6 = new ToolStripMenuItem();
+            toolStripSeparator6 = new ToolStripSeparator();
+            toolStripMenuItem7 = new ToolStripMenuItem();
             tableLayoutPanel.SuspendLayout();
             contextMenuStdDisp.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // lblLabel
@@ -311,6 +323,10 @@
             zamknijPaneToolStripMenuItem.Text = "Zamknij panel";
             zamknijPaneToolStripMenuItem.Click += zamknijPanelToolStripMenuItem_Click;
             // 
+            // fontDialog
+            // 
+            fontDialog.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 238);
+            // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.BackColor = Color.FromArgb(64, 64, 64);
@@ -337,6 +353,7 @@
             // 
             label7.BackColor = Color.FromArgb(0, 0, 64);
             label7.BorderStyle = BorderStyle.FixedSingle;
+            label7.Cursor = Cursors.Hand;
             label7.Dock = DockStyle.Top;
             label7.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label7.ForeColor = Color.Lime;
@@ -347,13 +364,13 @@
             label7.TabIndex = 15;
             label7.Text = "KRIS® VERSION";
             label7.TextAlign = ContentAlignment.MiddleCenter;
-            label7.Cursor = Cursors.Hand;
             label7.Click += label7_Click;
             // 
             // label6
             // 
             label6.BackColor = Color.FromArgb(34, 34, 34);
             label6.BorderStyle = BorderStyle.FixedSingle;
+            label6.Cursor = Cursors.Hand;
             label6.Dock = DockStyle.Top;
             label6.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label6.ForeColor = Color.Yellow;
@@ -362,15 +379,15 @@
             label6.Name = "label6";
             label6.Size = new Size(574, 36);
             label6.TabIndex = 13;
-            label6.Text = "ZOYI®        ZT-703S         OSCILLOSCOPE MULTIMETER";
+            label6.Text = "ZOYI®   ZT-706S  /  ZT-703S   OSCILLOSCOPE MULTIMETER";
             label6.TextAlign = ContentAlignment.MiddleCenter;
-            label6.Cursor = Cursors.Hand;
             label6.Click += label6_Click;
             // 
             // label8
             // 
             label8.BackColor = Color.Yellow;
             label8.BorderStyle = BorderStyle.FixedSingle;
+            label8.Cursor = Cursors.Hand;
             label8.Dock = DockStyle.Top;
             label8.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label8.ForeColor = Color.Navy;
@@ -381,7 +398,6 @@
             label8.TabIndex = 16;
             label8.Text = "GG 8772666";
             label8.TextAlign = ContentAlignment.MiddleCenter;
-            label8.Cursor = Cursors.Hand;
             label8.Click += label8_Click;
             // 
             // dateTimePicker1
@@ -397,6 +413,102 @@
             dateTimePicker1.TabStop = false;
             dateTimePicker1.Value = new DateTime(2025, 12, 21, 0, 0, 0, 0);
             dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.BackColor = Color.Black;
+            contextMenuStrip1.ImageScalingSize = new Size(24, 24);
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripSeparator4, toolStripMenuItem3, toolStripMenuItem4, toolStripSeparator5, toolStripMenuItem5, toolStripMenuItem6, toolStripSeparator6, toolStripMenuItem7 });
+            contextMenuStrip1.Name = "contextMenuStdDisp";
+            contextMenuStrip1.RenderMode = ToolStripRenderMode.System;
+            contextMenuStrip1.Size = new Size(164, 176);
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem1.Checked = true;
+            toolStripMenuItem1.CheckOnClick = true;
+            toolStripMenuItem1.CheckState = CheckState.Checked;
+            toolStripMenuItem1.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem1.ForeColor = Color.LemonChiffon;
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(163, 22);
+            toolStripMenuItem1.Text = "OPIS";
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem2.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem2.ForeColor = Color.LemonChiffon;
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(163, 22);
+            toolStripMenuItem2.Text = "Czcionka";
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(160, 6);
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem3.Checked = true;
+            toolStripMenuItem3.CheckOnClick = true;
+            toolStripMenuItem3.CheckState = CheckState.Checked;
+            toolStripMenuItem3.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem3.ForeColor = Color.LemonChiffon;
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(163, 22);
+            toolStripMenuItem3.Text = "WARTOŚC";
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem4.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem4.ForeColor = Color.LemonChiffon;
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new Size(163, 22);
+            toolStripMenuItem4.Text = "Czcionka";
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new Size(160, 6);
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem5.Checked = true;
+            toolStripMenuItem5.CheckOnClick = true;
+            toolStripMenuItem5.CheckState = CheckState.Checked;
+            toolStripMenuItem5.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem5.ForeColor = Color.LemonChiffon;
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new Size(163, 22);
+            toolStripMenuItem5.Text = "FUNKCJE";
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem6.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem6.ForeColor = Color.LemonChiffon;
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new Size(163, 22);
+            toolStripMenuItem6.Text = "Czcionka";
+            // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new Size(160, 6);
+            // 
+            // toolStripMenuItem7
+            // 
+            toolStripMenuItem7.BackColor = Color.FromArgb(64, 64, 64);
+            toolStripMenuItem7.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            toolStripMenuItem7.ForeColor = Color.Yellow;
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new Size(163, 22);
+            toolStripMenuItem7.Text = "Zamknij panel";
             // 
             // StandardDisplayPanel
             // 
@@ -423,6 +535,7 @@
             tableLayoutPanel.PerformLayout();
             contextMenuStdDisp.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
+            contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -454,5 +567,16 @@
         private Label label7;
         private Label label8;
         private DateTimePicker dateTimePicker1;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem toolStripMenuItem3;
+        private ToolStripMenuItem toolStripMenuItem4;
+        private ToolStripSeparator toolStripSeparator5;
+        private ToolStripMenuItem toolStripMenuItem5;
+        private ToolStripMenuItem toolStripMenuItem6;
+        private ToolStripSeparator toolStripSeparator6;
+        private ToolStripMenuItem toolStripMenuItem7;
     }
 }

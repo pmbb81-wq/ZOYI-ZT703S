@@ -57,40 +57,40 @@ namespace ZOYI
             btnCancel = new Button
             {
                 Text = "ANULUJ",
-                Size = new Size(100, 35),
+                Size = new Size(100, 30),
                 Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 BackColor = Color.FromArgb(64, 0, 0),
                 ForeColor = Color.LightCoral,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
-            btnCancel.FlatAppearance.BorderSize = 0;
+            btnCancel.FlatAppearance.BorderSize = 1;
             btnCancel.Click += (s, e) => DialogResult = DialogResult.Cancel;
 
             btnSave = new Button
             {
                 Text = "ZAPISZ",
-                Size = new Size(100, 35),
+                Size = new Size(100, 30),
                 Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 BackColor = Color.FromArgb(0, 64, 0),
                 ForeColor = Color.LightGreen,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
-            btnSave.FlatAppearance.BorderSize = 0;
+            btnSave.FlatAppearance.BorderSize = 1;
             btnSave.Click += (s, e) => SaveAndClose();
 
             var btnClear = new Button
             {
                 Text = "WYCZYŚĆ",
-                Size = new Size(100, 35),
+                Size = new Size(100, 30),
                 Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 BackColor = Color.FromArgb(64, 64, 0),
                 ForeColor = Color.Yellow,
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
-            btnClear.FlatAppearance.BorderSize = 0;
+            btnClear.FlatAppearance.BorderSize = 1;
             btnClear.Click += (s, e) => ClearSelected();
 
             flowButtons.Controls.Add(btnSave);
@@ -103,10 +103,10 @@ namespace ZOYI
             var lblHint = new Label
             {
                 Text = "Kliknij przycisk obok akcji i naciśnij kombinację klawiszy. ESC = wyczyść skrót.",
-                ForeColor = Color.Gray,
-                Font = new Font("Segoe UI", 8F),
-                Dock = DockStyle.Top,
-                Height = 25,
+                ForeColor = Color.Yellow,
+                Font = new Font("Segoe UI", 10F),
+                Dock = DockStyle.Bottom,
+                Height = 15,
                 TextAlign = ContentAlignment.MiddleCenter,
                 BackColor = Color.FromArgb(24, 24, 24)
             };
@@ -139,6 +139,19 @@ namespace ZOYI
             }
             shortcutManager.SaveToSettings();
             DialogResult = DialogResult.OK;
+        }
+
+        private void InitializeComponent()
+        {
+            SuspendLayout();
+            // 
+            // ShortcutConfigForm
+            // 
+            BackColor = SystemColors.ControlDarkDark;
+            ClientSize = new Size(370, 363);
+            Name = "ShortcutConfigForm";
+            ResumeLayout(false);
+
         }
 
         private void ClearSelected()
@@ -188,7 +201,7 @@ namespace ZOYI
                 Margin = new Padding(5, 5, 5, 5),
                 Cursor = Cursors.Hand
             };
-            btnKey.FlatAppearance.BorderSize = 1;
+            btnKey.FlatAppearance.BorderSize = 2;
             btnKey.FlatAppearance.BorderColor = Color.FromArgb(80, 80, 80);
             btnKey.Click += (s, e) => parentForm.StartListening(this);
             btnKey.PreviewKeyDown += (s, e) =>

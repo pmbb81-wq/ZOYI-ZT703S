@@ -500,7 +500,7 @@ namespace ZOYI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ZOYI®        ZT-703S         OSCILLOSCOPE MULTIMETER")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ZOYI®   ZT-706S  /  ZT-703S   OSCILLOSCOPE MULTIMETER   |  DQ02    |  RIDEN   | ")]
         public string panel_std_custom_title {
             get {
                 return ((string)(this["panel_std_custom_title"]));
@@ -738,6 +738,162 @@ namespace ZOYI.Properties {
             }
             set {
                 this["panel_std_riden_label_color"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public int panel_gauge_pos_x {
+            get {
+                return ((int)(this["panel_gauge_pos_x"]));
+            }
+            set {
+                this["panel_gauge_pos_x"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        public int panel_gauge_pos_y {
+            get {
+                return ((int)(this["panel_gauge_pos_y"]));
+            }
+            set {
+                this["panel_gauge_pos_y"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("92")]
+        public int panel_gauge_opacity {
+            get {
+                return ((int)(this["panel_gauge_opacity"]));
+            }
+            set {
+                this["panel_gauge_opacity"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int panel_gauge_range {
+            get {
+                return ((int)(this["panel_gauge_range"]));
+            }
+            set {
+                this["panel_gauge_range"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool buzzer_alarm_enabled {
+            get {
+                return ((bool)(this["buzzer_alarm_enabled"]));
+            }
+            set {
+                this["buzzer_alarm_enabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double buzzer_alarm_below {
+            get {
+                return ((double)(this["buzzer_alarm_below"]));
+            }
+            set {
+                this["buzzer_alarm_below"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double buzzer_alarm_above {
+            get {
+                return ((double)(this["buzzer_alarm_above"]));
+            }
+            set {
+                this["buzzer_alarm_above"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int buzzer_alarm_freq {
+            get {
+                return ((int)(this["buzzer_alarm_freq"]));
+            }
+            set {
+                this["buzzer_alarm_freq"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool buzzer_diode_enabled {
+            get {
+                return ((bool)(this["buzzer_diode_enabled"]));
+            }
+            set {
+                this["buzzer_diode_enabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2000")]
+        public int buzzer_diode_freq {
+            get {
+                return ((int)(this["buzzer_diode_freq"]));
+            }
+            set {
+                this["buzzer_diode_freq"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        public int buzzer_diode_interval {
+            get {
+                return ((int)(this["buzzer_diode_interval"]));
+            }
+            set {
+                this["buzzer_diode_interval"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int buzzer_continuity_threshold {
+            get {
+                return ((int)(this["buzzer_continuity_threshold"]));
+            }
+            set {
+                this["buzzer_continuity_threshold"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int buzzer_diode_short_threshold {
+            get {
+                return ((int)(this["buzzer_diode_short_threshold"]));
+            }
+            set {
+                this["buzzer_diode_short_threshold"] = value;
             }
         }
     }

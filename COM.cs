@@ -176,10 +176,25 @@ namespace ZOYI
                                 {
                                     advancedDisplayPanel.updatePanel(frame_dec);
                                 }));
+
+                                gaugeOverlayPanel.Invoke(new Action(() =>
+                                {
+                                    gaugeOverlayPanel.updatePanel(frame_dec);
+                                }));
                             }
                             catch (Exception)
                             {
                                 Console.WriteLine("readCom panel update Exception");
+                            }
+
+                            try
+                            {
+                                buzzerManager.CheckAlarm(frame_dec.Value?.Trim());
+                                buzzerManager.CheckContinuityBeep(frame_dec);
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("readCom buzzer Exception");
                             }
 
                             try
@@ -245,6 +260,11 @@ namespace ZOYI
                                         advancedDisplayPanel.updatePanel(frame_dec);
                                     }));
 
+                                    gaugeOverlayPanel.Invoke(new Action(() =>
+                                    {
+                                        gaugeOverlayPanel.updatePanel(frame_dec);
+                                    }));
+
                                     chartPanel.Invoke(new Action(() =>
                                     {
                                         chartPanel.AddDataPoint(frame_dec);
@@ -256,6 +276,16 @@ namespace ZOYI
                                 }
 
                                 SpeakMeasurement(frame_dec.Value?.Trim(), frame_dec.Unit);
+
+                                try
+                                {
+                                    buzzerManager.CheckAlarm(frame_dec.Value?.Trim());
+                                    buzzerManager.CheckContinuityBeep(frame_dec);
+                                }
+                                catch (Exception)
+                                {
+                                    Console.WriteLine("readCom buzzer Exception");
+                                }
 
                                 lock (csvLock)
                                 {

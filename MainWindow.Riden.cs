@@ -83,7 +83,7 @@ public partial class MainWindow
         ridenLblVsetVal.Text   = _riden.Vset.ToString("F2") + " V";
         ridenLblIsetVal.Text   = _riden.Iset.ToString("F3") + " A";
         ridenLblVoutVal.Text   = _riden.Vout.ToString("F2") + " V";
-        label7.Text            = $"VIN: {_riden.Vin.ToString("F2")} V   ({_riden.RawVin} / 0x{_riden.RawVin:X4})";
+        label7.Text = $"VIN: {_riden.Vin.ToString("F2")} V   ({_riden.RawVin} / 0x{_riden.RawVin:X4})";
         ridenLblIoutVal.Text   = _riden.Iout.ToString("F2") + " A";
         ridenLblPowerVal.Text  = _riden.Power.ToString("F2") + " W";
         if (standardDisplayPanel != null && !standardDisplayPanel.IsDisposed)
