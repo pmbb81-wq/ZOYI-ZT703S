@@ -64,7 +64,7 @@ namespace ZOYI
             y += rowH;
 
             AddLabel("Próg ciągłości (Ω):", 12, y);
-            nudContinuityThreshold = AddIntNumeric(inputX, y, 1, 100, Properties.Settings.Default.buzzer_continuity_threshold);
+            nudContinuityThreshold = AddIntNumeric(inputX, y, 1, 1000, Properties.Settings.Default.buzzer_continuity_threshold);
             y += rowH;
 
             AddLabel("Próg zwarcia diody (mV):", 12, y);

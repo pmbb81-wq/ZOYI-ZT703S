@@ -275,6 +275,7 @@ namespace ZOYI
             buzzerManager.DiodeInterval = Properties.Settings.Default.buzzer_diode_interval;
             buzzerManager.ContinuityThreshold = Properties.Settings.Default.buzzer_continuity_threshold;
             buzzerManager.DiodeShortThreshold = Properties.Settings.Default.buzzer_diode_short_threshold;
+            buzzerManager.AlarmVolume = Properties.Settings.Default.panel_gauge_volume / 100f;
 
             if (!buzzerManager.AlarmEnabled && !buzzerManager.DiodeBeepEnabled)
                 buzzerManager.StopAll();
@@ -282,6 +283,11 @@ namespace ZOYI
                 buzzerManager.StopAlarmSound();
             else if (!buzzerManager.DiodeBeepEnabled)
                 buzzerManager.StopAll();
+        }
+
+        public void SetAlarmVolume(float vol)
+        {
+            buzzerManager.AlarmVolume = vol;
         }
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -1601,7 +1607,8 @@ namespace ZOYI
                 Control? target = FindControlAtPoint(this, Control.MousePosition);
                 if (target != null && !string.IsNullOrEmpty(target.Text))
                 {
-                    string originalText = target.Text;
+                    string currentText = target.Text;
+                    string originalText = TranslationManager.GetOriginal(currentText);
                     string? currentTranslation = TranslationManager.Get(originalText);
                     using var dlg = new TranslationDialog(originalText, currentTranslation);
                     if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -1609,12 +1616,12 @@ namespace ZOYI
                         if (dlg.RemoveRequested)
                         {
                             TranslationManager.Remove(originalText);
-                            ApplyTranslationsRestore(originalText);
+                            ApplyTranslationsRestore(currentText, originalText);
                         }
                         else
                         {
                             TranslationManager.Set(originalText, dlg.TranslationResult);
-                            ApplyTranslationsOverride(originalText, dlg.TranslationResult);
+                            ApplyTranslationToControlText(this, currentText, dlg.TranslationResult);
                         }
                     }
                 }
@@ -1632,7 +1639,14 @@ namespace ZOYI
         {
             Point clientPoint = parent.PointToClient(screenPoint);
             Control? child = parent.GetChildAtPoint(clientPoint, GetChildAtPointSkip.Invisible);
-            if (child == null) return parent;
+
+            if (child == null)
+            {
+                if (parent is TabControl tc && tc.SelectedTab != null)
+                    return tc.SelectedTab;
+                return parent;
+            }
+
             return FindControlAtPoint(child, screenPoint) ?? child;
         }
 
@@ -1641,9 +1655,9 @@ namespace ZOYI
             ApplyTranslationToControl(this, originalText, translatedText);
         }
 
-        private void ApplyTranslationsRestore(string originalText)
+        private void ApplyTranslationsRestore(string currentText, string originalText)
         {
-            ApplyTranslationToControl(this, originalText, originalText);
+            ApplyTranslationToControlText(this, currentText, originalText);
         }
 
         private void ApplyTranslationToControl(Control control, string originalText, string newText)
@@ -1656,6 +1670,19 @@ namespace ZOYI
             foreach (Control child in control.Controls)
             {
                 ApplyTranslationToControl(child, originalText, newText);
+            }
+        }
+
+        private void ApplyTranslationToControlText(Control control, string currentText, string newText)
+        {
+            if (control.Text == currentText)
+            {
+                control.Text = newText;
+            }
+
+            foreach (Control child in control.Controls)
+            {
+                ApplyTranslationToControlText(child, currentText, newText);
             }
         }
 

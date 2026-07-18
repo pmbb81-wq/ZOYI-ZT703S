@@ -896,5 +896,41 @@ namespace ZOYI.Properties {
                 this["buzzer_diode_short_threshold"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int panel_gauge_volume {
+            get {
+                return ((int)(this["panel_gauge_volume"]));
+            }
+            set {
+                this["panel_gauge_volume"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(null)]
+        public global::System.Drawing.Font panel_gauge_value_font {
+            get {
+                return ((global::System.Drawing.Font)(this["panel_gauge_value_font"]));
+            }
+            set {
+                this["panel_gauge_value_font"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("White")]
+        public string panel_gauge_value_color {
+            get {
+                return ((string)(this["panel_gauge_value_color"]));
+            }
+            set {
+                this["panel_gauge_value_color"] = value;
+            }
+        }
     }
 }

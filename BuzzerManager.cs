@@ -25,6 +25,7 @@ namespace ZOYI
         public double AlarmBelow;
         public double AlarmAbove;
         public int AlarmFrequency = 1000;
+        public float AlarmVolume = 0.5f;
 
         public volatile bool DiodeBeepEnabled;
         public int DiodeFrequency = 2000;
@@ -45,7 +46,7 @@ namespace ZOYI
                 if (_alarmTriggered) { _alarmTriggered = false; StopAlarmSound(); }
                 return;
             }
-            if (string.IsNullOrEmpty(val) || val == "OL")
+            if (string.IsNullOrEmpty(val) || val.Contains("OL") || val.Contains("0.L"))
             {
                 if (_alarmTriggered) { _alarmTriggered = false; StopAlarmSound(); }
                 return;
@@ -156,6 +157,12 @@ namespace ZOYI
                             _lastDiodePatternTime = 0;
                         }
                     }
+                    else
+                    {
+                        StopDiodeContBeep();
+                        _diodePlaying = false;
+                        _lastDiodePatternTime = 0;
+                    }
                 }
                 catch { }
             }
@@ -175,7 +182,7 @@ namespace ZOYI
             {
                 _alarmGen = new SignalGenerator
                 {
-                    Gain = 0.5f,
+                    Gain = AlarmVolume,
                     Frequency = AlarmFrequency,
                     Type = SignalGeneratorType.Sin
                 };
@@ -207,7 +214,7 @@ namespace ZOYI
             {
                 _contGen = new SignalGenerator
                 {
-                    Gain = 0.5f,
+                    Gain = AlarmVolume,
                     Frequency = DiodeFrequency,
                     Type = SignalGeneratorType.Sin
                 };

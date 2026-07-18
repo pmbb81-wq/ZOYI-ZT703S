@@ -294,7 +294,7 @@
             label4.Name = "label4";
             label4.Size = new Size(236, 22);
             label4.TabIndex = 15;
-            label4.Text = "Wersja 1.8           |  KRIS® version";
+            label4.Text = "Wersja 1.9           |  KRIS® version";
             label4.TextAlign = ContentAlignment.MiddleCenter;
             label4.Click += label4_Click;
             // 

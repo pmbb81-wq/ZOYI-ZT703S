@@ -88,6 +88,14 @@ namespace ZOYI
         // Opacity
         private int _opacity = 92;
 
+        // Volume
+        private int _volume = 50;
+
+        // Custom font/color
+        private Font? _customValueFont;
+        private Font? _customUnitFont;
+        private Color _customValueColor = Color.White;
+
         public GaugeOverlayPanel(CheckBox chb)
         {
             _chb = chb;
@@ -113,6 +121,9 @@ namespace ZOYI
 
             Opacity = Properties.Settings.Default.panel_gauge_opacity / 100.0;
             _opacity = Properties.Settings.Default.panel_gauge_opacity;
+            _volume = Properties.Settings.Default.panel_gauge_volume;
+            _customValueFont = Properties.Settings.Default.panel_gauge_value_font;
+            try { _customValueColor = ColorTranslator.FromHtml(Properties.Settings.Default.panel_gauge_value_color); } catch { _customValueColor = Color.White; }
             _selectedRange = Math.Clamp(Properties.Settings.Default.panel_gauge_range, 0, ActiveRanges.Length - 1);
 
             _smoothTimer.Tick += (_, _) =>
@@ -139,6 +150,35 @@ namespace ZOYI
                 mw?.ApplyBuzzerSettings();
             });
             ctx.Items.Add(new ToolStripSeparator());
+            ctx.Items.Add("Zmień czcionkę...", null, (_, _) =>
+            {
+                using var fd = new FontDialog { Font = _customValueFont ?? new Font("Segoe UI", 42, FontStyle.Bold), ShowColor = true, Color = _customValueColor };
+                if (fd.ShowDialog(this) == DialogResult.OK)
+                {
+                    _customValueFont = fd.Font;
+                    _customValueColor = fd.Color;
+                    Properties.Settings.Default.panel_gauge_value_font = fd.Font;
+                    Properties.Settings.Default.panel_gauge_value_color = ColorTranslator.ToHtml(fd.Color);
+                    Properties.Settings.Default.Save();
+                    Invalidate();
+                }
+            });
+            ctx.Items.Add("Przywróć domyślną czcionkę", null, (_, _) =>
+            {
+                _customValueFont = null;
+                _customValueColor = Color.White;
+                Properties.Settings.Default.panel_gauge_value_font = null;
+                Properties.Settings.Default.panel_gauge_value_color = "White";
+                Properties.Settings.Default.Save();
+                Invalidate();
+            });
+            ctx.Items.Add(new ToolStripSeparator());
+            ctx.Items.Add("Resetuj MAX / TIMER", null, (_, _) =>
+            {
+                _maxValue = 0;
+                _startTime = DateTime.Now;
+                Invalidate();
+            });
             ctx.Items.Add("Zamknij panel", null, (_, _) => { Hide(); _chb.Checked = false; });
             ContextMenuStrip = ctx;
 
@@ -266,7 +306,15 @@ namespace ZOYI
         }
 
         private (string label, float max)[] ActiveRanges => _isResistance ? _resistanceRanges : _isCapacitance ? _capacitanceRanges : _ranges;
-        private float GaugeMax => ActiveRanges[_selectedRange].max;
+        private float GaugeMax
+        {
+            get
+            {
+                var ranges = ActiveRanges;
+                if (_selectedRange < 0 || _selectedRange >= ranges.Length) _selectedRange = Math.Clamp(_selectedRange, 0, ranges.Length - 1);
+                return ranges[_selectedRange].max;
+            }
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -546,7 +594,9 @@ namespace ZOYI
             }
 
             // --- Large digital value ---
-            using (var valFont = new Font("Segoe UI", _isOl ? 32 : 42, FontStyle.Bold))
+            var valueFont = _customValueFont ?? new Font("Segoe UI", _isOl ? 32 : 42, FontStyle.Bold);
+            bool ownFont = _customValueFont == null;
+            try
             {
                 string valTxt;
                 if (_displayValue != null)
@@ -568,13 +618,17 @@ namespace ZOYI
                 else if (_isDiode)
                     valColor = Color.Gold;
                 else
-                    valColor = Color.White;
+                    valColor = _customValueColor;
 
                 using (var valBrush = new SolidBrush(valColor))
                 {
-                    var sz = g.MeasureString(valTxt, valFont);
-                    g.DrawString(valTxt, valFont, valBrush, cx - sz.Width / 2, gaugeCenterY + 36);
+                    var sz = g.MeasureString(valTxt, valueFont);
+                    g.DrawString(valTxt, valueFont, valBrush, cx - sz.Width / 2, gaugeCenterY + 36);
                 }
+            }
+            finally
+            {
+                if (ownFont) valueFont.Dispose();
             }
 
             // --- Bottom info bar ---
@@ -629,6 +683,24 @@ namespace ZOYI
                 var sz = g.MeasureString(opTxt, opFont);
                 g.DrawString(opTxt, opFont, opBrush, sliderX + sliderW / 2 - sz.Width / 2, sliderY - 16);
             }
+
+            // --- Volume slider ---
+            int volSliderW = 120;
+            int volSliderX = sliderX - volSliderW - 20;
+            int volSliderY = h - 10;
+            int volSliderH = 8;
+            using (var volTrackBrush = new SolidBrush(Color.FromArgb(60, 60, 60)))
+                g.FillRectangle(volTrackBrush, volSliderX, volSliderY, volSliderW, volSliderH);
+            int volThumbX = volSliderX + (int)(volSliderW * _volume / 100f);
+            using (var volThumbBrush = new SolidBrush(Color.FromArgb(180, 180, 180)))
+                g.FillRectangle(volThumbBrush, volThumbX - thumbHalf, volSliderY - 3, thumbHalf * 2, volSliderH + 6);
+
+            // Volume label + % text
+            using (var volFont = new Font("Segoe UI", 9))
+            using (var volBrush = new SolidBrush(Color.FromArgb(140, 140, 140)))
+            {
+                g.DrawString("VOL", volFont, volBrush, volSliderX + volSliderW / 2 - 12, volSliderY - 16);
+            }
         }
 
         private readonly RectangleF[] _rangeButtons = new RectangleF[30];
@@ -673,6 +745,22 @@ namespace ZOYI
                 Opacity = _opacity / 100.0;
                 Properties.Settings.Default.panel_gauge_opacity = _opacity;
                 Properties.Settings.Default.Save();
+                Invalidate();
+            }
+
+            // Check volume slider click
+            int volSliderW = 120;
+            int volSliderX = sliderX - volSliderW - 20;
+            int volSliderY = Height - 10;
+            if (e.Y >= volSliderY - 8 && e.Y <= volSliderY + 16 &&
+                e.X >= volSliderX - 4 && e.X <= volSliderX + volSliderW + 4)
+            {
+                _volume = (int)((e.X - volSliderX) * 100f / volSliderW);
+                if (_volume < 0) _volume = 0;
+                if (_volume > 100) _volume = 100;
+                Properties.Settings.Default.panel_gauge_volume = _volume;
+                Properties.Settings.Default.Save();
+                ApplyVolumeToBuzzer();
                 Invalidate();
             }
         }
@@ -723,8 +811,15 @@ namespace ZOYI
             Properties.Settings.Default.panel_gauge_pos_x = Location.X;
             Properties.Settings.Default.panel_gauge_pos_y = Location.Y;
             Properties.Settings.Default.panel_gauge_opacity = _opacity;
+            Properties.Settings.Default.panel_gauge_volume = _volume;
             Properties.Settings.Default.panel_gauge_range = _selectedRange;
             Properties.Settings.Default.Save();
+        }
+
+        private void ApplyVolumeToBuzzer()
+        {
+            var mainWnd = Application.OpenForms.OfType<MainWindow>().FirstOrDefault();
+            mainWnd?.SetAlarmVolume(_volume / 100f);
         }
     }
 }

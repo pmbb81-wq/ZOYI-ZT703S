@@ -8,6 +8,7 @@ namespace ZOYI
             AppDomain.CurrentDomain.BaseDirectory, "translations.json");
 
         private static Dictionary<string, string> _translations = new();
+        private static Dictionary<string, string> _reverseLookup = new();
 
         public static IReadOnlyDictionary<string, string> Translations => _translations;
 
@@ -23,6 +24,14 @@ namespace ZOYI
             return translated;
         }
 
+        public static string GetOriginal(string currentText)
+        {
+            if (string.IsNullOrEmpty(currentText)) return currentText;
+            if (_reverseLookup.TryGetValue(currentText, out var original))
+                return original;
+            return currentText;
+        }
+
         public static void Set(string originalText, string translatedText)
         {
             if (string.IsNullOrWhiteSpace(originalText)) return;
@@ -35,18 +44,24 @@ namespace ZOYI
             {
                 _translations[originalText] = translatedText;
             }
+            RebuildReverseLookup();
             Save();
         }
 
         public static void Remove(string originalText)
         {
             if (_translations.Remove(originalText))
+            {
+                RebuildReverseLookup();
                 Save();
+            }
         }
 
         public static void ApplyToForm(Form form)
         {
+            _reverseLookup.Clear();
             ApplyToControl(form);
+            RebuildReverseLookup();
         }
 
         private static void ApplyToControl(Control control)
@@ -79,6 +94,15 @@ namespace ZOYI
             }
         }
 
+        private static void RebuildReverseLookup()
+        {
+            _reverseLookup.Clear();
+            foreach (var kv in _translations)
+            {
+                _reverseLookup[kv.Value] = kv.Key;
+            }
+        }
+
         private static void Load()
         {
             try
@@ -94,6 +118,7 @@ namespace ZOYI
             {
                 _translations = new Dictionary<string, string>();
             }
+            RebuildReverseLookup();
         }
 
         private static void Save()
