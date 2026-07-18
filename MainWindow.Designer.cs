@@ -39,6 +39,7 @@
             pbESR = new PictureBox();
             label8 = new Label();
             lblComConnStatus = new Label();
+            btnAuthors = new Button();
             chbTTSSwitch = new CheckBox();
             cbTTSVoice = new ComboBox();
             lblTTSStatus = new Label();
@@ -79,6 +80,7 @@
             chbStandardPanel = new CheckBox();
             btnListCOM = new Button();
             lbListCOMs = new ListBox();
+            chkAutoConnect = new CheckBox();
             btnComConnect = new Button();
             lblBaudRate = new Label();
             tabControl1 = new TabControl();
@@ -289,12 +291,12 @@
             label4.BorderStyle = BorderStyle.FixedSingle;
             label4.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             label4.ForeColor = Color.Yellow;
-            label4.Location = new Point(513, 518);
+            label4.Location = new Point(291, 520);
             label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(236, 22);
+            label4.Size = new Size(232, 22);
             label4.TabIndex = 15;
-            label4.Text = "Wersja 1.9           |  KRIS® version";
+            label4.Text = "Wersja 2.0           |  KRIS® version";
             label4.TextAlign = ContentAlignment.MiddleCenter;
             label4.Click += label4_Click;
             // 
@@ -346,6 +348,22 @@
             lblComConnStatus.Size = new Size(105, 20);
             lblComConnStatus.TabIndex = 18;
             lblComConnStatus.Text = "ROZŁĄCZONY";
+            // 
+            // btnAuthors
+            // 
+            btnAuthors.BackColor = Color.FromArgb(0, 64, 64);
+            btnAuthors.Cursor = Cursors.Hand;
+            btnAuthors.FlatStyle = FlatStyle.Flat;
+            btnAuthors.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnAuthors.ForeColor = Color.Cyan;
+            btnAuthors.Location = new Point(689, 518);
+            btnAuthors.Margin = new Padding(2);
+            btnAuthors.Name = "btnAuthors";
+            btnAuthors.Size = new Size(80, 24);
+            btnAuthors.TabIndex = 19;
+            btnAuthors.Text = "AUTHORS";
+            btnAuthors.UseVisualStyleBackColor = false;
+            btnAuthors.Click += btnAuthors_Click;
             // 
             // chbTTSSwitch
             // 
@@ -711,6 +729,7 @@
             tabPageCOM.Controls.Add(chbStandardPanel);
             tabPageCOM.Controls.Add(btnListCOM);
             tabPageCOM.Controls.Add(lbListCOMs);
+            tabPageCOM.Controls.Add(chkAutoConnect);
             tabPageCOM.Controls.Add(btnComConnect);
             tabPageCOM.Controls.Add(lblBaudRate);
             tabPageCOM.Location = new Point(4, 76);
@@ -860,7 +879,7 @@
             tbCOMBaudrate.Cursor = Cursors.IBeam;
             tbCOMBaudrate.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             tbCOMBaudrate.ForeColor = Color.Gold;
-            tbCOMBaudrate.Location = new Point(101, 245);
+            tbCOMBaudrate.Location = new Point(101, 255);
             tbCOMBaudrate.Margin = new Padding(2);
             tbCOMBaudrate.Name = "tbCOMBaudrate";
             tbCOMBaudrate.Size = new Size(99, 27);
@@ -942,6 +961,21 @@
             lbListCOMs.Size = new Size(185, 144);
             lbListCOMs.TabIndex = 2;
             // 
+            // chkAutoConnect
+            // 
+            chkAutoConnect.AutoSize = true;
+            chkAutoConnect.Cursor = Cursors.Hand;
+            chkAutoConnect.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 238);
+            chkAutoConnect.ForeColor = Color.FromArgb(200, 200, 200);
+            chkAutoConnect.Location = new Point(15, 226);
+            chkAutoConnect.Margin = new Padding(2);
+            chkAutoConnect.Name = "chkAutoConnect";
+            chkAutoConnect.Size = new Size(111, 21);
+            chkAutoConnect.TabIndex = 10;
+            chkAutoConnect.Text = "Auto Connect";
+            chkAutoConnect.UseVisualStyleBackColor = true;
+            chkAutoConnect.CheckedChanged += chkAutoConnect_CheckedChanged;
+            // 
             // btnComConnect
             // 
             btnComConnect.BackColor = Color.LightGreen;
@@ -962,7 +996,7 @@
             lblBaudRate.AutoSize = true;
             lblBaudRate.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 238);
             lblBaudRate.ForeColor = Color.Yellow;
-            lblBaudRate.Location = new Point(15, 249);
+            lblBaudRate.Location = new Point(15, 259);
             lblBaudRate.Margin = new Padding(2, 0, 2, 0);
             lblBaudRate.Name = "lblBaudRate";
             lblBaudRate.Size = new Size(82, 20);
@@ -2478,6 +2512,7 @@
             BackColor = Color.FromArgb(13, 13, 13);
             ClientSize = new Size(778, 544);
             Controls.Add(lblComConnStatus);
+            Controls.Add(btnAuthors);
             Controls.Add(label8);
             Controls.Add(pictureBox1);
             Controls.Add(label4);
@@ -2550,6 +2585,7 @@
         private PictureBox pbESR;
         private Label label8;
         private Label lblComConnStatus;
+        private Button btnAuthors;
         private TabPage tabPage4;
         private TabPage tabTools;
         private Button btnToolsRefresh;
@@ -2586,6 +2622,7 @@
         private Button btnListCOM;
         private ListBox lbListCOMs;
         private Button btnComConnect;
+        private CheckBox chkAutoConnect;
         private Label lblBaudRate;
         private TabControl tabControl1;
         private TabPage tabPage1;

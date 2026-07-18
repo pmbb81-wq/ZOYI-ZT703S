@@ -98,7 +98,11 @@ namespace ZOYI
             tools.refreshTools();
 
             // 7. Lista dostępnych portów COM
+            LoadPortAliases();
             refreshCOMlist();
+            InitPortContextMenu();
+            LoadAutoConnectState();
+            this.Shown += (_, _) => TryAutoConnect();
 
             // 8. Załadowanie ustawień suwaków
             LoadAdvancedPanelSettings(GetTbarArcTicks());
@@ -736,6 +740,12 @@ namespace ZOYI
         {
             var configForm = new ShortcutConfigForm(shortcutManager);
             configForm.ShowDialog(this);
+        }
+
+        private void btnAuthors_Click(object sender, EventArgs e)
+        {
+            using var dlg = new AuthorsForm();
+            dlg.ShowDialog(this);
         }
 
         private void pbESR_Click(object sender, EventArgs e)

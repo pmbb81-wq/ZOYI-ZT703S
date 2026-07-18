@@ -96,6 +96,32 @@ namespace ZOYI
         /*
          * 
          */
+        public bool CheckPortHealth()
+        {
+            if (!bConnected) return false;
+            try
+            {
+                lock (portLock)
+                {
+                    if (port == null || !port.IsOpen)
+                    {
+                        bConnected = false;
+                        return false;
+                    }
+                    _ = port.BytesToRead;
+                    return true;
+                }
+            }
+            catch
+            {
+                bConnected = false;
+                return false;
+            }
+        }
+
+        /*
+         * 
+         */
         public async Task<int> readByteAsync()
         {
             if (!bConnected)

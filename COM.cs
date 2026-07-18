@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +16,11 @@ namespace ZOYI
         String? COMportName = "";
         PARSE_MODE COMparseMode = PARSE_MODE.EXT;
         CancellationTokenSource ctsReadCOM;
-
+        private Dictionary<string, string> _portAliases = new();
+        private const string PORT_ALIASES_KEY = "com_port_aliases";
+        private volatile bool _dataReceivedAfterConnect = false;
+        private System.Windows.Forms.Timer? _autoReconnectTimer;
+        private volatile bool _autoReconnecting = false;
         private static List<EsrCsvRow> _bazaEsr = null;
         private static readonly object _bazaLock = new();
         private double? _customTanDelta = null;
@@ -77,10 +82,14 @@ namespace ZOYI
             {
                 try
                 {
-                    COMportName = lbListCOMs.SelectedItem!.ToString();
-                    int baudrate = int.Parse(tbCOMBaudrate.Text);
+                    COMportName = ResolvePortName(lbListCOMs.SelectedItem);
+                    int baudrate = int.TryParse(tbCOMBaudrate.Text, out var b1) ? b1 : 115200;
 
                     comx.connect(COMportName!, baudrate);
+
+                    StopAutoReconnect();
+
+                    LocalSettings.LastComPort = COMportName!;
 
                     btnComConnect.Text = "ROZŁĄCZ " + COMportName;
                     btnComConnect.BackColor = Color.LightCoral;
@@ -95,25 +104,53 @@ namespace ZOYI
                 }
                 catch (Exception ex)
                 {
-                    //MessageBox.Show("btnComConnect_Click:" + ex);
                     Console.WriteLine(ex);
+                    MessageBox.Show(
+                        $"Nie udało się połączyć z urządzeniem na porcie {COMportName}.\n\n{ex.Message}",
+                        "Błąd połączenia",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
                 }
             }
             else
             {
-                ctsReadCOM.Cancel();
-                ctsReadCOM.Dispose();
-
-                comx.disconnect();
-
                 btnComConnect.Text = "POŁĄCZ";
                 btnComConnect.BackColor = Color.LightGreen;
                 lblComConnStatus.Text = "ROZŁĄCZONY";
                 lblComConnStatus.ForeColor = Color.LightGreen;
-
                 lbListCOMs.Enabled = true;
                 tbCOMBaudrate.Enabled = true;
+                ctsReadCOM.Cancel();
+                ctsReadCOM.Dispose();
+                comx.disconnect();
+                StopAutoReconnect();
             }
+        }
+
+        /*
+         * 
+         */
+        private void ApplyConnectedUI(string portName)
+        {
+            btnComConnect.Text = "ROZŁĄCZ " + portName;
+            btnComConnect.BackColor = Color.LightCoral;
+            lbListCOMs.Enabled = false;
+            tbCOMBaudrate.Enabled = false;
+            lblComConnStatus.Text = "POŁĄCZONY";
+            lblComConnStatus.ForeColor = Color.LightCoral;
+        }
+
+        /*
+         * 
+         */
+        private void ApplyDisconnectedUI()
+        {
+            btnComConnect.Text = "POŁĄCZ";
+            btnComConnect.BackColor = Color.LightGreen;
+            lblComConnStatus.Text = "ROZŁĄCZONY";
+            lblComConnStatus.ForeColor = Color.LightGreen;
+            lbListCOMs.Enabled = true;
+            tbCOMBaudrate.Enabled = true;
         }
 
         async Task readCom(CancellationToken token)
@@ -121,6 +158,7 @@ namespace ZOYI
             String buff = "";
             byte[] bytesArray = new byte[18];
             int indexBytesArray = 0;
+            int consecutiveTimeouts = 0;
 
             try
             {
@@ -130,10 +168,54 @@ namespace ZOYI
                     {
                         int readByte = await comx.readByteAsync();
 
-                        if (readByte == -1)
+                        if (readByte == -2)
+                        {
+                            consecutiveTimeouts++;
+                            if (consecutiveTimeouts >= 10)
+                            {
+                                this.BeginInvoke(new Action(() =>
+                                {
+                                    ApplyDisconnectedUI();
+                                    MessageBox.Show(
+                                        $"Urządzenie na porcie {COMportName} nie odpowiada.\n\nSprawdź czy urządzenie jest włączone i w zasięgu Bluetooth.",
+                                        "Urządzenie niedostępne",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Warning);
+                                    lblComConnStatus.Text = "AUTO-CONNECT...";
+                                    lblComConnStatus.ForeColor = Color.Yellow;
+                                    StartAutoReconnect();
+                                }));
+                                comx.disconnect();
+                                return;
+                            }
                             continue;
+                        }
+
+                        consecutiveTimeouts = 0;
+
+                        if (readByte == -1)
+                        {
+                            if (!comx.isConnected())
+                            {
+                                this.BeginInvoke(new Action(() =>
+                                {
+                                    ApplyDisconnectedUI();
+                                    MessageBox.Show(
+                                        $"Urządzenie na porcie {COMportName} zostało rozłączone.",
+                                        "Urządzenie niedostępne",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Warning);
+                                    lblComConnStatus.Text = "AUTO-CONNECT...";
+                                    lblComConnStatus.ForeColor = Color.Yellow;
+                                    StartAutoReconnect();
+                                }));
+                                return;
+                            }
+                            continue;
+                        }
 
                         char c = (char)readByte;
+                        _dataReceivedAfterConnect = true;
 
                         // RAW
                         if (COMparseMode == PARSE_MODE.RAW)
@@ -322,9 +404,380 @@ namespace ZOYI
         /*
          * 
          */
+        private Dictionary<string, string> GetPortDeviceNames()
+        {
+            var result = new Dictionary<string, string>();
+            try
+            {
+                using var searcher = new ManagementObjectSearcher(
+                    "SELECT Caption, DeviceID FROM Win32_PnPEntity WHERE Caption LIKE '%(COM%'");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    string caption = obj["Caption"]?.ToString() ?? "";
+                    string deviceId = obj["DeviceID"]?.ToString() ?? "";
+
+                    var match = System.Text.RegularExpressions.Regex.Match(caption, @"\((COM\d+)\)");
+                    if (!match.Success) continue;
+                    string portName = match.Groups[1].Value;
+                    string deviceName = caption.Replace($"({portName})", "").Trim();
+
+                    if (deviceId.StartsWith("BTHENUM\\"))
+                    {
+                        string? btName = GetBluetoothDeviceName(deviceId);
+                        if (!string.IsNullOrEmpty(btName))
+                            deviceName = btName;
+                    }
+
+                    result.TryAdd(portName, deviceName);
+                }
+            }
+            catch { }
+            return result;
+        }
+
+        private static string? GetBluetoothDeviceName(string deviceId)
+        {
+            try
+            {
+                var macMatch = System.Text.RegularExpressions.Regex.Match(
+                    deviceId, @"([0-9A-Fa-f]{12})_[0-9A-Fa-f]+$");
+                if (!macMatch.Success) return null;
+
+                string mac = macMatch.Groups[1].Value.ToLowerInvariant();
+                if (mac == "000000000000") return null;
+
+                string regPath = $@"SYSTEM\CurrentControlSet\Services\BTHPORT\Parameters\Devices\{mac}";
+                using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(regPath);
+                if (key == null) return null;
+
+                var nameValue = key.GetValue("Name");
+                if (nameValue is byte[] nameBytes && nameBytes.Length > 0)
+                    return Encoding.Unicode.GetString(nameBytes).TrimEnd('\0');
+
+                return null;
+            }
+            catch { return null; }
+        }
+
         void refreshCOMlist()
         {
-            lbListCOMs.DataSource = comx.listCOMports();
+            var ports = comx.listCOMports();
+            var deviceNames = GetPortDeviceNames();
+            lbListCOMs.Items.Clear();
+            foreach (var port in ports)
+            {
+                if (_portAliases.TryGetValue(port, out var alias) && !string.IsNullOrWhiteSpace(alias))
+                    lbListCOMs.Items.Add($"{port} — {alias}");
+                else if (deviceNames.TryGetValue(port, out var devName) && !string.IsNullOrWhiteSpace(devName))
+                    lbListCOMs.Items.Add($"{port} — {devName}");
+                else
+                    lbListCOMs.Items.Add(port);
+            }
+        }
+
+        private string? ResolvePortName(object? item)
+        {
+            if (item == null) return null;
+            string text = item.ToString()!;
+            if (text.Contains(" — "))
+                return text.Split(new[] { " — " }, 2, StringSplitOptions.None)[0];
+            return text;
+        }
+
+        private void LoadPortAliases()
+        {
+            try
+            {
+                string json = Properties.Settings.Default.com_port_aliases ?? "";
+                if (!string.IsNullOrWhiteSpace(json))
+                    _portAliases = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new();
+            }
+            catch { _portAliases = new(); }
+        }
+
+        private void SavePortAliases()
+        {
+            try
+            {
+                var opts = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+                Properties.Settings.Default.com_port_aliases = System.Text.Json.JsonSerializer.Serialize(_portAliases, opts);
+                Properties.Settings.Default.Save();
+            }
+            catch { }
+        }
+
+        private void InitPortContextMenu()
+        {
+            var ctx = new ContextMenuStrip();
+            ctx.Items.Add("Nazwij port...", null, (_, _) => RenameSelectedPort());
+            ctx.Items.Add("Przywróć domyślną nazwę", null, (_, _) => ResetSelectedPortName());
+            lbListCOMs.ContextMenuStrip = ctx;
+        }
+
+        private void RenameSelectedPort()
+        {
+            if (lbListCOMs.SelectedItem == null) return;
+            string portName = ResolvePortName(lbListCOMs.SelectedItem)!;
+            string currentAlias = _portAliases.TryGetValue(portName, out var a) ? a : "";
+
+            using var dlg = new Form
+            {
+                Text = $"Nazwa portu: {portName}",
+                Size = new Size(350, 130),
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = Color.FromArgb(30, 30, 30)
+            };
+
+            var lbl = new Label { Text = "Własna nazwa:", ForeColor = Color.LightGray, Location = new Point(10, 10), AutoSize = true };
+            var tb = new TextBox { Text = currentAlias, Location = new Point(10, 35), Width = 310, BackColor = Color.FromArgb(50, 50, 50), ForeColor = Color.White };
+            var btnOk = new Button { Text = "OK", DialogResult = DialogResult.OK, Location = new Point(10, 68), Width = 80, BackColor = Color.FromArgb(0, 120, 215), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+            var btnCancel = new Button { Text = "Anuluj", DialogResult = DialogResult.Cancel, Location = new Point(100, 68), Width = 80, BackColor = Color.FromArgb(60, 60, 60), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+
+            dlg.Controls.AddRange(new Control[] { lbl, tb, btnOk, btnCancel });
+            dlg.AcceptButton = btnOk;
+            dlg.CancelButton = btnCancel;
+
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                string alias = tb.Text.Trim();
+                if (string.IsNullOrWhiteSpace(alias))
+                    _portAliases.Remove(portName);
+                else
+                    _portAliases[portName] = alias;
+                SavePortAliases();
+                int idx = lbListCOMs.SelectedIndex;
+                refreshCOMlist();
+                if (idx >= 0 && idx < lbListCOMs.Items.Count)
+                    lbListCOMs.SelectedIndex = idx;
+            }
+        }
+
+        private void ResetSelectedPortName()
+        {
+            if (lbListCOMs.SelectedItem == null) return;
+            string portName = ResolvePortName(lbListCOMs.SelectedItem)!;
+            if (_portAliases.Remove(portName))
+            {
+                SavePortAliases();
+                int idx = lbListCOMs.SelectedIndex;
+                refreshCOMlist();
+                if (idx >= 0 && idx < lbListCOMs.Items.Count)
+                    lbListCOMs.SelectedIndex = idx;
+            }
+        }
+
+        /*
+         * 
+         */
+        private void chkAutoConnect_CheckedChanged(object? sender, EventArgs e)
+        {
+            LocalSettings.AutoConnect = chkAutoConnect.Checked;
+            if (!chkAutoConnect.Checked)
+                StopAutoReconnect();
+        }
+
+        /*
+         * 
+         */
+        internal void LoadAutoConnectState()
+        {
+            chkAutoConnect.Checked = LocalSettings.AutoConnect;
+        }
+
+        /*
+         * 
+         */
+        internal void TryAutoConnect()
+        {
+            if (!LocalSettings.AutoConnect) return;
+
+            if (comx.isConnected()) return;
+
+            string lastPort = LocalSettings.LastComPort;
+            if (string.IsNullOrWhiteSpace(lastPort)) return;
+
+            refreshCOMlist();
+
+            string? displayName = null;
+            foreach (var item in lbListCOMs.Items)
+            {
+                if (ResolvePortName(item) == lastPort)
+                {
+                    displayName = item.ToString();
+                    break;
+                }
+            }
+
+            if (displayName == null)
+            {
+                lblComConnStatus.Text = "AUTO-CONNECT...";
+                lblComConnStatus.ForeColor = Color.Yellow;
+                StartAutoReconnect();
+                return;
+            }
+
+            lbListCOMs.SelectedItem = displayName;
+
+            try
+            {
+                COMportName = lastPort;
+                int baudrate = int.TryParse(tbCOMBaudrate.Text, out var b2) ? b2 : 115200;
+
+                _dataReceivedAfterConnect = false;
+                comx.connect(COMportName!, baudrate);
+
+                ApplyConnectedUI(COMportName!);
+
+                ctsReadCOM = new CancellationTokenSource();
+                var task = Task.Run(() => readCom(ctsReadCOM.Token));
+
+                _ = WaitForDataAsync(3000, COMportName!);
+                Console.WriteLine("AutoConnect: Task readCom run...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("AutoConnect failed: " + ex.Message);
+                ApplyDisconnectedUI();
+                lblComConnStatus.Text = "AUTO-CONNECT...";
+                lblComConnStatus.ForeColor = Color.Yellow;
+                StartAutoReconnect();
+            }
+        }
+
+        /*
+         * 
+         */
+        private async Task WaitForDataAsync(int timeoutMs, string portName)
+        {
+            await Task.Delay(timeoutMs);
+
+            if (_dataReceivedAfterConnect) return;
+            if (!comx.isConnected()) return;
+
+            try
+            {
+                ctsReadCOM?.Cancel();
+                comx.disconnect();
+
+                this.BeginInvoke(new Action(() =>
+                {
+                    ApplyDisconnectedUI();
+                    MessageBox.Show(
+                        $"Urządzenie na porcie {portName} nie odpowiada.\n\nSprawdź czy urządzenie jest włączone i w zasięgu Bluetooth.",
+                        "Auto Connect — brak odpowiedzi",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    lblComConnStatus.Text = "AUTO-CONNECT...";
+                    lblComConnStatus.ForeColor = Color.Yellow;
+                    StartAutoReconnect();
+                }));
+            }
+            catch { }
+        }
+
+        /*
+         * 
+         */
+        private void StartAutoReconnect()
+        {
+            if (!LocalSettings.AutoConnect) return;
+            if (_autoReconnectTimer != null) return;
+
+            _autoReconnectTimer = new System.Windows.Forms.Timer();
+            _autoReconnectTimer.Interval = 1000;
+            _autoReconnectTimer.Tick += AutoReconnectTick;
+            _autoReconnectTimer.Start();
+            Console.WriteLine("AutoReconnect: started");
+        }
+
+        /*
+         * 
+         */
+        private void StopAutoReconnect()
+        {
+            if (_autoReconnectTimer != null)
+            {
+                _autoReconnectTimer.Stop();
+                _autoReconnectTimer.Dispose();
+                _autoReconnectTimer = null;
+                Console.WriteLine("AutoReconnect: stopped");
+            }
+        }
+
+        /*
+         * 
+         */
+        private void AutoReconnectTick(object? sender, EventArgs e)
+        {
+            if (comx.isConnected())
+            {
+                StopAutoReconnect();
+                return;
+            }
+
+            if (_autoReconnecting) return;
+
+            string lastPort = LocalSettings.LastComPort;
+            if (string.IsNullOrWhiteSpace(lastPort))
+            {
+                StopAutoReconnect();
+                return;
+            }
+
+            var ports = comx.listCOMports();
+            if (!ports.Contains(lastPort))
+            {
+                this.BeginInvoke(new Action(() => refreshCOMlist()));
+                return;
+            }
+
+            _autoReconnecting = true;
+            int baudrate = int.TryParse(tbCOMBaudrate.Text, out var br) ? br : 115200;
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    _dataReceivedAfterConnect = false;
+                    comx.connect(lastPort, baudrate);
+
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        COMportName = lastPort;
+                        StopAutoReconnect();
+                        ApplyConnectedUI(lastPort);
+
+                        LocalSettings.LastComPort = lastPort;
+
+                        refreshCOMlist();
+                        foreach (var item in lbListCOMs.Items)
+                        {
+                            if (ResolvePortName(item) == lastPort)
+                            {
+                                lbListCOMs.SelectedItem = item;
+                                break;
+                            }
+                        }
+
+                        ctsReadCOM = new CancellationTokenSource();
+                        var task = Task.Run(() => readCom(ctsReadCOM.Token));
+
+                        _ = WaitForDataAsync(3000, lastPort);
+                    }));
+                    Console.WriteLine("AutoReconnect: connected to " + lastPort);
+                }
+                catch
+                {
+                    this.BeginInvoke(new Action(() => refreshCOMlist()));
+                }
+                finally
+                {
+                    _autoReconnecting = false;
+                }
+            });
         }
 
         /*

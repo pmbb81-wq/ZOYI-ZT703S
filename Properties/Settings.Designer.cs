@@ -932,5 +932,41 @@ namespace ZOYI.Properties {
                 this["panel_gauge_value_color"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("{}")]
+        public string com_port_aliases {
+            get {
+                return ((string)(this["com_port_aliases"]));
+            }
+            set {
+                this["com_port_aliases"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool auto_connect {
+            get {
+                return ((bool)(this["auto_connect"]));
+            }
+            set {
+                this["auto_connect"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string last_com_port {
+            get {
+                return ((string)(this["last_com_port"]));
+            }
+            set {
+                this["last_com_port"] = value;
+            }
+        }
     }
 }
